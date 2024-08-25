@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord Bot Dashboard</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+        .sidebar {
+            width: 80px;
+            background-color: #2f3136;
+            height: 100vh;
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .server-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+            cursor: pointer;
+            position: relative;
+        }
+        .server-icon img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+        }
+        .server-name {
+            display: none;
+            position: absolute;
+            background-color: #18191c;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            left: 70px;
+            top: 50%;
+            transform: translateY(-50%);
+            white-space: nowrap;
+        }
+        .server-icon:hover .server-name {
+            display: block;
+        }
+        .content {
+            flex-grow: 1;
+            padding: 20px;
+            background-color: #36393f;
+            color: #dcddde;
+            display: flex;
+            flex-direction: column;
+        }
+        .menu-bar {
+            display: none; /* Initially hidden */
+            background-color: #2f3136;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        .menu-item {
+            margin-right: 20px;
+            color: #dcddde;
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .menu-item:hover {
+            text-decoration: underline;
+        }
+        .server-details {
+            background-color: #2f3136;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        .server-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .server-header img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-right: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        {% if guild_details %}
+            {% for guild in guild_details %}
+            <div class="server-icon" onclick="loadServerDetails('{{ guild.id }}')">
+                <img src="{{ guild.icon_url }}" alt="{{ guild.name }}">
+                <span class="server-name">{{ guild.name }}</span>
+            </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div class="content">
+        <h1>Baxi Dashboard</h1>
+        <div id="server-details" class="server-details" style="display: none;"></div>
+        <div id="content-area" class="content-area"></div>
+        <div id="menu-bar" class="menu-bar">
+
+        </div>
+    </div>
+
+    <script id="menu-data" type="application/json">
+    {
+    "menu_items": [
+        {
+            "name": "Anti Raid",
+            "id": "anti_raid",
+            "endpoint": "https://baxi.pyropixle.com/api/dash/settings/load/anti_raid/{guild_id}"
+        },
+        {
+            "name": "Chatfilter",
+            "id": "chatfilter",
+            "endpoint": "https://baxi.pyropixle.com/api/dash/settings/load/chatfilter/{guild_id}"
+        },
+        {
+            "name": "Counting game",
+            "id": "countgame_data",
+            "endpoint": "https://baxi.pyropixle.com/api/dash/settings/load/countgame_data/{guild_id}"
+        },
+        {
+            "name": "Guessing game",
+            "id": "guessing",
+            "endpoint": "https://baxi.pyropixle.com/api/dash/settings/load/guessing/{guild_id}"
+        },
+        {
+            "name": "Verify System",
+            "id": "verify",
+            "endpoint": "https://baxi.pyropixle.com/api/dash/settings/load/verify/{guild_id}"
+        },
+        {
+            "name": "Welcome",
+            "id": "welcome",
+            "endpoint": "https://baxi.pyropixle.com/api/dash/settings/load/welcome/{guild_id}"
+        }
+    ]
+}
+
+    </script>
+
+    <script>
+        const apiKey = 'bdash-X_KzUaBBMlM8d5a5xbAav4Z6bYqS3rnBN94ugjtkhsI';
+
+        function loadMenuContent() {
+            const serverId = new URLSearchParams(window.location.search).get('server');
+            if (!serverId) {
+                document.getElementById('menu-bar').style.display = 'none';
+                return;
+            }
+
+            const menuData = JSON.parse(document.getElementById('menu-data').textContent);
+            const menuBar = document.getElementById('menu-bar');
+            menuBar.innerHTML = ''; // Clear existing menu items
+            menuData.menu_items.forEach(item => {
+                const a = document.createElement('a');
+                a.href = '#';
+                a.textContent = item.name;
+                a.className = 'menu-item';
+                a.dataset.endpoint = item.endpoint.replace('{guild_id}', serverId);
+                a.addEventListener('click', event => {
+                    event.preventDefault();
+                    loadApiData(a.dataset.endpoint);
+                });
+                menuBar.appendChild(a);
+            });
+            menuBar.style.display = 'flex'; // Show the menu bar
+        }
+
+        async function loadApiData(endpoint) {
+            try {
+                const response = await fetch(endpoint, {
+                    headers: {
+                        'Authorization': apiKey
+                    }
+                });
+                if (!response.ok) throw new Error('Network response was not ok');
+                const data = await response.json();
+                document.getElementById('content-area').innerHTML = JSON.stringify(data, null, 2);
+            } catch (error) {
+                console.error('Error fetching content:', error);
+            }
+        }
+
+        function loadServerDetails(serverId) {
+            history.pushState(null, '', '?server=' + serverId);
+
+            const serverDetails = {{ guild_details | tojson | safe }}.find(guild => guild.id === serverId);
+
+            if (serverDetails) {
+                const detailsHtml = `
+                    <div class="server-header">
+                        <img src="${serverDetails.icon_url}" alt="${serverDetails.name}">
+                        <h2>${serverDetails.name}</h2>
+                    </div>
+                    <p>ID: ${serverDetails.id}</p>
+                    <p>Members: ${serverDetails.member_count}</p>
+                    <p>Owner: ${serverDetails.owner_username}</p>
+                    <p>Region: ${serverDetails.region}</p>
+                    <p>Description: ${serverDetails.description}</p>
+                    <p>Verification Level: ${serverDetails.verification_level}</p>
+                `;
+                document.getElementById('server-details').innerHTML = detailsHtml;
+                document.getElementById('server-details').style.display = 'block';
+
+                // Fetch and display menu
+                loadMenuContent();
+            }
+        }
+
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const serverId = urlParams.get('server');
+            if (serverId) {
+                loadServerDetails(serverId);
+            }
+        }
+    </script>
+</body>
+</html>
