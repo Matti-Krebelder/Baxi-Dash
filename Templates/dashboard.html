@@ -36,40 +36,60 @@
     </div>
 
     <script id="menu-data" type="application/json">
-    {
-        "menu_items": [
-            {
-                "name": "Anti Raid",
-                "id": "anti_raid",
-                "endpoint": "https://baxi.pyropixle.com/api/dash/settings/load/anti_raid/{guild_id}"
-            },
-            {
-                "name": "Minigame guessing",
-                "id": "Minigame guessing",
-                "endpoint": "https://baxi.pyropixle.com/api/dash/settings/load/mgg/{guild_id}"
-            },
-            {
-                "name": "Counting game",
-                "id": "countgame_data",
-                "endpoint": "https://baxi.pyropixle.com/api/dash/settings/load/countgame_data/{guild_id}"
-            },
-            {
-                "name": "Guessing game",
-                "id": "guessing",
-                "endpoint": "https://baxi.pyropixle.com/api/dash/settings/load/guessing/{guild_id}"
-            },
-            {
-                "name": "Verify System",
-                "id": "verify",
-                "endpoint": "https://baxi.pyropixle.com/api/dash/settings/load/verify/{guild_id}"
-            },
-            {
-                "name": "Welcome",
-                "id": "welcome",
-                "endpoint": "https://baxi.pyropixle.com/api/dash/settings/load/welcome/{guild_id}"
-            }
-        ]
-    }
+{
+   "menu_items":[
+      {
+         "name":"Anti Raid",
+         "id":"anti_raid",
+         "endpoint":"https://baxi.pyropixle.com/api/dash/settings/load/anti_raid/{guild_id}"
+      },
+      {
+         "name":"Minigame guessing",
+         "id":"Minigame guessing",
+         "endpoint":"https://baxi.pyropixle.com/api/dash/settings/load/mgg/{guild_id}"
+      },
+      {
+         "name":"Counting game",
+         "id":"countgame_data",
+         "endpoint":"https://baxi.pyropixle.com/api/dash/settings/load/mgc/{guild_id}"
+      },
+      {
+         "name":"Global chat",
+         "id":"gc",
+         "endpoint":"https://baxi.pyropixle.com/api/dash/settings/load/gc/{guild_id}"
+      },
+      {
+         "name":"Welcome system",
+         "id":"welc",
+         "endpoint":"https://baxi.pyropixle.com/api/dash/settings/load/welc/{guild_id}"
+      },
+      {
+         "name":"Verify System",
+         "id":"verify",
+         "endpoint":"https://baxi.pyropixle.com/api/dash/settings/load/verify/{guild_id}"
+      },
+      {
+         "name":"Suggestion System",
+         "id":"Suggestion",
+         "endpoint":"https://baxi.pyropixle.com/api/dash/settings/load/sugg/{guild_id}"
+      },
+      {
+         "name":"Ticket System",
+         "id":"ticket",
+         "endpoint":"https://baxi.pyropixle.com/api/dash/settings/load/ticket/{guild_id}"
+      },
+      {
+         "name":"Log system",
+         "id":"log",
+         "endpoint":"https://baxi.pyropixle.com/api/dash/settings/load/log/{guild_id}"
+      },
+      {
+         "name":"Security system",
+         "id":"sec",
+         "endpoint":"https://baxi.pyropixle.com/api/dash/settings/load/sec/{guild_id}"
+      }
+   ]
+}
     </script>
 
     <script>
@@ -103,70 +123,122 @@
         }
 
         async function loadApiData(endpoint) {
-            try {
-                const response = await fetch(endpoint, {
-                    headers: {
-                        'Authorization': apiKey
-                    }
+    try {
+        const response = await fetch(endpoint, {
+            headers: {
+                'Authorization': apiKey
+            }
+        });
+        if (!response.ok) throw new Error('Network response was not ok');
+        const data = await response.json();
+        console.log('API Response:', data);
+
+        currentData = data;
+
+        const toggleSwitch = document.getElementById('toggle-switch');
+        let showToggle = false;
+
+        Object.keys(data).forEach(key => {
+            if (key.includes('-switch')) {
+                showToggle = true;
+                document.querySelector('#toggle-switch input').checked = data[key] === 1;
+            }
+        });
+
+        toggleSwitch.style.display = showToggle ? 'block' : 'none';
+
+        const textOutput = document.getElementById('text-output');
+        textOutput.innerHTML = '';
+
+        Object.keys(data).forEach(key => {
+            if (key.includes('-drop')) {
+                const dropdown = document.createElement('select');
+                const option = document.createElement('option');
+                option.textContent = key;
+                dropdown.appendChild(option);
+
+                Object.entries(data[key]).forEach(([subKey, subValue]) => {
+                    const option = document.createElement('option');
+                    option.value = subKey;
+                    option.textContent = `${subKey}: ${subValue}`;
+                    dropdown.appendChild(option);
                 });
-                if (!response.ok) throw new Error('Network response was not ok');
-                const data = await response.json();
-                console.log('API Response:', data); // Ausgabe in der Konsole
 
-                // Speichern der aktuellen Daten
-                currentData = data;
+                textOutput.appendChild(dropdown);
+            }
 
-                // Überprüfen, ob der Schalter angezeigt werden soll
-                const toggleSwitch = document.getElementById('toggle-switch');
-                if (data.active === 1) {
-                    toggleSwitch.style.display = 'block';
-                    document.querySelector('#toggle-switch input').checked = true;
-                } else if (data.active === 0) {
-                    toggleSwitch.style.display = 'block';
-                    document.querySelector('#toggle-switch input').checked = false;
-                } else {
-                    toggleSwitch.style.display = 'none';
+            if (key.includes('-table')) {
+                // Create a table dynamically based on the data structure
+                const table = document.createElement('table');
+                table.style.width = '100%';
+                table.style.borderCollapse = 'collapse';
+                table.style.marginTop = '20px';
+                table.style.marginBottom = '20px';
+
+                const thead = document.createElement('thead');
+                const headerRow = document.createElement('tr');
+
+                // Use the first entry to dynamically generate headers
+                const firstEntry = Object.entries(data[key])[0];
+                if (firstEntry) {
+                    Object.keys(firstEntry[1]).forEach(header => {
+                        const th = document.createElement('th');
+                        th.textContent = header;
+                        th.style.border = '1px solid #ddd';
+                        th.style.padding = '8px';
+                        th.style.backgroundColor = '#f2f2f2';
+                        headerRow.appendChild(th);
+                    });
                 }
 
-                // Display dropdowns for '-drop' keys
-                const textOutput = document.getElementById('text-output');
-                textOutput.innerHTML = ''; // Clear previous text output
+                thead.appendChild(headerRow);
+                table.appendChild(thead);
 
-                // Create dropdowns for keys containing '-drop'
-                Object.keys(data).forEach(key => {
-                    if (key.includes('-drop')) {
-                        const dropdown = document.createElement('select');
-                        const option = document.createElement('option');
-                        option.textContent = key;
-                        dropdown.appendChild(option);
+                // Create table body
+                const tbody = document.createElement('tbody');
 
-                        // Populate dropdown options
-                        Object.entries(data[key]).forEach(([subKey, subValue]) => {
-                            const option = document.createElement('option');
-                            option.value = subKey;
-                            option.textContent = `${subKey}: ${subValue}`;
-                            dropdown.appendChild(option);
+                Object.entries(data[key]).forEach(([id, value]) => {
+                    const row = document.createElement('tr');
+
+                    // If the value is an object, iterate over its properties
+                    if (typeof value === 'object' && value !== null) {
+                        Object.values(value).forEach(cellData => {
+                            const td = document.createElement('td');
+                            td.textContent = cellData;
+                            td.style.border = '1px solid #ddd';
+                            td.style.padding = '8px';
+                            row.appendChild(td);
                         });
-
-                        textOutput.appendChild(dropdown);
+                    } else {
+                        // Otherwise, treat the value as a single cell
+                        const td = document.createElement('td');
+                        td.textContent = value;
+                        td.style.border = '1px solid #ddd';
+                        td.style.padding = '8px';
+                        row.appendChild(td);
                     }
+
+                    tbody.appendChild(row);
                 });
 
-                // Fallback for other keys
-                Object.keys(data).forEach(key => {
-                    if (key.includes('_id') | key.includes('channel') & !key.includes('channels')) {
-                        const p = document.createElement('p');
-                        p.innerHTML = `${key}: ${formatValue(data[key])}`;
-                        textOutput.appendChild(p);
-                    }
-                });
-
-                // Zeige den "Save"-Button, wenn Änderungen vorliegen
-                document.getElementById('save-button').style.display = 'block';
-            } catch (error) {
-                console.error('Error fetching content:', error);
+                table.appendChild(tbody);
+                textOutput.appendChild(table);
             }
-        }
+
+            if (key.includes('-text')) {
+                const p = document.createElement('p');
+                p.innerHTML = `${key}: ${formatValue(data[key])}`;
+                textOutput.appendChild(p);
+            }
+        });
+
+        document.getElementById('save-button').style.display = 'block';
+    } catch (error) {
+        console.error('Error fetching content:', error);
+    }
+}
+
+
 
 function saveChanges() {
     // Hole den aktuellen Status des Toggle-Schalters
