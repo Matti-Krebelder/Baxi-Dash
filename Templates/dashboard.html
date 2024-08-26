@@ -137,10 +137,13 @@
         const toggleSwitch = document.getElementById('toggle-switch');
         let showToggle = false;
 
+        // Überprüfen und setzen des Toggle-Switch
         Object.keys(data).forEach(key => {
             if (key.includes('-switch')) {
                 showToggle = true;
-                document.querySelector('#toggle-switch input').checked = data[key] === 1;
+                const isChecked = data[key] === 1;
+                document.querySelector('#toggle-switch input').checked = isChecked;
+                console.log(`Toggle-Switch gefunden: ${key} = ${data[key]} (${isChecked ? 'Aktiviert' : 'Deaktiviert'})`);
             }
         });
 
@@ -149,25 +152,60 @@
         const textOutput = document.getElementById('text-output');
         textOutput.innerHTML = '';
 
+        // Sammle alle aktiven Drops in einer Map
+        const activeDropsMap = {};
         Object.keys(data).forEach(key => {
-            // Handle -drop keys
+            if (key.includes('-activedrop')) {
+                console.log(`Verarbeite aktiven Drop-Key: ${key}`);
+                const activeDropEntries = data[key];
+                Object.entries(activeDropEntries).forEach(([subKey, subValue]) => {
+                    activeDropsMap[subKey] = subValue;
+                    console.log(`Aktiver Drop gefunden: ${subKey} = ${subValue} (aus ${key})`);
+                });
+            }
+        });
+
+        // Verarbeite alle '-drop' Keys
+        Object.keys(data).forEach(key => {
             if (key.includes('-drop')) {
+                console.log(`Verarbeite Drop-Key: ${key}`);
                 const dropdown = document.createElement('select');
                 dropdown.name = key;
 
-                // Populate dropdown options
-                Object.entries(data[key]).forEach(([subKey, subValue]) => {
+                const dropEntries = data[key];
+                let selectedOptionFound = false;
+
+                // Iteriere über alle Optionen in diesem Drop-Key
+                Object.entries(dropEntries).forEach(([subKey, subValue]) => {
+                    console.log(`Überprüfe Option: ${subKey} = ${subValue}`);
+
                     const option = document.createElement('option');
-                    option.value = subKey.includes('-send') ? subKey : subValue; // Use -send key or fallback to value
-                    option.textContent = subKey.includes('-show') ? subValue.split(':')[0] : subValue; // Use -show or just the value
+                    option.value = subKey;
+                    // Entferne das Suffix '-show' für die Anzeige
+                    option.textContent = subValue.endsWith('-show') ? subValue.replace('-show', '') : subValue;
+
+                    // Überprüfe, ob diese Option aktiv ist
+                    if (activeDropsMap.hasOwnProperty(subKey)) {
+                        option.selected = true;
+                        selectedOptionFound = true;
+                        console.log(`Option "${subValue}" (${subKey}) ist aktiv und wird ausgewählt.`);
+                    } else {
+                        console.log(`Option "${subValue}" (${subKey}) ist nicht aktiv.`);
+                    }
+
                     dropdown.appendChild(option);
                 });
+
+                // Wenn keine aktive Option gefunden wurde, logge dies
+                if (!selectedOptionFound) {
+                    console.log(`Keine aktive Option für Drop-Key "${key}" gefunden.`);
+                }
 
                 textOutput.appendChild(dropdown);
             }
 
-            // Handle -table keys
             if (key.includes('-table')) {
+                console.log(`Verarbeite Table-Key: ${key}`);
                 const table = document.createElement('table');
                 table.style.width = '100%';
                 table.style.borderCollapse = 'collapse';
@@ -199,6 +237,7 @@
             }
 
             if (key.includes('-text')) {
+                console.log(`Verarbeite Text-Key: ${key}`);
                 const p = document.createElement('p');
                 p.innerHTML = `${key}: ${formatValue(data[key])}`;
                 textOutput.appendChild(p);
@@ -210,6 +249,7 @@
         console.error('Error fetching content:', error);
     }
 }
+
 
 function saveChanges() {
     const dropdowns = document.querySelectorAll('select');
