@@ -5,155 +5,76 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Discord Bot Dashboard</title>
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-        }
-        .sidebar {
-            width: 80px;
-            background-color: #2f3136;
-            height: 100vh;
-            padding: 20px 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .server-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            margin-bottom: 10px;
-            cursor: pointer;
-            position: relative;
-        }
-        .server-icon img {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-        }
-        .server-name {
-            display: none;
-            position: absolute;
-            background-color: #18191c;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 5px;
-            left: 70px;
-            top: 50%;
-            transform: translateY(-50%);
-            white-space: nowrap;
-        }
-        .server-icon:hover .server-name {
-            display: block;
-        }
-        .content {
-            flex-grow: 1;
-            padding: 20px;
-            background-color: #36393f;
-            color: #dcddde;
-            display: flex;
-            flex-direction: column;
-        }
-        .menu-bar {
-            display: none; /* Initially hidden */
-            background-color: #2f3136;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            overflow-x: auto;
-            white-space: nowrap;
-        }
-        .menu-item {
-            margin-right: 20px;
-            color: #dcddde;
-            text-decoration: none;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .menu-item:hover {
-            text-decoration: underline;
-        }
-        .server-details {
-            background-color: #2f3136;
-            padding: 20px;
-            border-radius: 5px;
-        }
-        .server-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .server-header img {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            margin-right: 20px;
-        }
-    </style>
 </head>
 <body>
     <div class="sidebar">
         {% if guild_details %}
-            {% for guild in guild_details %}
-            <div class="server-icon" onclick="loadServerDetails('{{ guild.id }}')">
-                <img src="{{ guild.icon_url }}" alt="{{ guild.name }}">
-                <span class="server-name">{{ guild.name }}</span>
-            </div>
-            {% endfor %}
+        {% for guild in guild_details %}
+        <div class="server-icon" onclick="loadServerDetails('{{ guild.id }}')">
+            <img src="{{ guild.icon_url }}" alt="{{ guild.name }}">
+            <span class="server-name">{{ guild.name }}</span>
+        </div>
+        {% endfor %}
         {% endif %}
     </div>
     <div class="content">
         <h1>Baxi Dashboard</h1>
-        <div id="server-details" class="server-details" style="display: none;"></div>
-        <div id="content-area" class="content-area"></div>
-        <div id="menu-bar" class="menu-bar">
+        <div id="menu-bar" class="menu-bar"></div>
+        <div id="server-details" class="server-details"></div>
+        <div id="content-area" class="content-area">
+            <!-- Toggle switch -->
+            <label id="toggle-switch" class="switch" style="display: none;">
+                <input type="checkbox" id="toggle-input">
+                <span class="slider"></span>
+            </label>
+            <!-- Output text area -->
+            <div id="text-output" class="text-output"></div>
+            <!-- Save Button -->
+            <button id="save-button" style="display: none;" onclick="saveChanges()">Save</button>
 
         </div>
     </div>
 
     <script id="menu-data" type="application/json">
     {
-    "menu_items": [
-        {
-            "name": "Anti Raid",
-            "id": "anti_raid",
-            "endpoint": "https://baxi.pyropixle.com/api/dash/settings/load/anti_raid/{guild_id}"
-        },
-        {
-            "name": "Chatfilter",
-            "id": "chatfilter",
-            "endpoint": "https://baxi.pyropixle.com/api/dash/settings/load/chatfilter/{guild_id}"
-        },
-        {
-            "name": "Counting game",
-            "id": "countgame_data",
-            "endpoint": "https://baxi.pyropixle.com/api/dash/settings/load/countgame_data/{guild_id}"
-        },
-        {
-            "name": "Guessing game",
-            "id": "guessing",
-            "endpoint": "https://baxi.pyropixle.com/api/dash/settings/load/guessing/{guild_id}"
-        },
-        {
-            "name": "Verify System",
-            "id": "verify",
-            "endpoint": "https://baxi.pyropixle.com/api/dash/settings/load/verify/{guild_id}"
-        },
-        {
-            "name": "Welcome",
-            "id": "welcome",
-            "endpoint": "https://baxi.pyropixle.com/api/dash/settings/load/welcome/{guild_id}"
-        }
-    ]
-}
-
+        "menu_items": [
+            {
+                "name": "Anti Raid",
+                "id": "anti_raid",
+                "endpoint": "https://baxi.pyropixle.com/api/dash/settings/load/anti_raid/{guild_id}"
+            },
+            {
+                "name": "Minigame guessing",
+                "id": "Minigame guessing",
+                "endpoint": "https://baxi.pyropixle.com/api/dash/settings/load/mgg/{guild_id}"
+            },
+            {
+                "name": "Counting game",
+                "id": "countgame_data",
+                "endpoint": "https://baxi.pyropixle.com/api/dash/settings/load/countgame_data/{guild_id}"
+            },
+            {
+                "name": "Guessing game",
+                "id": "guessing",
+                "endpoint": "https://baxi.pyropixle.com/api/dash/settings/load/guessing/{guild_id}"
+            },
+            {
+                "name": "Verify System",
+                "id": "verify",
+                "endpoint": "https://baxi.pyropixle.com/api/dash/settings/load/verify/{guild_id}"
+            },
+            {
+                "name": "Welcome",
+                "id": "welcome",
+                "endpoint": "https://baxi.pyropixle.com/api/dash/settings/load/welcome/{guild_id}"
+            }
+        ]
+    }
     </script>
 
     <script>
         const apiKey = 'bdash-X_KzUaBBMlM8d5a5xbAav4Z6bYqS3rnBN94ugjtkhsI';
+        let currentData = {};
 
         function loadMenuContent() {
             const serverId = new URLSearchParams(window.location.search).get('server');
@@ -174,6 +95,7 @@
                 a.addEventListener('click', event => {
                     event.preventDefault();
                     loadApiData(a.dataset.endpoint);
+                    document.getElementById('server-details').style.display = 'none'; // Hide server stats
                 });
                 menuBar.appendChild(a);
             });
@@ -189,10 +111,88 @@
                 });
                 if (!response.ok) throw new Error('Network response was not ok');
                 const data = await response.json();
-                document.getElementById('content-area').innerHTML = JSON.stringify(data, null, 2);
+                console.log('API Response:', data); // Ausgabe in der Konsole
+
+                // Speichern der aktuellen Daten
+                currentData = data;
+
+                // Überprüfen, ob der Schalter angezeigt werden soll
+                const toggleSwitch = document.getElementById('toggle-switch');
+                if (data.active === 1) {
+                    toggleSwitch.style.display = 'block';
+                    document.querySelector('#toggle-switch input').checked = true;
+                } else if (data.active === 0) {
+                    toggleSwitch.style.display = 'block';
+                    document.querySelector('#toggle-switch input').checked = false;
+                } else {
+                    toggleSwitch.style.display = 'none';
+                }
+
+                // Display dropdowns for '-drop' keys
+                const textOutput = document.getElementById('text-output');
+                textOutput.innerHTML = ''; // Clear previous text output
+
+                // Create dropdowns for keys containing '-drop'
+                Object.keys(data).forEach(key => {
+                    if (key.includes('-drop')) {
+                        const dropdown = document.createElement('select');
+                        const option = document.createElement('option');
+                        option.textContent = key;
+                        dropdown.appendChild(option);
+
+                        // Populate dropdown options
+                        Object.entries(data[key]).forEach(([subKey, subValue]) => {
+                            const option = document.createElement('option');
+                            option.value = subKey;
+                            option.textContent = `${subKey}: ${subValue}`;
+                            dropdown.appendChild(option);
+                        });
+
+                        textOutput.appendChild(dropdown);
+                    }
+                });
+
+                // Fallback for other keys
+                Object.keys(data).forEach(key => {
+                    if (key.includes('_id') | key.includes('channel') & !key.includes('channels')) {
+                        const p = document.createElement('p');
+                        p.innerHTML = `${key}: ${formatValue(data[key])}`;
+                        textOutput.appendChild(p);
+                    }
+                });
+
+                // Zeige den "Save"-Button, wenn Änderungen vorliegen
+                document.getElementById('save-button').style.display = 'block';
             } catch (error) {
                 console.error('Error fetching content:', error);
             }
+        }
+
+function saveChanges() {
+    // Hole den aktuellen Status des Toggle-Schalters
+    const isActive = document.querySelector('#toggle-switch input').checked ? 1 : 0;
+
+    // Erstelle die Daten, die "gespeichert" werden sollen
+    const updatedData = {
+        ...currentData,
+        active: isActive
+    };
+
+    // Hier könntest du die Daten an den Server senden oder lokal verarbeiten.
+    // Da wir fetch entfernt haben, zeigen wir einfach eine Bestätigungsmeldung an.
+
+    // Zeige die "gespeicherten" Daten im Alert an
+    alert('Änderungen gespeichert:\n' + JSON.stringify(updatedData, null, 2));
+}
+
+
+
+        function formatValue(value) {
+            if (typeof value === 'object' && value !== null) {
+                // If the value is an object, convert it to a readable format
+                return Object.entries(value).map(([k, v]) => `${k}: ${v}`).join(', ');
+            }
+            return value;
         }
 
         function loadServerDetails(serverId) {
@@ -203,7 +203,7 @@
             if (serverDetails) {
                 const detailsHtml = `
                     <div class="server-header">
-                        <img src="${serverDetails.icon_url}" alt="${serverDetails.name}">
+                        <img src="${serverDetails.icon_url}" alt="${serverDetails.name}" style="width: 80px; height: 80px; border-radius: 50%; margin-right: 20px;">
                         <h2>${serverDetails.name}</h2>
                     </div>
                     <p>ID: ${serverDetails.id}</p>
@@ -216,12 +216,22 @@
                 document.getElementById('server-details').innerHTML = detailsHtml;
                 document.getElementById('server-details').style.display = 'block';
 
+                // Leere den Inhaltbereich beim Serverwechsel
+                document.getElementById('content-area').innerHTML = `
+                    <label id="toggle-switch" class="switch" style="display: none;">
+                        <input type="checkbox" id="toggle-input">
+                        <span class="slider"></span>
+                    </label>
+                    <div id="text-output" class="text-output"></div>
+                    <button id="save-button" style="display: none;" onclick="saveChanges()">Save</button>
+                `;
+
                 // Fetch and display menu
                 loadMenuContent();
             }
         }
 
-        window.onload = function() {
+        window.onload = function () {
             const urlParams = new URLSearchParams(window.location.search);
             const serverId = urlParams.get('server');
             if (serverId) {
@@ -231,3 +241,152 @@
     </script>
 </body>
 </html>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+    }
+
+    .sidebar {
+        width: 80px;
+        background-color: #2f3136;
+        height: 100vh;
+        padding: 20px 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .server-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        margin-bottom: 10px;
+        cursor: pointer;
+        position: relative;
+    }
+
+    .server-icon img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+    }
+
+    .server-name {
+        display: none;
+        position: absolute;
+        background-color: #18191c;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 5px;
+        left: 70px;
+        top: 50%;
+        transform: translateY(-50%);
+        white-space: nowrap;
+    }
+
+    .server-icon:hover .server-name {
+        display: block;
+    }
+
+    .content {
+        flex-grow: 1;
+        padding: 20px;
+        background-color: #36393f;
+        color: #dcddde;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .menu-bar {
+        display: none;
+        /* Initially hidden */
+        background-color: #2f3136;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    .menu-item {
+        margin-right: 20px;
+        color: #dcddde;
+        text-decoration: none;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .menu-item:hover {
+        text-decoration: underline;
+    }
+
+    .server-details {
+        background-color: #2f3136;
+        padding: 20px;
+        border-radius: 5px;
+        display: none;
+        /* Initially hidden */
+    }
+
+    .server-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .server-header img {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        margin-right: 20px;
+    }
+
+    /* CSS for the toggle switch */
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+    }
+
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: .4s;
+        border-radius: 34px;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        border-radius: 50%;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: .4s;
+    }
+
+    input:checked+.slider {
+        background-color: #2196F3;
+    }
+
+    input:checked+.slider:before {
+        transform: translateX(26px);
+    }
+</style>
