@@ -121,6 +121,24 @@
             menuBar.style.display = 'flex'; // Show the menu bar
         }
 
+        function replaceValue(data, targetValue, replacementValue) {
+    if (data === targetValue) {
+        return replacementValue;
+    } else if (Array.isArray(data)) {
+        return data.map(item => replaceValue(item, targetValue, replacementValue));
+    } else if (typeof data === 'object' && data !== null) {
+        const result = {};
+        for (const key in data) {
+            if (data.hasOwnProperty(key)) {
+                result[key] = replaceValue(data[key], targetValue, replacementValue);
+            }
+        }
+        return result;
+    } else {
+        return data;
+    }
+}
+
         async function loadApiData(endpoint) {
     try {
         const response = await fetch(endpoint, {
@@ -129,7 +147,8 @@
             }
         });
         if (!response.ok) throw new Error('Network response was not ok');
-        const data = await response.json();
+        const dataraw = await response.json();
+        const data = replaceValue(dataraw, null, "null");
         console.log('API Response:', data);
 
         currentData = data;
@@ -252,43 +271,57 @@
 
 
 function saveChanges() {
+    // Object to store changes
+    const updatedData = {};
+    
+    // Get the current state of the toggle switch
+    const isActive = document.querySelector('#toggle-switch input').checked ? 1 : 0;
+    updatedData.active = isActive;
+
+    // Track changes in dropdowns
     const dropdowns = document.querySelectorAll('select');
     dropdowns.forEach(dropdown => {
         const selectedOption = dropdown.options[dropdown.selectedIndex];
         const originalKey = dropdown.name;
 
+        // Check if this dropdown key exists in the currentData
         if (currentData[originalKey]) {
-            currentData[originalKey]['selected-send'] = selectedOption.value;
+            updatedData[originalKey] =                
+                selectedOption.value
+            ;
         }
     });
 
-    const isActive = document.querySelector('#toggle-switch input').checked ? 1 : 0;
-    const updatedData = {
-        ...currentData,
-        active: isActive
-    };
 
-    alert('Änderungen gespeichert:\n' + JSON.stringify(updatedData, null, 2));
+    const senddata = removeSendFromObject(updatedData);
+
+    // Show the updated data in an alert
+    console.log(senddata)
+    alert('Änderungen gespeichert:\n' + JSON.stringify(senddata, null, 2));
 }
 
-
-
-function saveChanges() {
-    // Hole den aktuellen Status des Toggle-Schalters
-    const isActive = document.querySelector('#toggle-switch input').checked ? 1 : 0;
-
-    // Erstelle die Daten, die "gespeichert" werden sollen
-    const updatedData = {
-        ...currentData,
-        active: isActive
-    };
-
-    // Hier könntest du die Daten an den Server senden oder lokal verarbeiten.
-    // Da wir fetch entfernt haben, zeigen wir einfach eine Bestätigungsmeldung an.
-
-    // Zeige die "gespeicherten" Daten im Alert an
-    alert('Änderungen gespeichert:\n' + JSON.stringify(updatedData, null, 2));
+function removeSendFromObject(obj) {
+    if (typeof obj === 'string') {
+        // Falls der aktuelle Wert ein String ist, ersetze "-send"
+        return obj.replace("-send", "");
+    } else if (Array.isArray(obj)) {
+        // Falls der aktuelle Wert ein Array ist, rekursiv alle Elemente bearbeiten
+        return obj.map(removeSendFromObject);
+    } else if (typeof obj === 'object' && obj !== null) {
+        // Falls der aktuelle Wert ein Objekt ist, rekursiv alle Schlüssel bearbeiten
+        const newObj = {};
+        for (let key in obj) {
+            if (obj.hasOwnProperty(key)) {
+                newObj[key] = removeSendFromObject(obj[key]);
+            }
+        }
+        return newObj;
+    } else {
+        // Falls der aktuelle Wert weder String, Array, noch Objekt ist, gebe ihn unverändert zurück
+        return obj;
+    }
 }
+
 
 
 
