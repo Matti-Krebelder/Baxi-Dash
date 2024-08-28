@@ -1,10 +1,8 @@
 import json
-
-from quart import Quart, render_template, request, send_from_directory, send_file, jsonify, url_for, redirect, session, make_response
-from quart_cors import cors
-
 import requests
 import os
+from quart import Quart, render_template, request, send_from_directory, send_file, jsonify, url_for, redirect, session, make_response
+from quart_cors import cors
 
 app = Quart(__name__, template_folder="Templates")
 app = cors(app)
@@ -17,6 +15,8 @@ API_ENDPOINT = 'https://discord.com/api/v10'
 AUTH_URL = 'https://discord.com/api/oauth2/authorize'
 TOKEN_URL = 'https://discord.com/api/oauth2/token'
 BOT_TOKEN = 'OTgxMjY4ODE0MzA4MTg0MDg0.GMCiT4.EERN07N-94eV_vGTvP0AEvcEFJDBCgXEurfSRk'
+PERMS_API = 'https://security.pyropixle.com/api/dash/check/staff/user/perms/'
+LOG_FILE = 'denied_access.json'
 
 @app.route("/")
 async def home():
@@ -46,9 +46,24 @@ async def callback():
 
 DEFAULT_ICON = 'https://cdn.discordapp.com/embed/avatars/0.png'
 
+def log_denied_access(ip_address, user_id):
+    """Append the IP address and user ID to the JSON log file."""
+    if os.path.exists(LOG_FILE):
+        with open(LOG_FILE, 'r') as file:
+            denied_access = json.load(file)
+    else:
+        denied_access = []
+
+    denied_access.append({
+        'ip_address': ip_address,
+        'user_id': user_id
+    })
+
+    with open(LOG_FILE, 'w') as file:
+        json.dump(denied_access, file, indent=4)
+
 @app.route("/dashboard")
 async def dashboard():
-    global APIKEY
     if 'token' not in session:
         return redirect('/login')
 
@@ -56,6 +71,24 @@ async def dashboard():
         'Authorization': f'Bearer {session["token"]}'
     }
 
+    # Fetch user information
+    user_info_response = requests.get(f'{API_ENDPOINT}/users/@me', headers=headers)
+    user_info_response.raise_for_status()
+    user_info = user_info_response.json()
+    user_id = user_info['id']
+
+    # Fetch permissions array from external API
+    perms_response = requests.get(PERMS_API)
+    perms_response.raise_for_status()
+    permitted_user_ids = perms_response.json()
+
+    # Check if the user ID is in the permitted list
+    if user_id not in permitted_user_ids:
+        ip_address = request.headers.get('X-Forwarded-For', request.remote_addr)
+        log_denied_access(ip_address, user_id)
+        return "Access Denied: You do not have permission to access this dashboard."
+
+    # Fetch user guilds
     user_guilds_response = requests.get(f'{API_ENDPOINT}/users/@me/guilds', headers=headers)
     user_guilds_response.raise_for_status()
     user_guilds = user_guilds_response.json()
