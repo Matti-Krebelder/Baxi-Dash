@@ -1,30 +1,33 @@
 import json
 
-from flask import Flask, request, redirect, session, render_template, send_from_directory
+from quart import Quart, render_template, request, send_from_directory, send_file, jsonify, url_for, redirect, session, make_response
+from quart_cors import cors
+
 import requests
 import os
 
-app = Flask(__name__)
+app = Quart(__name__)
+app = cors(app)
 app.secret_key = os.urandom(24)
 
-CLIENT_ID = '1277310867381158002'
-CLIENT_SECRET = '4doXCvWpIxOXeQTtxnkPPw9O7MNB-pV7'
+CLIENT_ID = '981268814308184084'
+CLIENT_SECRET = "dVqR7HQsTrZ25_QzpCjndvcPTazjKTlI"
 REDIRECT_URI = 'http://127.0.0.1:5000/callback'
 API_ENDPOINT = 'https://discord.com/api/v10'
 AUTH_URL = 'https://discord.com/api/oauth2/authorize'
 TOKEN_URL = 'https://discord.com/api/oauth2/token'
-BOT_TOKEN = 'MTI3NzMxMDg2NzM4MTE1ODAwMg.GL6Hjb.H8CWb5QTquw_42LG6zdOjeBi8kGrzRBe1mtUpM'
+BOT_TOKEN = 'OTgxMjY4ODE0MzA4MTg0MDg0.GMCiT4.EERN07N-94eV_vGTvP0AEvcEFJDBCgXEurfSRk'
 
 @app.route("/")
-def home():
+async def home():
     return '<a href="/login">Login with Discord</a>'
 
 @app.route("/login")
-def login():
+async def login():
     return redirect(f'{AUTH_URL}?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=identify%20guilds%20email')
 
 @app.route("/callback")
-def callback():
+async def callback():
     code = request.args.get('code')
     data = {
         'client_id': CLIENT_ID,
@@ -44,7 +47,7 @@ def callback():
 DEFAULT_ICON = 'https://cdn.discordapp.com/embed/avatars/0.png'
 
 @app.route("/dashboard")
-def dashboard():
+async def dashboard():
     global APIKEY
     if 'token' not in session:
         return redirect('/login')
@@ -97,11 +100,11 @@ def dashboard():
             'verification_level': guild_info.get('verification_level', 'Unknown'),
         })
 
-    return render_template('dashboard.html', guild_details=guild_details)
+    return await render_template('dashboard.html', guild_details=guild_details)
 
 @app.route('/dashboard-menu.json')
-def menu():
-    return send_from_directory('templates', 'dashboard-menu.json')
+async def menu():
+    return await send_from_directory('templates', 'dashboard-menu.json')
 
 if __name__ == '__main__':
     app.run(debug=True)
