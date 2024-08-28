@@ -6,12 +6,12 @@ from quart_cors import cors
 import requests
 import os
 
-app = Quart(__name__)
+app = Quart(__name__, template_folder="Templates")
 app = cors(app)
 app.secret_key = os.urandom(24)
 
 CLIENT_ID = '981268814308184084'
-CLIENT_SECRET = "dVqR7HQsTrZ25_QzpCjndvcPTazjKTlI"
+CLIENT_SECRET = "2KbKKJO0UEIwMasUVm5znMR4Z2D8qyTo"
 REDIRECT_URI = 'https://baxi.pyropixle.com/callback'
 API_ENDPOINT = 'https://discord.com/api/v10'
 AUTH_URL = 'https://discord.com/api/oauth2/authorize'
