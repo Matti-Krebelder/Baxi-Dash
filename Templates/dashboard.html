@@ -351,6 +351,26 @@ function saveChanges() {
         }
     });
 
+    // Änderungen in Input-Feldern nachverfolgen
+    const inputs = document.querySelectorAll('input');
+    inputs.forEach(input => {
+        const originalKey = input.name;
+        let value;
+
+        if (input.type === 'checkbox') {
+            value = input.checked ? 1 : 0;
+        } else if (input.type === 'radio' && !input.checked) {
+            return; // Überspringen, wenn Radio-Button nicht ausgewählt ist
+        } else {
+            value = input.value;
+        }
+
+        // Überprüfen, ob dieser Input-Schlüssel im currentData vorhanden ist
+        if (currentData[originalKey]) {
+            updatedData[originalKey] = value;
+        }
+    });
+
     const senddata = removeSendFromObject(updatedData);
 
     // Den saveEndpoint aus dem localStorage abrufen
@@ -359,7 +379,7 @@ function saveChanges() {
         console.error('Error: No save endpoint found in localStorage.');
         return;
     }
-    console.log(senddata)
+    console.log(senddata);
 
     // Daten an den saveEndpoint senden
     fetch(saveEndpoint, {
@@ -367,10 +387,8 @@ function saveChanges() {
         headers: {
             'Content-Type': 'application/json',
             'Authorization': apiKey
-            
         },
         body: JSON.stringify(senddata)
-        
     })
     .then(response => {
         if (!response.ok) {
@@ -387,6 +405,7 @@ function saveChanges() {
         // Optional: Fehlermeldung anzeigen
     });
 }
+
 
 
 
