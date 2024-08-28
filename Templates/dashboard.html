@@ -22,7 +22,7 @@
         <div id="menu-bar" class="menu-bar"></div>
         <div id="server-details" class="server-details"></div>
         <div id="content-area" class="content-area">
-            
+
             <label id="toggle-switch" class="switch" style="display: none;">
                 <input type="checkbox" id="toggle-input">
                 <span class="slider"></span>
@@ -139,7 +139,7 @@
     }
 }
 
-        async function loadApiData(endpoint) {
+async function loadApiData(endpoint) {
     try {
         const response = await fetch(endpoint, {
             headers: {
@@ -171,6 +171,21 @@
         const textOutput = document.getElementById('text-output');
         textOutput.innerHTML = '';
 
+        // Verarbeitung von -input Keys
+        Object.keys(data).forEach(key => {
+            if (key.includes('-input')) {
+                console.log(`Verarbeite Input-Key: ${key}`);
+                const input = document.createElement('input');
+                input.name = key;
+                input.type = 'text';
+                input.placeholder = data[key] === "null" ? 'Enter text...' : data[key];
+                input.value = data[key] === "null" ? '' : data[key];
+                input.style.display = 'block';
+                input.style.marginBottom = '10px';
+                textOutput.appendChild(input);
+            }
+        });
+
         // Sammle alle aktiven Drops in einer Map
         const activeDropsMap = {};
         Object.keys(data).forEach(key => {
@@ -184,7 +199,7 @@
             }
         });
 
-        // Verarbeite alle '-drop' Keys
+        // Verarbeite alle '-drop' Keys (z.B. -drop, -drop-1, -drop-2)
         Object.keys(data).forEach(key => {
             if (key.includes('-drop')) {
                 console.log(`Verarbeite Drop-Key: ${key}`);
@@ -270,10 +285,11 @@
 }
 
 
+
 function saveChanges() {
     // Object to store changes
     const updatedData = {};
-    
+
     // Get the current state of the toggle switch
     const isActive = document.querySelector('#toggle-switch input').checked ? 1 : 0;
     updatedData.active = isActive;
@@ -286,7 +302,7 @@ function saveChanges() {
 
         // Check if this dropdown key exists in the currentData
         if (currentData[originalKey]) {
-            updatedData[originalKey] =                
+            updatedData[originalKey] =
                 selectedOption.value
             ;
         }

@@ -96,9 +96,8 @@ def dashboard():
             'description': guild_info.get('description', 'No description available'),
             'verification_level': guild_info.get('verification_level', 'Unknown'),
         })
-        APIKEY="bdash-X_KzUaBBMlM8d5a5xbAav4Z6bYqS3rnBN94ugjtkhsI"
 
-    return render_template('dashboard.html', guild_details=guild_details,APIKEY=APIKEY)
+    return render_template('dashboard.html', guild_details=guild_details)
 
 @app.route('/dashboard-menu.json')
 def menu():
