@@ -35,60 +35,90 @@
     </div>
 
     <script id="menu-data" type="application/json">
-{
-   "menu_items":[
-      {
-         "name":"Anti Raid",
-         "id":"anti_raid",
-         "endpoint":"https://baxi.pyropixle.com/api/dash/settings/load/anti_raid/{guild_id}"
-      },
-      {
-         "name":"Minigame guessing",
-         "id":"Minigame guessing",
-         "endpoint":"https://baxi.pyropixle.com/api/dash/settings/load/mgg/{guild_id}"
-      },
-      {
-         "name":"Counting game",
-         "id":"countgame_data",
-         "endpoint":"https://baxi.pyropixle.com/api/dash/settings/load/mgc/{guild_id}"
-      },
-      {
-         "name":"Global chat",
-         "id":"gc",
-         "endpoint":"https://baxi.pyropixle.com/api/dash/settings/load/gc/{guild_id}"
-      },
-      {
-         "name":"Welcome system",
-         "id":"welc",
-         "endpoint":"https://baxi.pyropixle.com/api/dash/settings/load/welc/{guild_id}"
-      },
-      {
-         "name":"Verify System",
-         "id":"verify",
-         "endpoint":"https://baxi.pyropixle.com/api/dash/settings/load/verify/{guild_id}"
-      },
-      {
-         "name":"Suggestion System",
-         "id":"Suggestion",
-         "endpoint":"https://baxi.pyropixle.com/api/dash/settings/load/sugg/{guild_id}"
-      },
-      {
-         "name":"Ticket System",
-         "id":"ticket",
-         "endpoint":"https://baxi.pyropixle.com/api/dash/settings/load/ticket/{guild_id}"
-      },
-      {
-         "name":"Log system",
-         "id":"log",
-         "endpoint":"https://baxi.pyropixle.com/api/dash/settings/load/log/{guild_id}"
-      },
-      {
-         "name":"Security system",
-         "id":"sec",
-         "endpoint":"https://baxi.pyropixle.com/api/dash/settings/load/sec/{guild_id}"
-      }
-   ]
-}
+        {
+            "menu_items":[
+               {
+                  "name": "Anti Raid",
+                  "id": "anti_raid",
+                  "endpoints": {
+                     "load": "https://baxi.pyropixle.com/api/dash/settings/load/anti_raid/{guild_id}",
+                     "save": "https://baxi.pyropixle.com/api/dash/settings/save/anti_raid/{guild_id}"
+                  }
+               },
+               {
+                  "name": "Minigame guessing",
+                  "id": "Minigame guessing",
+                  "endpoints": {
+                     "load": "https://baxi.pyropixle.com/api/dash/settings/load/mgg/{guild_id}",
+                     "save": "https://baxi.pyropixle.com/api/dash/settings/save/mgg/{guild_id}"
+                  }
+               },
+               {
+                  "name": "Counting game",
+                  "id": "countgame_data",
+                  "endpoints": {
+                     "load": "https://baxi.pyropixle.com/api/dash/settings/load/mgc/{guild_id}",
+                     "save": "https://baxi.pyropixle.com/api/dash/settings/save/mgc/{guild_id}"
+                  }
+               },
+               {
+                  "name": "Global chat",
+                  "id": "gc",
+                  "endpoints": {
+                     "load": "https://baxi.pyropixle.com/api/dash/settings/load/gc/{guild_id}",
+                     "save": "https://baxi.pyropixle.com/api/dash/settings/save/gc/{guild_id}"
+                  }
+               },
+               {
+                  "name": "Welcome system",
+                  "id": "welc",
+                  "endpoints": {
+                     "load": "https://baxi.pyropixle.com/api/dash/settings/load/welc/{guild_id}",
+                     "save": "https://baxi.pyropixle.com/api/dash/settings/save/welc/{guild_id}"
+                  }
+               },
+               {
+                  "name": "Verify system",
+                  "id": "verify",
+                  "endpoints": {
+                     "load": "https://baxi.pyropixle.com/api/dash/settings/load/verify/{guild_id}",
+                     "save": "https://baxi.pyropixle.com/api/dash/settings/save/verify/{guild_id}"
+                  }
+               },
+               {
+                  "name": "Suggestion system",
+                  "id": "Suggestions",
+                  "endpoints": {
+                     "load": "https://baxi.pyropixle.com/api/dash/settings/load/sugg/{guild_id}",
+                     "save": "https://baxi.pyropixle.com/api/dash/settings/save/sugg/{guild_id}"
+                  }
+               },
+               {
+                  "name": "Ticket system",
+                  "id": "ticket",
+                  "endpoints": {
+                     "load": "https://baxi.pyropixle.com/api/dash/settings/load/ticket/{guild_id}",
+                     "save": "https://baxi.pyropixle.com/api/dash/settings/save/ticket/{guild_id}"
+                  }
+               },
+               {
+                  "name": "Log system",
+                  "id": "log",
+                  "endpoints": {
+                     "load": "https://baxi.pyropixle.com/api/dash/settings/load/log/{guild_id}",
+                     "save": "https://baxi.pyropixle.com/api/dash/settings/save/log/{guild_id}"
+                  }
+               },
+               {
+                  "name": "Security system",
+                  "id": "sec",
+                  "endpoints": {
+                     "load": "https://baxi.pyropixle.com/api/dash/settings/load/sec/{guild_id}",
+                     "save": "https://baxi.pyropixle.com/api/dash/settings/save/sec/{guild_id}"
+                  }
+               }
+            ]
+         }
     </script>
 
     <script>
@@ -96,30 +126,44 @@
         let currentData = {};
 
         function loadMenuContent() {
-            const serverId = new URLSearchParams(window.location.search).get('server');
-            if (!serverId) {
-                document.getElementById('menu-bar').style.display = 'none';
-                return;
-            }
+    const serverId = new URLSearchParams(window.location.search).get('server');
+    if (!serverId) {
+        document.getElementById('menu-bar').style.display = 'none';
+        return;
+    }
 
-            const menuData = JSON.parse(document.getElementById('menu-data').textContent);
-            const menuBar = document.getElementById('menu-bar');
-            menuBar.innerHTML = ''; // Clear existing menu items
-            menuData.menu_items.forEach(item => {
-                const a = document.createElement('a');
-                a.href = '#';
-                a.textContent = item.name;
-                a.className = 'menu-item';
-                a.dataset.endpoint = item.endpoint.replace('{guild_id}', serverId);
-                a.addEventListener('click', event => {
-                    event.preventDefault();
-                    loadApiData(a.dataset.endpoint);
-                    document.getElementById('server-details').style.display = 'none'; // Hide server stats
-                });
-                menuBar.appendChild(a);
-            });
-            menuBar.style.display = 'flex'; // Show the menu bar
-        }
+    const menuData = JSON.parse(document.getElementById('menu-data').textContent);
+    const menuBar = document.getElementById('menu-bar');
+    menuBar.innerHTML = ''; // Bestehende Menüelemente löschen
+
+    menuData.menu_items.forEach(item => {
+        const a = document.createElement('a');
+        a.href = '#';
+        a.textContent = item.name;
+        a.className = 'menu-item';
+        a.dataset.loadEndpoint = item.endpoints.load.replace('{guild_id}', serverId);
+        a.dataset.saveEndpoint = item.endpoints.save.replace('{guild_id}', serverId);
+
+        a.addEventListener('click', event => {
+            event.preventDefault();
+            loadApiData(a.dataset.loadEndpoint);
+            document.getElementById('server-details').style.display = 'none'; // Server-Details ausblenden
+
+            // Save the saveEndpoint to localStorage when a menu item is clicked
+            localStorage.setItem('currentSaveEndpoint', a.dataset.saveEndpoint);
+
+            // Optional: Set the clicked menu item as selected (add a 'selected' class)
+            document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('selected'));
+            a.classList.add('selected');
+        });
+
+        menuBar.appendChild(a);
+    });
+
+    menuBar.style.display = 'flex'; // Menüleiste anzeigen
+}
+
+
 
         function replaceValue(data, targetValue, replacementValue) {
     if (data === targetValue) {
@@ -286,35 +330,66 @@ async function loadApiData(endpoint) {
 
 
 
+
 function saveChanges() {
-    // Object to store changes
+    // Objekt zum Speichern der Änderungen
     const updatedData = {};
 
-    // Get the current state of the toggle switch
+    // Aktuellen Zustand des Toggle-Schalters abrufen
     const isActive = document.querySelector('#toggle-switch input').checked ? 1 : 0;
     updatedData.active = isActive;
 
-    // Track changes in dropdowns
+    // Änderungen in Dropdowns nachverfolgen
     const dropdowns = document.querySelectorAll('select');
     dropdowns.forEach(dropdown => {
         const selectedOption = dropdown.options[dropdown.selectedIndex];
         const originalKey = dropdown.name;
 
-        // Check if this dropdown key exists in the currentData
+        // Überprüfen, ob dieser Dropdown-Schlüssel im currentData vorhanden ist
         if (currentData[originalKey]) {
-            updatedData[originalKey] =
-                selectedOption.value
-            ;
+            updatedData[originalKey] = selectedOption.value;
         }
     });
 
-
     const senddata = removeSendFromObject(updatedData);
 
-    // Show the updated data in an alert
+    // Den saveEndpoint aus dem localStorage abrufen
+    const saveEndpoint = localStorage.getItem('currentSaveEndpoint');
+    if (!saveEndpoint) {
+        console.error('Error: No save endpoint found in localStorage.');
+        return;
+    }
     console.log(senddata)
-    alert('Änderungen gespeichert:\n' + JSON.stringify(senddata, null, 2));
+
+    // Daten an den saveEndpoint senden
+    fetch(saveEndpoint, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': apiKey
+            
+        },
+        body: JSON.stringify(senddata)
+        
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Save successful:', data);
+        // Optional: Erfolgsnachricht anzeigen
+    })
+    .catch(error => {
+        console.error('Error saving data:', error);
+        // Optional: Fehlermeldung anzeigen
+    });
 }
+
+
+
 
 function removeSendFromObject(obj) {
     if (typeof obj === 'string') {
