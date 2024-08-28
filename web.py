@@ -107,4 +107,4 @@ async def menu():
     return await send_from_directory('templates', 'dashboard-menu.json')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0")
