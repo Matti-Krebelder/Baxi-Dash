@@ -1,493 +1,494 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Discord Bot Dashboard</title>
-    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
-</head>
-<body>
-    <div class="sidebar">
-        {% if guild_details %}
-        {% for guild in guild_details %}
-        <div class="server-icon" onclick="loadServerDetails('{{ guild.id }}')">
-            <img src="{{ guild.icon_url }}" alt="{{ guild.name }}">
-            <span class="server-name">{{ guild.name }}</span>
-        </div>
-        {% endfor %}
-        {% endif %}
-    </div>
-    <div class="content">
-        <h1>Baxi Dashboard</h1>
-        <div id="menu-bar" class="menu-bar"></div>
-        <div id="server-details" class="server-details"></div>
-        <div id="content-area" class="content-area">
-
-            <label id="toggle-switch" class="switch" style="display: none;">
-                <input type="checkbox" id="toggle-input">
-                <span class="slider"></span>
-            </label>
-            <div id="text-output" class="text-output"></div>
-
-            <button id="save-button" style="display: none;" onclick="saveChanges()">Save</button>
-
-        </div>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Discord Bot Dashboard</title>
+        <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}" />
+    </head>
+    <div id="overlay">
+        <iframe id="iframe" src="https://pyropixle.com/baxi_logon/" style="width: 100%; height: 100%; border: none;"></iframe>
     </div>
 
-    <script id="menu-data" type="application/json">
-        {
-            "menu_items":[
-               {
-                  "name": "Anti Raid",
-                  "id": "anti_raid",
-                  "endpoints": {
-                     "load": "https://baxi.pyropixle.com/api/dash/settings/load/anti_raid/{guild_id}",
-                     "save": "https://baxi.pyropixle.com/api/dash/settings/save/anti_raid/{guild_id}"
-                  }
-               },
-               {
-                  "name": "Minigame guessing",
-                  "id": "Minigame guessing",
-                  "endpoints": {
-                     "load": "https://baxi.pyropixle.com/api/dash/settings/load/mgg/{guild_id}",
-                     "save": "https://baxi.pyropixle.com/api/dash/settings/save/mgg/{guild_id}"
-                  }
-               },
-               {
-                  "name": "Counting game",
-                  "id": "countgame_data",
-                  "endpoints": {
-                     "load": "https://baxi.pyropixle.com/api/dash/settings/load/mgc/{guild_id}",
-                     "save": "https://baxi.pyropixle.com/api/dash/settings/save/mgc/{guild_id}"
-                  }
-               },
-               {
-                  "name": "Global chat",
-                  "id": "gc",
-                  "endpoints": {
-                     "load": "https://baxi.pyropixle.com/api/dash/settings/load/gc/{guild_id}",
-                     "save": "https://baxi.pyropixle.com/api/dash/settings/save/gc/{guild_id}"
-                  }
-               },
-               {
-                  "name": "Welcome system",
-                  "id": "welc",
-                  "endpoints": {
-                     "load": "https://baxi.pyropixle.com/api/dash/settings/load/welc/{guild_id}",
-                     "save": "https://baxi.pyropixle.com/api/dash/settings/save/welc/{guild_id}"
-                  }
-               },
-               {
-                  "name": "Verify system",
-                  "id": "verify",
-                  "endpoints": {
-                     "load": "https://baxi.pyropixle.com/api/dash/settings/load/verify/{guild_id}",
-                     "save": "https://baxi.pyropixle.com/api/dash/settings/save/verify/{guild_id}"
-                  }
-               },
-               {
-                  "name": "Suggestion system",
-                  "id": "Suggestions",
-                  "endpoints": {
-                     "load": "https://baxi.pyropixle.com/api/dash/settings/load/sugg/{guild_id}",
-                     "save": "https://baxi.pyropixle.com/api/dash/settings/save/sugg/{guild_id}"
-                  }
-               },
-               {
-                  "name": "Ticket system",
-                  "id": "ticket",
-                  "endpoints": {
-                     "load": "https://baxi.pyropixle.com/api/dash/settings/load/ticket/{guild_id}",
-                     "save": "https://baxi.pyropixle.com/api/dash/settings/save/ticket/{guild_id}"
-                  }
-               },
-               {
-                  "name": "Log system",
-                  "id": "log",
-                  "endpoints": {
-                     "load": "https://baxi.pyropixle.com/api/dash/settings/load/log/{guild_id}",
-                     "save": "https://baxi.pyropixle.com/api/dash/settings/save/log/{guild_id}"
-                  }
-               },
-               {
-                  "name": "Security system",
-                  "id": "sec",
-                  "endpoints": {
-                     "load": "https://baxi.pyropixle.com/api/dash/settings/load/sec/{guild_id}",
-                     "save": "https://baxi.pyropixle.com/api/dash/settings/save/sec/{guild_id}"
-                  }
-               }
-            ]
-         }
-    </script>
+    <body>
+        <div class="sidebar">
+            {% if guild_details %} {% for guild in guild_details %}
+            <div class="server-icon" onclick="loadServerDetails('{{ guild.id }}')">
+                <img src="{{ guild.icon_url }}" alt="{{ guild.name }}" />
+                <span class="server-name">{{ guild.name }}</span>
+            </div>
+            {% endfor %} {% endif %}
+        </div>
+        <div class="content">
+            <h1>Baxi Dashboard</h1>
+            <div id="menu-bar" class="menu-bar"></div>
+            <div id="server-details" class="server-details"></div>
+            <div id="content-area" class="content-area">
+                <label id="toggle-switch" class="switch" style="display: none;">
+                    <input type="checkbox" id="toggle-input" />
+                    <span class="slider"></span>
+                </label>
+                <div id="text-output" class="text-output"></div>
 
-    <script>
-        const apiKey = 'bdash-X_KzUaBBMlM8d5a5xbAav4Z6bYqS3rnBN94ugjtkhsI';
-        let currentData = {};
+                <button id="save-button" style="display: none;" onclick="saveChanges()">Save</button>
+            </div>
+        </div>
 
-        function loadMenuContent() {
-    const serverId = new URLSearchParams(window.location.search).get('server');
-    if (!serverId) {
-        document.getElementById('menu-bar').style.display = 'none';
-        return;
-    }
-
-    const menuData = JSON.parse(document.getElementById('menu-data').textContent);
-    const menuBar = document.getElementById('menu-bar');
-    menuBar.innerHTML = ''; // Bestehende Menüelemente löschen
-
-    menuData.menu_items.forEach(item => {
-        const a = document.createElement('a');
-        a.href = '#';
-        a.textContent = item.name;
-        a.className = 'menu-item';
-        a.dataset.loadEndpoint = item.endpoints.load.replace('{guild_id}', serverId);
-        a.dataset.saveEndpoint = item.endpoints.save.replace('{guild_id}', serverId);
-
-        a.addEventListener('click', event => {
-            event.preventDefault();
-            loadApiData(a.dataset.loadEndpoint);
-            document.getElementById('server-details').style.display = 'none'; // Server-Details ausblenden
-
-            // Save the saveEndpoint to localStorage when a menu item is clicked
-            localStorage.setItem('currentSaveEndpoint', a.dataset.saveEndpoint);
-
-            // Optional: Set the clicked menu item as selected (add a 'selected' class)
-            document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('selected'));
-            a.classList.add('selected');
-        });
-
-        menuBar.appendChild(a);
-    });
-
-    menuBar.style.display = 'flex'; // Menüleiste anzeigen
-}
-
-
-
-        function replaceValue(data, targetValue, replacementValue) {
-    if (data === targetValue) {
-        return replacementValue;
-    } else if (Array.isArray(data)) {
-        return data.map(item => replaceValue(item, targetValue, replacementValue));
-    } else if (typeof data === 'object' && data !== null) {
-        const result = {};
-        for (const key in data) {
-            if (data.hasOwnProperty(key)) {
-                result[key] = replaceValue(data[key], targetValue, replacementValue);
-            }
-        }
-        return result;
-    } else {
-        return data;
-    }
-}
-
-async function loadApiData(endpoint) {
-    try {
-        const response = await fetch(endpoint, {
-            headers: {
-                'Authorization': apiKey
-            }
-        });
-        if (!response.ok) throw new Error('Network response was not ok');
-        const dataraw = await response.json();
-        const data = replaceValue(dataraw, null, "null");
-        console.log('API Response:', data);
-
-        currentData = data;
-
-        const toggleSwitch = document.getElementById('toggle-switch');
-        let showToggle = false;
-
-        // Überprüfen und setzen des Toggle-Switch
-        Object.keys(data).forEach(key => {
-            if (key.includes('-switch')) {
-                showToggle = true;
-                const isChecked = data[key] === 1;
-                document.querySelector('#toggle-switch input').checked = isChecked;
-                console.log(`Toggle-Switch gefunden: ${key} = ${data[key]} (${isChecked ? 'Aktiviert' : 'Deaktiviert'})`);
-            }
-        });
-
-        toggleSwitch.style.display = showToggle ? 'block' : 'none';
-
-        const textOutput = document.getElementById('text-output');
-        textOutput.innerHTML = '';
-
-        // Verarbeitung von -input Keys
-        Object.keys(data).forEach(key => {
-            if (key.includes('-input')) {
-                console.log(`Verarbeite Input-Key: ${key}`);
-                const input = document.createElement('input');
-                input.name = key;
-                input.type = 'text';
-                input.placeholder = data[key] === "null" ? 'Enter text...' : data[key];
-                input.value = data[key] === "null" ? '' : data[key];
-                input.style.display = 'block';
-                input.style.marginBottom = '10px';
-                textOutput.appendChild(input);
-            }
-        });
-
-        // Sammle alle aktiven Drops in einer Map
-        const activeDropsMap = {};
-        Object.keys(data).forEach(key => {
-            if (key.includes('-activedrop')) {
-                console.log(`Verarbeite aktiven Drop-Key: ${key}`);
-                const activeDropEntries = data[key];
-                Object.entries(activeDropEntries).forEach(([subKey, subValue]) => {
-                    activeDropsMap[subKey] = subValue;
-                    console.log(`Aktiver Drop gefunden: ${subKey} = ${subValue} (aus ${key})`);
-                });
-            }
-        });
-
-        // Verarbeite alle '-drop' Keys (z.B. -drop, -drop-1, -drop-2)
-        Object.keys(data).forEach(key => {
-            if (key.includes('-drop')) {
-                console.log(`Verarbeite Drop-Key: ${key}`);
-                const dropdown = document.createElement('select');
-                dropdown.name = key;
-
-                const dropEntries = data[key];
-                let selectedOptionFound = false;
-
-                // Iteriere über alle Optionen in diesem Drop-Key
-                Object.entries(dropEntries).forEach(([subKey, subValue]) => {
-                    console.log(`Überprüfe Option: ${subKey} = ${subValue}`);
-
-                    const option = document.createElement('option');
-                    option.value = subKey;
-                    // Entferne das Suffix '-show' für die Anzeige
-                    option.textContent = subValue.endsWith('-show') ? subValue.replace('-show', '') : subValue;
-
-                    // Überprüfe, ob diese Option aktiv ist
-                    if (activeDropsMap.hasOwnProperty(subKey)) {
-                        option.selected = true;
-                        selectedOptionFound = true;
-                        console.log(`Option "${subValue}" (${subKey}) ist aktiv und wird ausgewählt.`);
-                    } else {
-                        console.log(`Option "${subValue}" (${subKey}) ist nicht aktiv.`);
+        <script id="menu-data" type="application/json">
+            {
+                "menu_items": [
+                    {
+                        "name": "Anti Raid",
+                        "id": "anti_raid",
+                        "endpoints": {
+                            "load": "https://baxi.pyropixle.com/api/dash/settings/load/anti_raid/{guild_id}",
+                            "save": "https://baxi.pyropixle.com/api/dash/settings/save/anti_raid/{guild_id}"
+                        }
+                    },
+                    {
+                        "name": "Minigame guessing",
+                        "id": "Minigame guessing",
+                        "endpoints": {
+                            "load": "https://baxi.pyropixle.com/api/dash/settings/load/mgg/{guild_id}",
+                            "save": "https://baxi.pyropixle.com/api/dash/settings/save/mgg/{guild_id}"
+                        }
+                    },
+                    {
+                        "name": "Counting game",
+                        "id": "countgame_data",
+                        "endpoints": {
+                            "load": "https://baxi.pyropixle.com/api/dash/settings/load/mgc/{guild_id}",
+                            "save": "https://baxi.pyropixle.com/api/dash/settings/save/mgc/{guild_id}"
+                        }
+                    },
+                    {
+                        "name": "Global chat",
+                        "id": "gc",
+                        "endpoints": {
+                            "load": "https://baxi.pyropixle.com/api/dash/settings/load/gc/{guild_id}",
+                            "save": "https://baxi.pyropixle.com/api/dash/settings/save/gc/{guild_id}"
+                        }
+                    },
+                    {
+                        "name": "Welcome system",
+                        "id": "welc",
+                        "endpoints": {
+                            "load": "https://baxi.pyropixle.com/api/dash/settings/load/welc/{guild_id}",
+                            "save": "https://baxi.pyropixle.com/api/dash/settings/save/welc/{guild_id}"
+                        }
+                    },
+                    {
+                        "name": "Verify system",
+                        "id": "verify",
+                        "endpoints": {
+                            "load": "https://baxi.pyropixle.com/api/dash/settings/load/verify/{guild_id}",
+                            "save": "https://baxi.pyropixle.com/api/dash/settings/save/verify/{guild_id}"
+                        }
+                    },
+                    {
+                        "name": "Suggestion system",
+                        "id": "Suggestions",
+                        "endpoints": {
+                            "load": "https://baxi.pyropixle.com/api/dash/settings/load/sugg/{guild_id}",
+                            "save": "https://baxi.pyropixle.com/api/dash/settings/save/sugg/{guild_id}"
+                        }
+                    },
+                    {
+                        "name": "Ticket system",
+                        "id": "ticket",
+                        "endpoints": {
+                            "load": "https://baxi.pyropixle.com/api/dash/settings/load/ticket/{guild_id}",
+                            "save": "https://baxi.pyropixle.com/api/dash/settings/save/ticket/{guild_id}"
+                        }
+                    },
+                    {
+                        "name": "Log system",
+                        "id": "log",
+                        "endpoints": {
+                            "load": "https://baxi.pyropixle.com/api/dash/settings/load/log/{guild_id}",
+                            "save": "https://baxi.pyropixle.com/api/dash/settings/save/log/{guild_id}"
+                        }
+                    },
+                    {
+                        "name": "Security system",
+                        "id": "sec",
+                        "endpoints": {
+                            "load": "https://baxi.pyropixle.com/api/dash/settings/load/sec/{guild_id}",
+                            "save": "https://baxi.pyropixle.com/api/dash/settings/save/sec/{guild_id}"
+                        }
                     }
+                ]
+            }
+        </script>
 
-                    dropdown.appendChild(option);
-                });
+        <script>
+            const apiKey = 'bdash-X_KzUaBBMlM8d5a5xbAav4Z6bYqS3rnBN94ugjtkhsI';
+            let currentData = {};
 
-                // Wenn keine aktive Option gefunden wurde, logge dies
-                if (!selectedOptionFound) {
-                    console.log(`Keine aktive Option für Drop-Key "${key}" gefunden.`);
+            function loadMenuContent() {
+                const serverId = new URLSearchParams(window.location.search).get('server');
+                if (!serverId) {
+                    document.getElementById('menu-bar').style.display = 'none';
+                    return;
                 }
 
-                textOutput.appendChild(dropdown);
-            }
+                const menuData = JSON.parse(document.getElementById('menu-data').textContent);
+                const menuBar = document.getElementById('menu-bar');
+                menuBar.innerHTML = ''; // Bestehende Menüelemente löschen
 
-            if (key.includes('-table')) {
-                console.log(`Verarbeite Table-Key: ${key}`);
-                const table = document.createElement('table');
-                table.style.width = '100%';
-                table.style.borderCollapse = 'collapse';
-                table.style.marginTop = '20px';
-                table.style.marginBottom = '20px';
+                menuData.menu_items.forEach(item => {
+                    const a = document.createElement('a');
+                    a.href = '#';
+                    a.textContent = item.name;
+                    a.className = 'menu-item';
+                    a.dataset.loadEndpoint = item.endpoints.load.replace('{guild_id}', serverId);
+                    a.dataset.saveEndpoint = item.endpoints.save.replace('{guild_id}', serverId);
 
-                const tbody = document.createElement('tbody');
+                    a.addEventListener('click', event => {
+                        event.preventDefault();
+                        loadApiData(a.dataset.loadEndpoint);
+                        document.getElementById('server-details').style.display = 'none'; // Server-Details ausblenden
 
-                Object.entries(data[key]).forEach(([id, value]) => {
-                    const row = document.createElement('tr');
+                        // Save the saveEndpoint to localStorage when a menu item is clicked
+                        localStorage.setItem('currentSaveEndpoint', a.dataset.saveEndpoint);
 
-                    const idCell = document.createElement('td');
-                    idCell.textContent = id;
-                    idCell.style.border = '1px solid #ddd';
-                    idCell.style.padding = '8px';
-                    row.appendChild(idCell);
+                        // Optional: Set the clicked menu item as selected (add a 'selected' class)
+                        document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('selected'));
+                        a.classList.add('selected');
+                    });
 
-                    const valueCell = document.createElement('td');
-                    valueCell.textContent = value;
-                    valueCell.style.border = '1px solid #ddd';
-                    valueCell.style.padding = '8px';
-                    row.appendChild(valueCell);
-
-                    tbody.appendChild(row);
+                    menuBar.appendChild(a);
                 });
 
-                table.appendChild(tbody);
-                textOutput.appendChild(table);
+                menuBar.style.display = 'flex'; // Menüleiste anzeigen
             }
 
-            if (key.includes('-text')) {
-                console.log(`Verarbeite Text-Key: ${key}`);
-                const p = document.createElement('p');
-                p.innerHTML = `${key}: ${formatValue(data[key])}`;
-                textOutput.appendChild(p);
+
+
+            function replaceValue(data, targetValue, replacementValue) {
+                if (data === targetValue) {
+                    return replacementValue;
+                } else if (Array.isArray(data)) {
+                    return data.map(item => replaceValue(item, targetValue, replacementValue));
+                } else if (typeof data === 'object' && data !== null) {
+                    const result = {};
+                    for (const key in data) {
+                        if (data.hasOwnProperty(key)) {
+                            result[key] = replaceValue(data[key], targetValue, replacementValue);
+                        }
+                    }
+                    return result;
+                } else {
+                    return data;
+                }
             }
-        });
 
-        document.getElementById('save-button').style.display = 'block';
-    } catch (error) {
-        console.error('Error fetching content:', error);
-    }
-}
+            async function loadApiData(endpoint) {
+                try {
+                    const response = await fetch(endpoint, {
+                        headers: {
+                            'Authorization': apiKey
+                        }
+                    });
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    const dataraw = await response.json();
+                    const data = replaceValue(dataraw, null, "null");
+                    console.log('API Response:', data);
 
+                    currentData = data;
 
+                    const toggleSwitch = document.getElementById('toggle-switch');
+                    let showToggle = false;
 
+                    // Überprüfen und setzen des Toggle-Switch
+                    Object.keys(data).forEach(key => {
+                        if (key.includes('-switch')) {
+                            showToggle = true;
+                            const isChecked = data[key] === 1;
+                            document.querySelector('#toggle-switch input').checked = isChecked;
+                            console.log(`Toggle-Switch gefunden: ${key} = ${data[key]} (${isChecked ? 'Aktiviert' : 'Deaktiviert'})`);
+                        }
+                    });
 
-function saveChanges() {
-    // Objekt zum Speichern der Änderungen
-    const updatedData = {};
+                    toggleSwitch.style.display = showToggle ? 'block' : 'none';
 
-    // Aktuellen Zustand des Toggle-Schalters abrufen
-    const isActive = document.querySelector('#toggle-switch input').checked ? 1 : 0;
-    updatedData.active = isActive;
+                    const textOutput = document.getElementById('text-output');
+                    textOutput.innerHTML = '';
 
-    // Änderungen in Dropdowns nachverfolgen
-    const dropdowns = document.querySelectorAll('select');
-    dropdowns.forEach(dropdown => {
-        const selectedOption = dropdown.options[dropdown.selectedIndex];
-        const originalKey = dropdown.name;
+                    // Verarbeitung von -input Keys
+                    Object.keys(data).forEach(key => {
+                        if (key.includes('-input')) {
+                            console.log(`Verarbeite Input-Key: ${key}`);
+                            const input = document.createElement('input');
+                            input.name = key;
+                            input.type = 'text';
+                            input.placeholder = data[key] === "null" ? 'Enter text...' : data[key];
+                            input.value = data[key] === "null" ? '' : data[key];
+                            input.style.display = 'block';
+                            input.style.marginBottom = '10px';
+                            textOutput.appendChild(input);
+                        }
+                    });
 
-        // Überprüfen, ob dieser Dropdown-Schlüssel im currentData vorhanden ist
-        if (currentData[originalKey]) {
-            updatedData[originalKey] = selectedOption.value;
-        }
-    });
+                    // Sammle alle aktiven Drops in einer Map
+                    const activeDropsMap = {};
+                    Object.keys(data).forEach(key => {
+                        if (key.includes('-activedrop')) {
+                            console.log(`Verarbeite aktiven Drop-Key: ${key}`);
+                            const activeDropEntries = data[key];
+                            Object.entries(activeDropEntries).forEach(([subKey, subValue]) => {
+                                activeDropsMap[subKey] = subValue;
+                                console.log(`Aktiver Drop gefunden: ${subKey} = ${subValue} (aus ${key})`);
+                            });
+                        }
+                    });
 
-    // Änderungen in Input-Feldern nachverfolgen
-    const inputs = document.querySelectorAll('input');
-    inputs.forEach(input => {
-        const originalKey = input.name;
-        let value;
+                    // Verarbeite alle '-drop' Keys (z.B. -drop, -drop-1, -drop-2)
+                    Object.keys(data).forEach(key => {
+                        if (key.includes('-drop')) {
+                            console.log(`Verarbeite Drop-Key: ${key}`);
+                            const dropdown = document.createElement('select');
+                            dropdown.name = key;
 
-        if (input.type === 'checkbox') {
-            value = input.checked ? 1 : 0;
-        } else if (input.type === 'radio' && !input.checked) {
-            return; // Überspringen, wenn Radio-Button nicht ausgewählt ist
-        } else {
-            value = input.value;
-        }
+                            const dropEntries = data[key];
+                            let selectedOptionFound = false;
 
-        // Überprüfen, ob dieser Input-Schlüssel im currentData vorhanden ist
-        if (currentData[originalKey]) {
-            updatedData[originalKey] = value;
-        }
-    });
+                            // Iteriere über alle Optionen in diesem Drop-Key
+                            Object.entries(dropEntries).forEach(([subKey, subValue]) => {
+                                console.log(`Überprüfe Option: ${subKey} = ${subValue}`);
 
-    const senddata = removeSendFromObject(updatedData);
+                                const option = document.createElement('option');
+                                option.value = subKey;
+                                // Entferne das Suffix '-show' für die Anzeige
+                                option.textContent = subValue.endsWith('-show') ? subValue.replace('-show', '') : subValue;
 
-    // Den saveEndpoint aus dem localStorage abrufen
-    const saveEndpoint = localStorage.getItem('currentSaveEndpoint');
-    if (!saveEndpoint) {
-        console.error('Error: No save endpoint found in localStorage.');
-        return;
-    }
-    console.log(senddata);
+                                // Überprüfe, ob diese Option aktiv ist
+                                if (activeDropsMap.hasOwnProperty(subKey)) {
+                                    option.selected = true;
+                                    selectedOptionFound = true;
+                                    console.log(`Option "${subValue}" (${subKey}) ist aktiv und wird ausgewählt.`);
+                                } else {
+                                    console.log(`Option "${subValue}" (${subKey}) ist nicht aktiv.`);
+                                }
 
-    // Daten an den saveEndpoint senden
-    fetch(saveEndpoint, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': apiKey
-        },
-        body: JSON.stringify(senddata)
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log('Save successful:', data);
-        // Optional: Erfolgsnachricht anzeigen
-    })
-    .catch(error => {
-        console.error('Error saving data:', error);
-        // Optional: Fehlermeldung anzeigen
-    });
-}
+                                dropdown.appendChild(option);
+                            });
 
+                            // Wenn keine aktive Option gefunden wurde, logge dies
+                            if (!selectedOptionFound) {
+                                console.log(`Keine aktive Option für Drop-Key "${key}" gefunden.`);
+                            }
 
+                            textOutput.appendChild(dropdown);
+                        }
 
+                        if (key.includes('-table')) {
+                            console.log(`Verarbeite Table-Key: ${key}`);
+                            const table = document.createElement('table');
+                            table.style.width = '100%';
+                            table.style.borderCollapse = 'collapse';
+                            table.style.marginTop = '20px';
+                            table.style.marginBottom = '20px';
 
+                            const tbody = document.createElement('tbody');
 
-function removeSendFromObject(obj) {
-    if (typeof obj === 'string') {
-        // Falls der aktuelle Wert ein String ist, ersetze "-send"
-        return obj.replace("-send", "");
-    } else if (Array.isArray(obj)) {
-        // Falls der aktuelle Wert ein Array ist, rekursiv alle Elemente bearbeiten
-        return obj.map(removeSendFromObject);
-    } else if (typeof obj === 'object' && obj !== null) {
-        // Falls der aktuelle Wert ein Objekt ist, rekursiv alle Schlüssel bearbeiten
-        const newObj = {};
-        for (let key in obj) {
-            if (obj.hasOwnProperty(key)) {
-                newObj[key] = removeSendFromObject(obj[key]);
+                            Object.entries(data[key]).forEach(([id, value]) => {
+                                const row = document.createElement('tr');
+
+                                const idCell = document.createElement('td');
+                                idCell.textContent = id;
+                                idCell.style.border = '1px solid #ddd';
+                                idCell.style.padding = '8px';
+                                row.appendChild(idCell);
+
+                                const valueCell = document.createElement('td');
+                                valueCell.textContent = value;
+                                valueCell.style.border = '1px solid #ddd';
+                                valueCell.style.padding = '8px';
+                                row.appendChild(valueCell);
+
+                                tbody.appendChild(row);
+                            });
+
+                            table.appendChild(tbody);
+                            textOutput.appendChild(table);
+                        }
+
+                        if (key.includes('-text')) {
+                            console.log(`Verarbeite Text-Key: ${key}`);
+                            const p = document.createElement('p');
+                            p.innerHTML = `${key}: ${formatValue(data[key])}`;
+                            textOutput.appendChild(p);
+                        }
+                    });
+
+                    document.getElementById('save-button').style.display = 'block';
+                } catch (error) {
+                    console.error('Error fetching content:', error);
+                }
             }
-        }
-        return newObj;
-    } else {
-        // Falls der aktuelle Wert weder String, Array, noch Objekt ist, gebe ihn unverändert zurück
-        return obj;
-    }
-}
 
 
 
 
-        function formatValue(value) {
-            if (typeof value === 'object' && value !== null) {
-                // If the value is an object, convert it to a readable format
-                return Object.entries(value).map(([k, v]) => `${k}: ${v}`).join(', ');
+            function saveChanges() {
+                // Objekt zum Speichern der Änderungen
+                const updatedData = {};
+
+                // Aktuellen Zustand des Toggle-Schalters abrufen
+                const isActive = document.querySelector('#toggle-switch input').checked ? 1 : 0;
+                updatedData.active = isActive;
+
+                // Änderungen in Dropdowns nachverfolgen
+                const dropdowns = document.querySelectorAll('select');
+                dropdowns.forEach(dropdown => {
+                    const selectedOption = dropdown.options[dropdown.selectedIndex];
+                    const originalKey = dropdown.name;
+
+                    // Überprüfen, ob dieser Dropdown-Schlüssel im currentData vorhanden ist
+                    if (currentData[originalKey]) {
+                        updatedData[originalKey] = selectedOption.value;
+                    }
+                });
+
+                // Änderungen in Input-Feldern nachverfolgen
+                const inputs = document.querySelectorAll('input');
+                inputs.forEach(input => {
+                    const originalKey = input.name;
+                    let value;
+
+                    if (input.type === 'checkbox') {
+                        value = input.checked ? 1 : 0;
+                    } else if (input.type === 'radio' && !input.checked) {
+                        return; // Überspringen, wenn Radio-Button nicht ausgewählt ist
+                    } else {
+                        value = input.value;
+                    }
+
+                    // Überprüfen, ob dieser Input-Schlüssel im currentData vorhanden ist
+                    if (currentData[originalKey]) {
+                        updatedData[originalKey] = value;
+                    }
+                });
+
+                const senddata = removeSendFromObject(updatedData);
+
+                // Den saveEndpoint aus dem localStorage abrufen
+                const saveEndpoint = localStorage.getItem('currentSaveEndpoint');
+                if (!saveEndpoint) {
+                    console.error('Error: No save endpoint found in localStorage.');
+                    return;
+                }
+                console.log(senddata);
+
+                // Daten an den saveEndpoint senden
+                fetch(saveEndpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': apiKey
+                    },
+                    body: JSON.stringify(senddata)
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Save successful:', data);
+                        // Optional: Erfolgsnachricht anzeigen
+                    })
+                    .catch(error => {
+                        console.error('Error saving data:', error);
+                        // Optional: Fehlermeldung anzeigen
+                    });
             }
-            return value;
-        }
 
-        function loadServerDetails(serverId) {
-            history.pushState(null, '', '?server=' + serverId);
 
-            const serverDetails = {{ guild_details | tojson | safe }}.find(guild => guild.id === serverId);
+
+
+
+            function removeSendFromObject(obj) {
+                if (typeof obj === 'string') {
+                    // Falls der aktuelle Wert ein String ist, ersetze "-send"
+                    return obj.replace("-send", "");
+                } else if (Array.isArray(obj)) {
+                    // Falls der aktuelle Wert ein Array ist, rekursiv alle Elemente bearbeiten
+                    return obj.map(removeSendFromObject);
+                } else if (typeof obj === 'object' && obj !== null) {
+                    // Falls der aktuelle Wert ein Objekt ist, rekursiv alle Schlüssel bearbeiten
+                    const newObj = {};
+                    for (let key in obj) {
+                        if (obj.hasOwnProperty(key)) {
+                            newObj[key] = removeSendFromObject(obj[key]);
+                        }
+                    }
+                    return newObj;
+                } else {
+                    // Falls der aktuelle Wert weder String, Array, noch Objekt ist, gebe ihn unverändert zurück
+                    return obj;
+                }
+            }
+
+
+
+
+            function formatValue(value) {
+                if (typeof value === 'object' && value !== null) {
+                    // If the value is an object, convert it to a readable format
+                    return Object.entries(value).map(([k, v]) => `${k}: ${v}`).join(', ');
+                }
+                return value;
+            }
+
+            function loadServerDetails(serverId) {
+                history.pushState(null, '', '?server=' + serverId);
+
+                const serverDetails = {{ guild_details | tojson | safe
+            }}.find(guild => guild.id === serverId);
 
             if (serverDetails) {
                 const detailsHtml = `
-                    <div class="server-header">
-                        <img src="${serverDetails.icon_url}" alt="${serverDetails.name}" style="width: 80px; height: 80px; border-radius: 50%; margin-right: 20px;">
-                        <h2>${serverDetails.name}</h2>
-                    </div>
-                    <p>ID: ${serverDetails.id}</p>
-                    <p>Members: ${serverDetails.member_count}</p>
-                    <p>Owner: ${serverDetails.owner_username}</p>
-                    <p>Region: ${serverDetails.region}</p>
-                    <p>Description: ${serverDetails.description}</p>
-                    <p>Verification Level: ${serverDetails.verification_level}</p>
-                `;
+                        <div class="server-header">
+                            <img src="${serverDetails.icon_url}" alt="${serverDetails.name}" style="width: 80px; height: 80px; border-radius: 50%; margin-right: 20px;">
+                            <h2>${serverDetails.name}</h2>
+                        </div>
+                        <p>ID: ${serverDetails.id}</p>
+                        <p>Members: ${serverDetails.member_count}</p>
+                        <p>Owner: ${serverDetails.owner_username}</p>
+                        <p>Region: ${serverDetails.region}</p>
+                        <p>Description: ${serverDetails.description}</p>
+                        <p>Verification Level: ${serverDetails.verification_level}</p>
+                    `;
                 document.getElementById('server-details').innerHTML = detailsHtml;
                 document.getElementById('server-details').style.display = 'block';
 
                 // Leere den Inhaltbereich beim Serverwechsel
                 document.getElementById('content-area').innerHTML = `
-                    <label id="toggle-switch" class="switch" style="display: none;">
-                        <input type="checkbox" id="toggle-input">
-                        <span class="slider"></span>
-                    </label>
-                    <div id="text-output" class="text-output"></div>
-                    <button id="save-button" style="display: none;" onclick="saveChanges()">Save</button>
-                `;
+                        <label id="toggle-switch" class="switch" style="display: none;">
+                            <input type="checkbox" id="toggle-input">
+                            <span class="slider"></span>
+                        </label>
+                        <div id="text-output" class="text-output"></div>
+                        <button id="save-button" style="display: none;" onclick="saveChanges()">Save</button>
+                    `;
 
                 // Fetch and display menu
                 loadMenuContent();
             }
-        }
-
-        window.onload = function () {
-            const urlParams = new URLSearchParams(window.location.search);
-            const serverId = urlParams.get('server');
-            if (serverId) {
-                loadServerDetails(serverId);
             }
-        }
-    </script>
-</body>
+
+            window.onload = function () {
+                const urlParams = new URLSearchParams(window.location.search);
+                const serverId = urlParams.get('server');
+                if (serverId) {
+                    loadServerDetails(serverId);
+                }
+            }
+        </script>
+    </body>
 </html>
 <style>
     body {
@@ -614,7 +615,7 @@ function removeSendFromObject(obj) {
         right: 0;
         bottom: 0;
         background-color: #ccc;
-        transition: .4s;
+        transition: 0.4s;
         border-radius: 34px;
     }
 
@@ -627,14 +628,120 @@ function removeSendFromObject(obj) {
         left: 4px;
         bottom: 4px;
         background-color: white;
-        transition: .4s;
+        transition: 0.4s;
     }
 
-    input:checked+.slider {
-        background-color: #2196F3;
+    input:checked + .slider {
+        background-color: #2196f3;
     }
 
-    input:checked+.slider:before {
+    input:checked + .slider:before {
         transform: translateX(26px);
+    }
+
+    .info {
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+        width: 320px;
+        padding: 12px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: start;
+        border-radius: 8px;
+        box-shadow: 0px 0px 5px -3px #111;
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        z-index: 1000;
+        display: none;
+        /* Hidden by default */
+    }
+
+    .info__icon {
+        width: 20px;
+        height: 20px;
+        transform: translateY(-2px);
+        margin-right: 8px;
+    }
+
+    .info__title {
+        font-weight: 500;
+        font-size: 14px;
+        color: #fff;
+    }
+
+    .info__close {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+        margin-left: auto;
+    }
+
+    .info__close path {
+        fill: #fff;
+    }
+
+    /* Notify Info */
+    .notify-info {
+        background: #509af8;
+    }
+
+    .notify-info .info__icon path {
+        fill: #fff;
+    }
+
+    /* Notify Warning */
+    .notify-warn {
+        background: #ffc107;
+    }
+
+    .notify-warn .info__icon path {
+        fill: #fff;
+    }
+
+    /* Notify Success */
+    .notify-success {
+        background: #28a745;
+    }
+
+    .notify-success .info__icon path {
+        fill: #fff;
+    }
+</style>
+
+<!--loader -->
+<script>
+    window.onload = function () {
+        const overlay = document.getElementById("overlay");
+
+        // Beginne den Übergang der Opazität nach 4 Sekunden
+        setTimeout(() => {
+            overlay.style.opacity = 0; // Opazität auf 0 setzen
+        }, 3500); // 4000 Millisekunden = 4 Sekunden
+
+        // Verstecke das Overlay nach insgesamt 4.5 Sekunden
+        setTimeout(() => {
+            overlay.style.display = "none"; // Overlay aus dem Layout entfernen
+        }, 4500); // 4500 Millisekunden = 4.5 Sekunden
+    };
+</script>
+<style>
+    #overlay {
+        position: fixed;
+        /* oder andere Positionierung nach Bedarf */
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 1);
+        /* Vollständige Deckkraft */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 1;
+        /* Anfangs Opazität auf 100% */
+        transition: opacity 0.99s ease-out;
+        /* Übergangseffekt für die Opazität */
+        z-index: 1000;
     }
 </style>
