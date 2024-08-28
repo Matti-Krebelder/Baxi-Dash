@@ -12,7 +12,7 @@ app.secret_key = os.urandom(24)
 
 CLIENT_ID = '981268814308184084'
 CLIENT_SECRET = "dVqR7HQsTrZ25_QzpCjndvcPTazjKTlI"
-REDIRECT_URI = 'http://127.0.0.1:5000/callback'
+REDIRECT_URI = 'https://baxi.pyropixle.com/callback'
 API_ENDPOINT = 'https://discord.com/api/v10'
 AUTH_URL = 'https://discord.com/api/oauth2/authorize'
 TOKEN_URL = 'https://discord.com/api/oauth2/token'
