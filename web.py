@@ -83,7 +83,9 @@ async def dashboard():
     permitted_user_ids = perms_response.json()  # This should be a list of IDs
 
     # Check if the user ID is in the permitted list
-    if user_id not in permitted_user_ids:
+    print(int(user_id))
+    print(permitted_user_ids)
+    if int(user_id) not in permitted_user_ids:
         ip_address = request.headers.get('X-Forwarded-For', request.remote_addr)
         log_denied_access(ip_address, user_id)
         return "Access Denied: You do not have permission to access this dashboard."
