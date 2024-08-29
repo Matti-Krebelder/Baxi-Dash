@@ -551,6 +551,46 @@ Object.keys(data).forEach(key => {
         </script>
     </body>
 </html>
+
+<script>
+    // Funktion zur Aktualisierung des Inhalts basierend auf der Eingabe
+    function updateContent() {
+        const inputs = document.querySelectorAll('input[type="text"]');
+        inputs.forEach(input => {
+            input.addEventListener('input', function() {
+                // Hier kannst du den Code einfügen, um die Änderungen anzuzeigen oder zu speichern
+                console.log(`Input geändert: ${input.name} = ${input.value}`);
+                
+                // Beispiel: Textausgabe aktualisieren (falls benötigt)
+                const textOutput = document.getElementById('text-output');
+                const inputName = input.name;
+                let existingElement = document.querySelector(`p[data-name="${inputName}"]`);
+
+                if (existingElement) {
+                    existingElement.textContent = `${inputName}: ${input.value}`;
+                } else {
+                    const p = document.createElement('p');
+                    p.setAttribute('data-name', inputName);
+                    p.textContent = `${inputName}: ${input.value}`;
+                    textOutput.appendChild(p);
+                }
+            });
+        });
+    }
+
+    // Stelle sicher, dass updateContent aufgerufen wird, wenn der Inhalt geladen wird
+    window.onload = function () {
+        updateContent();
+        
+        // Dein bestehender Code für das Laden der Daten und den anderen Funktionsaufruf
+        const urlParams = new URLSearchParams(window.location.search);
+        const serverId = urlParams.get('server');
+        if (serverId) {
+            loadServerDetails(serverId);
+        }
+    };
+</script>
+
 <style>
     body {
         font-family: Arial, sans-serif;
