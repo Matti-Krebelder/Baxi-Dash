@@ -20,7 +20,7 @@ LOG_FILE = 'denied_access.json'
 
 @app.route("/")
 async def home():
-    return redirect(f'{AUTH_URL}?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=identify%20guilds%20email')
+    return redirect("https://baxi.pyropixle.com/dashboard")
 
 @app.route("/login")
 async def login():
