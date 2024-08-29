@@ -209,7 +209,16 @@
 
                 currentData = data;
 
-                
+                const toggleSwitch = document.getElementById('toggle-switch');
+                let showToggle = false;
+                Object.keys(data).forEach(key => {
+                    if (key.includes('-switch')) {
+                        showToggle = true;
+                        const isChecked = data[key] === 1;
+                        document.querySelector('#toggle-switch input').checked = isChecked;
+                        console.log(`Toggle-Switch gefunden: ${key} = ${data[key]} (${isChecked ? 'Aktiviert' : 'Deaktiviert'})`);
+                    }
+                });
                 toggleSwitch.style.display = showToggle ? 'block' : 'none';
                 const textOutput = document.getElementById('text-output');
                 textOutput.innerHTML = '';
