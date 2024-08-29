@@ -19,6 +19,7 @@ headers = {
     'Authorization': "BAXI-GET_DATA-770370c68e4ddd460d906987817cc70de4c83250e9d73a1d5add48ce30ac6071"
 }
 baxi_data_request = requests.get("https://security.pyropixle.com/api/oauth/get/data/baxi", headers=headers)
+print(baxi_data_request.text)
 baxi_data = baxi_data_request.json()
 
 
