@@ -31,6 +31,9 @@ baxi_data = baxi_data_request.json()
 baxi_client_secret = fernet.decrypt(baxi_data['client_secret'])
 baxi_tocken = fernet.decrypt(baxi_data["tocken"])
 
+print(baxi_client_secret)
+print(baxi_tocken)
+
 @app.route("/")
 async def home():
     return redirect("https://baxi.pyropixle.com/dashboard")
