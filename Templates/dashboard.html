@@ -392,34 +392,37 @@ Object.keys(data).forEach(key => {
 function updateImage() {
     const textOutput = document.getElementById('text-output');
 
-    // Alte Bilder entfernen, ohne andere Inhalte zu löschen
-    Array.from(textOutput.getElementsByTagName('img')).forEach(img => {
-        textOutput.removeChild(img);
-    });
-
     // Durchlaufen der aktuellen Daten
     Object.keys(currentData).forEach(key => {
         if (typeof currentData[key] === 'string' && 
             (/\.(png|gif|jpg|jpeg)$/.test(currentData[key]) || 
             currentData[key].startsWith('https://placehold.co/'))) {
             
-            // Erstellen eines neuen img-Elements
-            const img = document.createElement('img');
-            img.src = currentData[key];
-            img.alt = key;
-            img.style.maxWidth = '100%';
-            img.style.height = 'auto';
+            // Versuchen, das Bild-Element im Container zu finden
+            let img = Array.from(textOutput.getElementsByTagName('img')).find(img => img.alt === key);
 
-            // Nur hinzufügen, wenn das Bild erfolgreich geladen wird
-            img.onload = function() {
+            if (!img) {
+                // Wenn kein Bild mit dem entsprechenden 'alt'-Attribut gefunden wird, erstellen wir ein neues Bild
+                img = document.createElement('img');
+                img.alt = key;
+                img.style.maxWidth = '100%';
+                img.style.height = 'auto';
                 textOutput.appendChild(img);
+            }
+
+            // Setzen der neuen Bildquelle
+            img.src = currentData[key];
+
+            // Event-Handler für erfolgreiche Bildladung
+            img.onload = function() {
+                console.log(`Bild erfolgreich geladen: ${key}`);
             };
 
-            // Bild anzeigen, wenn das ursprüngliche Bild nicht geladen werden kann
+            // Event-Handler für Fehler beim Laden des Bildes
             img.onerror = function() {
+                console.error(`Bild konnte nicht geladen werden: ${currentData[key]}`);
                 img.src = 'https://placehold.co/400x200?text=Bild+Konnte+nicht+geladen+werden';
                 img.alt = 'Bild konnte nicht geladen werden';
-                textOutput.appendChild(img);
             };
         }
     });
