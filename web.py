@@ -28,8 +28,8 @@ baxi_data_request = requests.get("https://security.pyropixle.com/api/oauth/get/d
 print(baxi_data_request.text)
 baxi_data = baxi_data_request.json()
 
-baxi_client_secret = str(fernet.decrypt(baxi_data['client_secret'])).encode('utf-8')
-baxi_tocken = str(fernet.decrypt(baxi_data["tocken"])).encode('utf-8')
+baxi_client_secret = str(fernet.decrypt(baxi_data['client_secret']))
+baxi_tocken = str(fernet.decrypt(baxi_data["tocken"]))
 
 print(baxi_client_secret)
 print(baxi_tocken)
