@@ -46,7 +46,7 @@ async def callback():
     code = request.args.get('code')
     data = {
         'client_id': int(baxi_data['client_id']),
-        'client_secret': baxi_client_secret,
+        'client_secret': str(baxi_client_secret),
         'grant_type': 'authorization_code',
         'code': code,
         'redirect_uri': str(baxi_data['redirect_uri'])
@@ -111,7 +111,7 @@ async def dashboard():
     user_guilds = user_guilds_response.json()
 
     bot_headers = {
-        'Authorization': f'Bot {baxi_tocken}'
+        'Authorization': f'Bot {str(baxi_tocken)}'
     }
     bot_guilds_response = requests.get(f'{API_ENDPOINT}/users/@me/guilds', headers=bot_headers)
     bot_guilds_response.raise_for_status()
