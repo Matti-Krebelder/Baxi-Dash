@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,6 +11,7 @@
     <iframe id="iframe" src="https://pyropixle.com/baxi_logon/"
         style="width: 100%; height: 100%; border: none;"></iframe>
 </div>
+
 <body>
     <div class="sidebar">
         {% if guild_details %} {% for guild in guild_details %}
@@ -140,7 +142,7 @@
                 ]
             }
         </script>
-        <!--Main Script-->
+    <!--Main Script-->
     <script>
         const apiKey = 'bdash-X_KzUaBBMlM8d5a5xbAav4Z6bYqS3rnBN94ugjtkhsI';
         let currentData = {};
@@ -209,17 +211,20 @@
 
                 currentData = data;
 
-                const toggleSwitch = document.getElementById('toggle-switch');
-                let showToggle = false;
-                Object.keys(data).forEach(key => {
-                    if (key.includes('-switch')) {
-                        showToggle = true;
-                        const isChecked = data[key] === 1;
-                        document.querySelector('#toggle-switch input').checked = isChecked;
-                        console.log(`Toggle-Switch gefunden: ${key} = ${data[key]} (${isChecked ? 'Aktiviert' : 'Deaktiviert'})`);
-                    }
+                // Verarbeitung für mehrere -switch Elemente
+                document.querySelectorAll('[id^="toggle-switch"]').forEach(toggleSwitch => {
+                    let showToggle = false;
+                    Object.keys(data).forEach(key => {
+                        if (key.includes('-switch')) {
+                            showToggle = true;
+                            const isChecked = data[key] === 1;
+                            toggleSwitch.querySelector('input').checked = isChecked;
+                            console.log(`Toggle-Switch gefunden: ${key} = ${data[key]} (${isChecked ? 'Aktiviert' : 'Deaktiviert'})`);
+                        }
+                    });
+                    toggleSwitch.style.display = showToggle ? 'block' : 'none';
                 });
-                toggleSwitch.style.display = showToggle ? 'block' : 'none';
+
                 const textOutput = document.getElementById('text-output');
                 textOutput.innerHTML = '';
                 Object.keys(data).forEach(key => {
@@ -235,42 +240,8 @@
                         textOutput.appendChild(input);
                     }
                 });
-                Object.keys(data).forEach(key => {
-                    if (typeof data[key] === 'string' &&
-                        (/\.(png|gif|jpg|jpeg)$/.test(data[key]) ||
-                            data[key].startsWith('https://placehold.co/'))) {
 
-                        console.log(`Verarbeite Bilddatei: ${key}`);
-                        const img = document.createElement('img');
-                        img.src = data[key];
-                        img.alt = key;
-                        img.style.maxWidth = '100%';
-                        img.style.height = 'auto';
-                        start_updater()
-                        img.onload = function () {
-                            textOutput.appendChild(img);
-                        };
-                        img.onerror = function () {
-                            console.error(`Bild konnte nicht geladen werden: ${data[key]}`);
-                            img.src = 'https://placehold.co/400x200?text=Bild+Konnte+nicht+geladen+werden';
-                            img.alt = 'Bild konnte nicht geladen werden';
-                            textOutput.appendChild(img);
-                        };
-                    }
-                });
-
-                const activeDropsMap = {};
-                Object.keys(data).forEach(key => {
-                    if (key.includes('-activedrop')) {
-                        console.log(`Verarbeite aktiven Drop-Key: ${key}`);
-                        const activeDropEntries = data[key];
-                        Object.entries(activeDropEntries).forEach(([subKey, subValue]) => {
-                            activeDropsMap[subKey] = subValue;
-                            console.log(`Aktiver Drop gefunden: ${subKey} = ${subValue} (aus ${key})`);
-                        });
-                    }
-                });
-
+                // Verarbeitung für mehrere -drop Elemente
                 Object.keys(data).forEach(key => {
                     if (key.includes('-drop')) {
                         console.log(`Verarbeite Drop-Key: ${key}`);
@@ -302,6 +273,7 @@
                         textOutput.appendChild(dropdown);
                     }
 
+                    // Verarbeitung für mehrere -table Elemente
                     if (key.includes('-table')) {
                         console.log(`Verarbeite Table-Key: ${key}`);
                         const table = document.createElement('table');
@@ -329,6 +301,7 @@
                         textOutput.appendChild(table);
                     }
 
+                    // Verarbeitung für mehrere -text Elemente
                     if (key.includes('-text')) {
                         console.log(`Verarbeite Text-Key: ${key}`);
                         const p = document.createElement('p');
@@ -341,6 +314,68 @@
             } catch (error) {
                 console.error('Error fetching content:', error);
             }
+        }
+
+        function saveChanges() {
+            const updatedData = {};
+            const toggleSwitches = document.querySelectorAll('[id^="toggle-switch"]');
+            toggleSwitches.forEach(toggleSwitch => {
+                const isActive = toggleSwitch.querySelector('input').checked ? 1 : 0;
+                updatedData[toggleSwitch.id] = isActive;
+            });
+
+            const dropdowns = document.querySelectorAll('select');
+            dropdowns.forEach(dropdown => {
+                const selectedOption = dropdown.options[dropdown.selectedIndex];
+                const originalKey = dropdown.name;
+                if (currentData[originalKey]) {
+                    updatedData[originalKey] = selectedOption.value;
+                }
+            });
+
+            const inputs = document.querySelectorAll('input');
+            inputs.forEach(input => {
+                const originalKey = input.name;
+                let value;
+                if (input.type === 'checkbox') {
+                    value = input.checked ? 1 : 0;
+                } else if (input.type === 'radio' && !input.checked) {
+                    return;
+                } else {
+                    value = input.value;
+                }
+                if (currentData[originalKey]) {
+                    updatedData[originalKey] = value;
+                }
+            });
+
+            const senddata = removeSendFromObject(updatedData);
+            const saveEndpoint = localStorage.getItem('currentSaveEndpoint');
+            if (!saveEndpoint) {
+                console.error('Error: No save endpoint found in localStorage.');
+                return;
+            }
+            console.log(senddata);
+            fetch(saveEndpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': apiKey
+                },
+                body: JSON.stringify(senddata)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Save successful:', data);
+                })
+                .catch(error => {
+                    console.error('Error saving data:', error);
+                });
         }
         function saveChanges() {
             const updatedData = {};
@@ -469,30 +504,31 @@
         }
     </script>
     <script>
-          function start_updater(){
-        document.querySelector('input[name="image-input"]').addEventListener('input', function () {
-        localStorage.setItem("Image-Link", this.value);
-        updateimage()
-    });
-    }
-
-    function updateimage() {
-        var bild = document.querySelector('img[alt="image-input"]');
-        var linkraw = localStorage.getItem("Image-Link");
-
-        const linkExtension = linkraw.split('.').pop().split('?')[0];
-        const validExtensions = ["png", "gif", "jpg", "webp", "placehold"];
-        const isValidLink = validExtensions.includes(linkExtension);
-
-        if (!isValidLink) {
-            link = "https://placehold.co/200x100?text=Sorry but your url does not work"
-        } else {
-            link = linkraw
+        function start_updater() {
+            document.querySelector('input[name="image-input"]').addEventListener('input', function () {
+                localStorage.setItem("Image-Link", this.value);
+                updateimage()
+            });
         }
-        bild.src = link;
-    }
+
+        function updateimage() {
+            var bild = document.querySelector('img[alt="image-input"]');
+            var linkraw = localStorage.getItem("Image-Link");
+
+            const linkExtension = linkraw.split('.').pop().split('?')[0];
+            const validExtensions = ["png", "gif", "jpg", "webp", "placehold"];
+            const isValidLink = validExtensions.includes(linkExtension);
+
+            if (!isValidLink) {
+                link = "https://placehold.co/200x100?text=Sorry but your url does not work"
+            } else {
+                link = linkraw
+            }
+            bild.src = link;
+        }
     </script>
 </body>
+
 </html>
 <style>
     body {
@@ -514,9 +550,11 @@
         scrollbar-width: none;
         -ms-overflow-style: none;
     }
+
     .sidebar::-webkit-scrollbar {
         display: none;
     }
+
     .server-icon {
         width: 60px;
         height: 60px;
@@ -525,11 +563,13 @@
         cursor: pointer;
         position: relative;
     }
+
     .server-icon img {
         width: 100%;
         height: 100%;
         border-radius: 50%;
     }
+
     .server-name {
         display: none;
         position: absolute;
@@ -542,9 +582,11 @@
         transform: translateY(-50%);
         white-space: nowrap;
     }
+
     .server-icon:hover .server-name {
         display: block;
     }
+
     .content {
         flex-grow: 1;
         padding: 20px;
@@ -553,6 +595,7 @@
         display: flex;
         flex-direction: column;
     }
+
     .menu-bar {
         display: none;
         background-color: #2f3136;
@@ -562,6 +605,7 @@
         overflow-x: auto;
         white-space: nowrap;
     }
+
     .menu-item {
         margin-right: 20px;
         color: #dcddde;
@@ -569,37 +613,44 @@
         font-weight: bold;
         cursor: pointer;
     }
+
     .menu-item:hover {
         text-decoration: underline;
     }
+
     .server-details {
         background-color: #2f3136;
         padding: 20px;
         border-radius: 5px;
         display: none;
     }
+
     .server-header {
         display: flex;
         align-items: center;
         margin-bottom: 20px;
     }
+
     .server-header img {
         width: 80px;
         height: 80px;
         border-radius: 50%;
         margin-right: 20px;
     }
+
     .switch {
         position: relative;
         display: inline-block;
         width: 60px;
         height: 34px;
     }
+
     .switch input {
         opacity: 0;
         width: 0;
         height: 0;
     }
+
     .slider {
         position: absolute;
         cursor: pointer;
@@ -611,6 +662,7 @@
         transition: 0.4s;
         border-radius: 34px;
     }
+
     .slider:before {
         position: absolute;
         content: "";
@@ -622,12 +674,15 @@
         background-color: white;
         transition: 0.4s;
     }
+
     input:checked+.slider {
         background-color: #2196f3;
     }
+
     input:checked+.slider:before {
         transform: translateX(26px);
     }
+
     #overlay {
         position: fixed;
         top: 0;
@@ -652,6 +707,6 @@
         }, 3500);
         setTimeout(() => {
             overlay.style.display = "none";
-        }, 4500); 
+        }, 4500);
     };
 </script>
