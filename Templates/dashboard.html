@@ -33,6 +33,37 @@
                 <button id="save-button" style="display: none;" onclick="saveChanges()">Save</button>
             </div>
         </div>
+        <script>
+function preventDefaultForEvent(event) {
+    event.preventDefault();
+    event.stopPropagation();
+}
+
+
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'F12' || 
+        (event.ctrlKey && event.shiftKey && (event.key === 'I' || event.key === 'C')) || 
+        (event.ctrlKey && event.key === 'U')) {
+        preventDefaultForEvent(event);
+    }
+
+
+    if (event.ctrlKey || event.altKey || event.shiftKey) {
+        preventDefaultForEvent(event);
+    }
+});
+
+
+console.log = console.warn = console.error = console.info = function() {};
+
+
+console.debug = function() {};
+
+document.addEventListener('contextmenu', function(event) {
+    event.preventDefault();
+});
+
+        </script>
 
         <script id="menu-data" type="application/json">
             {
