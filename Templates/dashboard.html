@@ -390,8 +390,12 @@ Object.keys(data).forEach(key => {
 }
 
 function updateImage() {
-    // Holen des Textausgabe-Elements
     const textOutput = document.getElementById('text-output');
+
+    // Alte Bilder entfernen, ohne andere Inhalte zu löschen
+    Array.from(textOutput.getElementsByTagName('img')).forEach(img => {
+        textOutput.removeChild(img);
+    });
 
     // Durchlaufen der aktuellen Daten
     Object.keys(currentData).forEach(key => {
