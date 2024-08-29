@@ -8,13 +8,13 @@ app = Quart(__name__, template_folder="Templates")
 app = cors(app)
 app.secret_key = os.urandom(24)
 
-CLIENT_ID = '981268814308184084'
-CLIENT_SECRET = "2KbKKJO0UEIwMasUVm5znMR4Z2D8qyTo"
-REDIRECT_URI = 'https://baxi.pyropixle.com/callback'
+CLIENT_ID = '1277310867381158002'
+CLIENT_SECRET = '4doXCvWpIxOXeQTtxnkPPw9O7MNB-pV7'
+REDIRECT_URI = 'http://127.0.0.1:5000/callback'
 API_ENDPOINT = 'https://discord.com/api/v10'
 AUTH_URL = 'https://discord.com/api/oauth2/authorize'
 TOKEN_URL = 'https://discord.com/api/oauth2/token'
-BOT_TOKEN = 'OTgxMjY4ODE0MzA4MTg0MDg0.GMCiT4.EERN07N-94eV_vGTvP0AEvcEFJDBCgXEurfSRk'
+BOT_TOKEN = 'MTI3NzMxMDg2NzM4MTE1ODAwMg.GL6Hjb.H8CWb5QTquw_42LG6zdOjeBi8kGrzRBe1mtUpM'
 PERMS_API = 'https://security.pyropixle.com/api/dash/check/staff/user/perms/'
 LOG_FILE = 'denied_access.json'
 

@@ -29,6 +29,7 @@
                     <span class="slider"></span>
                 </label>
                 <div id="text-output" class="text-output"></div>
+                
 
                 <button id="save-button" style="display: none;" onclick="saveChanges()">Save</button>
             </div>
@@ -215,149 +216,162 @@ document.addEventListener('contextmenu', function(event) {
             }
 
             async function loadApiData(endpoint) {
-                try {
-                    const response = await fetch(endpoint, {
-                        headers: {
-                            'Authorization': apiKey
-                        }
-                    });
-                    if (!response.ok) throw new Error('Network response was not ok');
-                    const dataraw = await response.json();
-                    const data = replaceValue(dataraw, null, "null");
-                    console.log('API Response:', data);
-
-                    currentData = data;
-
-                    const toggleSwitch = document.getElementById('toggle-switch');
-                    let showToggle = false;
-
-                    // Überprüfen und setzen des Toggle-Switch
-                    Object.keys(data).forEach(key => {
-                        if (key.includes('-switch')) {
-                            showToggle = true;
-                            const isChecked = data[key] === 1;
-                            document.querySelector('#toggle-switch input').checked = isChecked;
-                            console.log(`Toggle-Switch gefunden: ${key} = ${data[key]} (${isChecked ? 'Aktiviert' : 'Deaktiviert'})`);
-                        }
-                    });
-
-                    toggleSwitch.style.display = showToggle ? 'block' : 'none';
-
-                    const textOutput = document.getElementById('text-output');
-                    textOutput.innerHTML = '';
-
-                    // Verarbeitung von -input Keys
-                    Object.keys(data).forEach(key => {
-                        if (key.includes('-input')) {
-                            console.log(`Verarbeite Input-Key: ${key}`);
-                            const input = document.createElement('input');
-                            input.name = key;
-                            input.type = 'text';
-                            input.placeholder = data[key] === "null" ? 'Enter text...' : data[key];
-                            input.value = data[key] === "null" ? '' : data[key];
-                            input.style.display = 'block';
-                            input.style.marginBottom = '10px';
-                            textOutput.appendChild(input);
-                        }
-                    });
-
-                    // Sammle alle aktiven Drops in einer Map
-                    const activeDropsMap = {};
-                    Object.keys(data).forEach(key => {
-                        if (key.includes('-activedrop')) {
-                            console.log(`Verarbeite aktiven Drop-Key: ${key}`);
-                            const activeDropEntries = data[key];
-                            Object.entries(activeDropEntries).forEach(([subKey, subValue]) => {
-                                activeDropsMap[subKey] = subValue;
-                                console.log(`Aktiver Drop gefunden: ${subKey} = ${subValue} (aus ${key})`);
-                            });
-                        }
-                    });
-
-                    // Verarbeite alle '-drop' Keys (z.B. -drop, -drop-1, -drop-2)
-                    Object.keys(data).forEach(key => {
-                        if (key.includes('-drop')) {
-                            console.log(`Verarbeite Drop-Key: ${key}`);
-                            const dropdown = document.createElement('select');
-                            dropdown.name = key;
-
-                            const dropEntries = data[key];
-                            let selectedOptionFound = false;
-
-                            // Iteriere über alle Optionen in diesem Drop-Key
-                            Object.entries(dropEntries).forEach(([subKey, subValue]) => {
-                                console.log(`Überprüfe Option: ${subKey} = ${subValue}`);
-
-                                const option = document.createElement('option');
-                                option.value = subKey;
-                                // Entferne das Suffix '-show' für die Anzeige
-                                option.textContent = subValue.endsWith('-show') ? subValue.replace('-show', '') : subValue;
-
-                                // Überprüfe, ob diese Option aktiv ist
-                                if (activeDropsMap.hasOwnProperty(subKey)) {
-                                    option.selected = true;
-                                    selectedOptionFound = true;
-                                    console.log(`Option "${subValue}" (${subKey}) ist aktiv und wird ausgewählt.`);
-                                } else {
-                                    console.log(`Option "${subValue}" (${subKey}) ist nicht aktiv.`);
-                                }
-
-                                dropdown.appendChild(option);
-                            });
-
-                            // Wenn keine aktive Option gefunden wurde, logge dies
-                            if (!selectedOptionFound) {
-                                console.log(`Keine aktive Option für Drop-Key "${key}" gefunden.`);
-                            }
-
-                            textOutput.appendChild(dropdown);
-                        }
-
-                        if (key.includes('-table')) {
-                            console.log(`Verarbeite Table-Key: ${key}`);
-                            const table = document.createElement('table');
-                            table.style.width = '100%';
-                            table.style.borderCollapse = 'collapse';
-                            table.style.marginTop = '20px';
-                            table.style.marginBottom = '20px';
-
-                            const tbody = document.createElement('tbody');
-
-                            Object.entries(data[key]).forEach(([id, value]) => {
-                                const row = document.createElement('tr');
-
-                                const idCell = document.createElement('td');
-                                idCell.textContent = id;
-                                idCell.style.border = '1px solid #ddd';
-                                idCell.style.padding = '8px';
-                                row.appendChild(idCell);
-
-                                const valueCell = document.createElement('td');
-                                valueCell.textContent = value;
-                                valueCell.style.border = '1px solid #ddd';
-                                valueCell.style.padding = '8px';
-                                row.appendChild(valueCell);
-
-                                tbody.appendChild(row);
-                            });
-
-                            table.appendChild(tbody);
-                            textOutput.appendChild(table);
-                        }
-
-                        if (key.includes('-text')) {
-                            console.log(`Verarbeite Text-Key: ${key}`);
-                            const p = document.createElement('p');
-                            p.innerHTML = `${key}: ${formatValue(data[key])}`;
-                            textOutput.appendChild(p);
-                        }
-                    });
-
-                    document.getElementById('save-button').style.display = 'block';
-                } catch (error) {
-                    console.error('Error fetching content:', error);
-                }
+    try {
+        const response = await fetch(endpoint, {
+            headers: {
+                'Authorization': apiKey
             }
+        });
+        if (!response.ok) throw new Error('Network response was not ok');
+        const dataraw = await response.json();
+        const data = replaceValue(dataraw, null, "null");
+        console.log('API Response:', data);
+
+        currentData = data;
+
+        const toggleSwitch = document.getElementById('toggle-switch');
+        let showToggle = false;
+
+        // Überprüfen und setzen des Toggle-Switch
+        Object.keys(data).forEach(key => {
+            if (key.includes('-switch')) {
+                showToggle = true;
+                const isChecked = data[key] === 1;
+                document.querySelector('#toggle-switch input').checked = isChecked;
+                console.log(`Toggle-Switch gefunden: ${key} = ${data[key]} (${isChecked ? 'Aktiviert' : 'Deaktiviert'})`);
+            }
+        });
+
+        toggleSwitch.style.display = showToggle ? 'block' : 'none';
+
+        const textOutput = document.getElementById('text-output');
+        textOutput.innerHTML = '';
+
+        // Verarbeitung von -input Keys
+        Object.keys(data).forEach(key => {
+            if (key.includes('-input')) {
+                console.log(`Verarbeite Input-Key: ${key}`);
+                const input = document.createElement('input');
+                input.name = key;
+                input.type = 'text';
+                input.placeholder = data[key] === "null" ? 'Enter text...' : data[key];
+                input.value = data[key] === "null" ? '' : data[key];
+                input.style.display = 'block';
+                input.style.marginBottom = '10px';
+                textOutput.appendChild(input);
+            }
+        });
+
+        // Überprüfen auf Bilddateien und Erstellen eines <img> Elements
+        Object.keys(data).forEach(key => {
+            if (typeof data[key] === 'string' && (data[key].endsWith('.png') || data[key].endsWith('.gif') || data[key].endsWith('.jpg') || data[key].endsWith('.jpeg'))) {
+                console.log(`Verarbeite Bilddatei: ${key}`);
+                const img = document.createElement('img');
+                img.src = data[key];
+                img.alt = key;
+                img.style.maxWidth = '100%';
+                img.style.height = 'auto';
+                textOutput.appendChild(img);
+            }
+        });
+
+        // Sammle alle aktiven Drops in einer Map
+        const activeDropsMap = {};
+        Object.keys(data).forEach(key => {
+            if (key.includes('-activedrop')) {
+                console.log(`Verarbeite aktiven Drop-Key: ${key}`);
+                const activeDropEntries = data[key];
+                Object.entries(activeDropEntries).forEach(([subKey, subValue]) => {
+                    activeDropsMap[subKey] = subValue;
+                    console.log(`Aktiver Drop gefunden: ${subKey} = ${subValue} (aus ${key})`);
+                });
+            }
+        });
+
+        // Verarbeite alle '-drop' Keys (z.B. -drop, -drop-1, -drop-2)
+        Object.keys(data).forEach(key => {
+            if (key.includes('-drop')) {
+                console.log(`Verarbeite Drop-Key: ${key}`);
+                const dropdown = document.createElement('select');
+                dropdown.name = key;
+
+                const dropEntries = data[key];
+                let selectedOptionFound = false;
+
+                // Iteriere über alle Optionen in diesem Drop-Key
+                Object.entries(dropEntries).forEach(([subKey, subValue]) => {
+                    console.log(`Überprüfe Option: ${subKey} = ${subValue}`);
+
+                    const option = document.createElement('option');
+                    option.value = subKey;
+                    // Entferne das Suffix '-show' für die Anzeige
+                    option.textContent = subValue.endsWith('-show') ? subValue.replace('-show', '') : subValue;
+
+                    // Überprüfe, ob diese Option aktiv ist
+                    if (activeDropsMap.hasOwnProperty(subKey)) {
+                        option.selected = true;
+                        selectedOptionFound = true;
+                        console.log(`Option "${subValue}" (${subKey}) ist aktiv und wird ausgewählt.`);
+                    } else {
+                        console.log(`Option "${subValue}" (${subKey}) ist nicht aktiv.`);
+                    }
+
+                    dropdown.appendChild(option);
+                });
+
+                // Wenn keine aktive Option gefunden wurde, logge dies
+                if (!selectedOptionFound) {
+                    console.log(`Keine aktive Option für Drop-Key "${key}" gefunden.`);
+                }
+
+                textOutput.appendChild(dropdown);
+            }
+
+            if (key.includes('-table')) {
+                console.log(`Verarbeite Table-Key: ${key}`);
+                const table = document.createElement('table');
+                table.style.width = '100%';
+                table.style.borderCollapse = 'collapse';
+                table.style.marginTop = '20px';
+                table.style.marginBottom = '20px';
+
+                const tbody = document.createElement('tbody');
+
+                Object.entries(data[key]).forEach(([id, value]) => {
+                    const row = document.createElement('tr');
+
+                    const idCell = document.createElement('td');
+                    idCell.textContent = id;
+                    idCell.style.border = '1px solid #ddd';
+                    idCell.style.padding = '8px';
+                    row.appendChild(idCell);
+
+                    const valueCell = document.createElement('td');
+                    valueCell.textContent = value;
+                    valueCell.style.border = '1px solid #ddd';
+                    valueCell.style.padding = '8px';
+                    row.appendChild(valueCell);
+
+                    tbody.appendChild(row);
+                });
+
+                table.appendChild(tbody);
+                textOutput.appendChild(table);
+            }
+
+            if (key.includes('-text')) {
+                console.log(`Verarbeite Text-Key: ${key}`);
+                const p = document.createElement('p');
+                p.innerHTML = `${key}: ${formatValue(data[key])}`;
+                textOutput.appendChild(p);
+            }
+        });
+
+        document.getElementById('save-button').style.display = 'block';
+    } catch (error) {
+        console.error('Error fetching content:', error);
+    }
+}
 
 
 
