@@ -12,7 +12,7 @@ config.read("config/runtime.conf")
 app = Quart(__name__, template_folder="Templates")
 app = cors(app)
 app.secret_key = os.urandom(24)
-fernet = Fernet(str(config["BAXI"]["encryption_key"]))
+fernet = Fernet(config["BAXI"]["encryption_key"])
 
 API_ENDPOINT = 'https://discord.com/api/v10'
 AUTH_URL = 'https://discord.com/api/oauth2/authorize'
