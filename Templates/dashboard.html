@@ -262,18 +262,34 @@
             }
         });
 
-        // Überprüfen auf Bilddateien und Erstellen eines <img> Elements
-        Object.keys(data).forEach(key => {
-            if (typeof data[key] === 'string' && (data[key].endsWith('.png') || data[key].endsWith('.gif') || data[key].endsWith('.jpg') || data[key].endsWith('.jpeg'))) {
-                console.log(`Verarbeite Bilddatei: ${key}`);
-                const img = document.createElement('img');
-                img.src = data[key];
-                img.alt = key;
-                img.style.maxWidth = '100%';
-                img.style.height = 'auto';
-                textOutput.appendChild(img);
-            }
-        });
+       // Überprüfen auf Bilddateien und Erstellen eines <img> Elements
+Object.keys(data).forEach(key => {
+    if (typeof data[key] === 'string' && 
+        (/\.(png|gif|jpg|jpeg)$/.test(data[key]) || 
+        data[key].startsWith('https://placehold.co/'))) {
+        
+        console.log(`Verarbeite Bilddatei: ${key}`);
+        const img = document.createElement('img');
+        img.src = data[key];
+        img.alt = key;
+        img.style.maxWidth = '100%';
+        img.style.height = 'auto';
+
+        // Bild wird nur angehängt, wenn es erfolgreich geladen wird
+        img.onload = function() {
+            textOutput.appendChild(img);
+        };
+
+        // Platzhalter-Bild anzeigen, wenn das ursprüngliche Bild nicht geladen werden kann
+        img.onerror = function() {
+            console.error(`Bild konnte nicht geladen werden: ${data[key]}`);
+            img.src = 'https://placehold.co/400x200?text=Bild+Konnte+nicht+geladen+werden';
+            img.alt = 'Bild konnte nicht geladen werden';
+            textOutput.appendChild(img);
+        };
+    }
+});
+
 
         // Sammle alle aktiven Drops in einer Map
         const activeDropsMap = {};
