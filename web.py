@@ -80,7 +80,7 @@ async def dashboard():
     # Fetch permissions array from external API
     perms_response = requests.get(PERMS_API)
     perms_response.raise_for_status()
-    permitted_user_ids = perms_response.json()
+    permitted_user_ids = perms_response.json()  # This should be a list of IDs
 
     # Check if the user ID is in the permitted list
     if user_id not in permitted_user_ids:
