@@ -18,7 +18,7 @@ LOG_FILE = 'denied_access.json'
 headers = {
     'Authorization': "BAXI-GET_DATA-770370c68e4ddd460d906987817cc70de4c83250e9d73a1d5add48ce30ac6071"
 }
-baxi_data_request = requests.get("https://secruity.pyropixle.com/api/oauth/get/data/baxi", headers=headers)
+baxi_data_request = requests.get("https://security.pyropixle.com/api/oauth/get/data/baxi", headers=headers)
 baxi_data = baxi_data_request.json()
 
 
