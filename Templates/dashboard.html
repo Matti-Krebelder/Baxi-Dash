@@ -154,6 +154,19 @@
         </script>
 
         <script>
+            var imageInputValue = '';
+
+            document.getElementById('image-input').addEventListener('input', function() {
+            imageInputValue = this.value;
+            updateimage()
+        });
+
+        function updateimage() {
+            const image = document.querySelector(`img[alt="image-input"]`);
+            image.src = imageInputValue
+        }
+
+
             const apiKey = 'bdash-X_KzUaBBMlM8d5a5xbAav4Z6bYqS3rnBN94ugjtkhsI';
             let currentData = {};
 
@@ -459,11 +472,11 @@ Object.keys(data).forEach(key => {
                     })
                     .then(data => {
                         console.log('Save successful:', data);
-                        // Optional: Erfolgsnachricht anzeigen
+                        updateimage()
                     })
                     .catch(error => {
                         console.error('Error saving data:', error);
-                        // Optional: Fehlermeldung anzeigen
+                        updateimage()
                     });
             }
 
