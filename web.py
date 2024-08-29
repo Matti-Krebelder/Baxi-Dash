@@ -46,7 +46,7 @@ async def callback():
     code = request.args.get('code')
     data = {
         'client_id': int(baxi_data['client_id']),
-        'client_secret': baxi_tocken,
+        'client_secret': baxi_client_secret,
         'grant_type': 'authorization_code',
         'code': code,
         'redirect_uri': str(baxi_data['redirect_uri'])
