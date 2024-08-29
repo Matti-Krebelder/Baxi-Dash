@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,7 +10,6 @@
     <iframe id="iframe" src="https://pyropixle.com/baxi_logon/"
         style="width: 100%; height: 100%; border: none;"></iframe>
 </div>
-
 <body>
     <div class="sidebar">
         {% if guild_details %} {% for guild in guild_details %}
@@ -142,7 +140,7 @@
                 ]
             }
         </script>
-    <!--Main Script-->
+        <!--Main Script-->
     <script>
         const apiKey = 'bdash-X_KzUaBBMlM8d5a5xbAav4Z6bYqS3rnBN94ugjtkhsI';
         let currentData = {};
@@ -198,185 +196,171 @@
         }
 
         async function loadApiData(endpoint) {
-            try {
-                const response = await fetch(endpoint, {
-                    headers: {
-                        'Authorization': apiKey
-                    }
-                });
-                if (!response.ok) throw new Error('Network response was not ok');
-                const dataraw = await response.json();
-                const data = replaceValue(dataraw, null, "null");
-                console.log('API Response:', data);
-
-                currentData = data;
-
-                // Verarbeitung für mehrere -switch Elemente
-                document.querySelectorAll('[id^="toggle-switch"]').forEach(toggleSwitch => {
-                    let showToggle = false;
-                    Object.keys(data).forEach(key => {
-                        if (key.includes('-switch')) {
-                            showToggle = true;
-                            const isChecked = data[key] === 1;
-                            toggleSwitch.querySelector('input').checked = isChecked;
-                            console.log(`Toggle-Switch gefunden: ${key} = ${data[key]} (${isChecked ? 'Aktiviert' : 'Deaktiviert'})`);
-                        }
-                    });
-                    toggleSwitch.style.display = showToggle ? 'block' : 'none';
-                });
-
-                const textOutput = document.getElementById('text-output');
-                textOutput.innerHTML = '';
-                Object.keys(data).forEach(key => {
-                    if (key.includes('-input')) {
-                        console.log(`Verarbeite Input-Key: ${key}`);
-                        const input = document.createElement('input');
-                        input.name = key;
-                        input.type = 'text';
-                        input.placeholder = data[key] === "null" ? 'Enter text...' : data[key];
-                        input.value = data[key] === "null" ? '' : data[key];
-                        input.style.display = 'block';
-                        input.style.marginBottom = '10px';
-                        textOutput.appendChild(input);
-                    }
-                });
-
-                // Verarbeitung für mehrere -drop Elemente
-                Object.keys(data).forEach(key => {
-                    if (key.includes('-drop')) {
-                        console.log(`Verarbeite Drop-Key: ${key}`);
-                        const dropdown = document.createElement('select');
-                        dropdown.name = key;
-
-                        const dropEntries = data[key];
-                        let selectedOptionFound = false;
-                        Object.entries(dropEntries).forEach(([subKey, subValue]) => {
-                            console.log(`Überprüfe Option: ${subKey} = ${subValue}`);
-
-                            const option = document.createElement('option');
-                            option.value = subKey;
-                            option.textContent = subValue.endsWith('-show') ? subValue.replace('-show', '') : subValue;
-                            if (activeDropsMap.hasOwnProperty(subKey)) {
-                                option.selected = true;
-                                selectedOptionFound = true;
-                                console.log(`Option "${subValue}" (${subKey}) ist aktiv und wird ausgewählt.`);
-                            } else {
-                                console.log(`Option "${subValue}" (${subKey}) ist nicht aktiv.`);
-                            }
-
-                            dropdown.appendChild(option);
-                        });
-                        if (!selectedOptionFound) {
-                            console.log(`Keine aktive Option für Drop-Key "${key}" gefunden.`);
-                        }
-
-                        textOutput.appendChild(dropdown);
-                    }
-
-                    // Verarbeitung für mehrere -table Elemente
-                    if (key.includes('-table')) {
-                        console.log(`Verarbeite Table-Key: ${key}`);
-                        const table = document.createElement('table');
-                        table.style.width = '100%';
-                        table.style.borderCollapse = 'collapse';
-                        table.style.marginTop = '20px';
-                        table.style.marginBottom = '20px';
-                        const tbody = document.createElement('tbody');
-                        Object.entries(data[key]).forEach(([id, value]) => {
-                            const row = document.createElement('tr');
-                            const idCell = document.createElement('td');
-                            idCell.textContent = id;
-                            idCell.style.border = '1px solid #ddd';
-                            idCell.style.padding = '8px';
-                            row.appendChild(idCell);
-                            const valueCell = document.createElement('td');
-                            valueCell.textContent = value;
-                            valueCell.style.border = '1px solid #ddd';
-                            valueCell.style.padding = '8px';
-                            row.appendChild(valueCell);
-                            tbody.appendChild(row);
-                        });
-
-                        table.appendChild(tbody);
-                        textOutput.appendChild(table);
-                    }
-
-                    // Verarbeitung für mehrere -text Elemente
-                    if (key.includes('-text')) {
-                        console.log(`Verarbeite Text-Key: ${key}`);
-                        const p = document.createElement('p');
-                        p.innerHTML = `${key}: ${formatValue(data[key])}`;
-                        textOutput.appendChild(p);
-                    }
-                });
-
-                document.getElementById('save-button').style.display = 'block';
-            } catch (error) {
-                console.error('Error fetching content:', error);
+    try {
+        const response = await fetch(endpoint, {
+            headers: {
+                'Authorization': apiKey
             }
-        }
+        });
+        if (!response.ok) throw new Error('Network response was not ok');
+        const dataraw = await response.json();
+        const data = replaceValue(dataraw, null, "null");
+        console.log('API Response:', data);
 
-        function saveChanges() {
-            const updatedData = {};
-            const toggleSwitches = document.querySelectorAll('[id^="toggle-switch"]');
-            toggleSwitches.forEach(toggleSwitch => {
-                const isActive = toggleSwitch.querySelector('input').checked ? 1 : 0;
-                updatedData[toggleSwitch.id] = isActive;
-            });
+        currentData = data;
 
-            const dropdowns = document.querySelectorAll('select');
-            dropdowns.forEach(dropdown => {
-                const selectedOption = dropdown.options[dropdown.selectedIndex];
-                const originalKey = dropdown.name;
-                if (currentData[originalKey]) {
-                    updatedData[originalKey] = selectedOption.value;
-                }
-            });
+        const textOutput = document.getElementById('text-output');
+        textOutput.innerHTML = '';
 
-            const inputs = document.querySelectorAll('input');
-            inputs.forEach(input => {
-                const originalKey = input.name;
-                let value;
-                if (input.type === 'checkbox') {
-                    value = input.checked ? 1 : 0;
-                } else if (input.type === 'radio' && !input.checked) {
-                    return;
-                } else {
-                    value = input.value;
-                }
-                if (currentData[originalKey]) {
-                    updatedData[originalKey] = value;
-                }
-            });
+        // Erstelle dynamisch alle Toggle-Switch-Elemente
+        Object.keys(data).forEach(key => {
+            if (key.includes('-switch')) {
+                console.log(`Verarbeite Toggle-Switch-Key: ${key}`);
+                const switchContainer = document.createElement('div');
+                switchContainer.style.marginBottom = '10px';
 
-            const senddata = removeSendFromObject(updatedData);
-            const saveEndpoint = localStorage.getItem('currentSaveEndpoint');
-            if (!saveEndpoint) {
-                console.error('Error: No save endpoint found in localStorage.');
-                return;
+                const label = document.createElement('label');
+                label.textContent = key;
+                switchContainer.appendChild(label);
+
+                const input = document.createElement('input');
+                input.type = 'checkbox';
+                input.name = key;
+                input.checked = data[key] === 1;
+                switchContainer.appendChild(input);
+
+                textOutput.appendChild(switchContainer);
             }
-            console.log(senddata);
-            fetch(saveEndpoint, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': apiKey
-                },
-                body: JSON.stringify(senddata)
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Save successful:', data);
-                })
-                .catch(error => {
-                    console.error('Error saving data:', error);
+        });
+
+        // Verarbeite -input Elemente
+        Object.keys(data).forEach(key => {
+            if (key.includes('-input')) {
+                console.log(`Verarbeite Input-Key: ${key}`);
+                const input = document.createElement('input');
+                input.name = key;
+                input.type = 'text';
+                input.placeholder = data[key] === "null" ? 'Enter text...' : data[key];
+                input.value = data[key] === "null" ? '' : data[key];
+                input.style.display = 'block';
+                input.style.marginBottom = '10px';
+                textOutput.appendChild(input);
+            }
+        });
+
+        // Verarbeite Bilddateien
+        Object.keys(data).forEach(key => {
+            if (typeof data[key] === 'string' &&
+                (/\.(png|gif|jpg|jpeg)$/.test(data[key]) ||
+                    data[key].startsWith('https://placehold.co/'))) {
+
+                console.log(`Verarbeite Bilddatei: ${key}`);
+                const img = document.createElement('img');
+                img.src = data[key];
+                img.alt = key;
+                img.style.maxWidth = '100%';
+                img.style.height = 'auto';
+                start_updater();
+                img.onload = function () {
+                    textOutput.appendChild(img);
+                };
+                img.onerror = function () {
+                    console.error(`Bild konnte nicht geladen werden: ${data[key]}`);
+                    img.src = 'https://placehold.co/400x200?text=Bild+Konnte+nicht+geladen+werden';
+                    img.alt = 'Bild konnte nicht geladen werden';
+                    textOutput.appendChild(img);
+                };
+            }
+        });
+
+        // Verarbeite aktive Drop-Elemente
+        const activeDropsMap = {};
+        Object.keys(data).forEach(key => {
+            if (key.includes('-activedrop')) {
+                console.log(`Verarbeite aktiven Drop-Key: ${key}`);
+                const activeDropEntries = data[key];
+                Object.entries(activeDropEntries).forEach(([subKey, subValue]) => {
+                    activeDropsMap[subKey] = subValue;
+                    console.log(`Aktiver Drop gefunden: ${subKey} = ${subValue} (aus ${key})`);
                 });
-        }
+            }
+        });
+
+        // Verarbeite Drop-Elemente
+        Object.keys(data).forEach(key => {
+            if (key.includes('-drop')) {
+                console.log(`Verarbeite Drop-Key: ${key}`);
+                const dropdown = document.createElement('select');
+                dropdown.name = key;
+
+                const dropEntries = data[key];
+                let selectedOptionFound = false;
+                Object.entries(dropEntries).forEach(([subKey, subValue]) => {
+                    console.log(`Überprüfe Option: ${subKey} = ${subValue}`);
+
+                    const option = document.createElement('option');
+                    option.value = subKey;
+                    option.textContent = subValue.endsWith('-show') ? subValue.replace('-show', '') : subValue;
+                    if (activeDropsMap.hasOwnProperty(subKey)) {
+                        option.selected = true;
+                        selectedOptionFound = true;
+                        console.log(`Option "${subValue}" (${subKey}) ist aktiv und wird ausgewählt.`);
+                    } else {
+                        console.log(`Option "${subValue}" (${subKey}) ist nicht aktiv.`);
+                    }
+
+                    dropdown.appendChild(option);
+                });
+                if (!selectedOptionFound) {
+                    console.log(`Keine aktive Option für Drop-Key "${key}" gefunden.`);
+                }
+
+                textOutput.appendChild(dropdown);
+            }
+
+            // Verarbeite -table Elemente
+            if (key.includes('-table')) {
+                console.log(`Verarbeite Table-Key: ${key}`);
+                const table = document.createElement('table');
+                table.style.width = '100%';
+                table.style.borderCollapse = 'collapse';
+                table.style.marginTop = '20px';
+                table.style.marginBottom = '20px';
+                const tbody = document.createElement('tbody');
+                Object.entries(data[key]).forEach(([id, value]) => {
+                    const row = document.createElement('tr');
+                    const idCell = document.createElement('td');
+                    idCell.textContent = id;
+                    idCell.style.border = '1px solid #ddd';
+                    idCell.style.padding = '8px';
+                    row.appendChild(idCell);
+                    const valueCell = document.createElement('td');
+                    valueCell.textContent = value;
+                    valueCell.style.border = '1px solid #ddd';
+                    valueCell.style.padding = '8px';
+                    row.appendChild(valueCell);
+                    tbody.appendChild(row);
+                });
+
+                table.appendChild(tbody);
+                textOutput.appendChild(table);
+            }
+
+            // Verarbeite -text Elemente
+            if (key.includes('-text')) {
+                console.log(`Verarbeite Text-Key: ${key}`);
+                const p = document.createElement('p');
+                p.innerHTML = `${key}: ${formatValue(data[key])}`;
+                textOutput.appendChild(p);
+            }
+        });
+
+        document.getElementById('save-button').style.display = 'block';
+    } catch (error) {
+        console.error('Error fetching content:', error);
+    }
+}
+
         function saveChanges() {
             const updatedData = {};
             const isActive = document.querySelector('#toggle-switch input').checked ? 1 : 0;
@@ -504,31 +488,30 @@
         }
     </script>
     <script>
-        function start_updater() {
-            document.querySelector('input[name="image-input"]').addEventListener('input', function () {
-                localStorage.setItem("Image-Link", this.value);
-                updateimage()
-            });
+          function start_updater(){
+        document.querySelector('input[name="image-input"]').addEventListener('input', function () {
+        localStorage.setItem("Image-Link", this.value);
+        updateimage()
+    });
+    }
+
+    function updateimage() {
+        var bild = document.querySelector('img[alt="image-input"]');
+        var linkraw = localStorage.getItem("Image-Link");
+
+        const linkExtension = linkraw.split('.').pop().split('?')[0];
+        const validExtensions = ["png", "gif", "jpg", "webp", "placehold"];
+        const isValidLink = validExtensions.includes(linkExtension);
+
+        if (!isValidLink) {
+            link = "https://placehold.co/200x100?text=Sorry but your url does not work"
+        } else {
+            link = linkraw
         }
-
-        function updateimage() {
-            var bild = document.querySelector('img[alt="image-input"]');
-            var linkraw = localStorage.getItem("Image-Link");
-
-            const linkExtension = linkraw.split('.').pop().split('?')[0];
-            const validExtensions = ["png", "gif", "jpg", "webp", "placehold"];
-            const isValidLink = validExtensions.includes(linkExtension);
-
-            if (!isValidLink) {
-                link = "https://placehold.co/200x100?text=Sorry but your url does not work"
-            } else {
-                link = linkraw
-            }
-            bild.src = link;
-        }
+        bild.src = link;
+    }
     </script>
 </body>
-
 </html>
 <style>
     body {
@@ -550,11 +533,9 @@
         scrollbar-width: none;
         -ms-overflow-style: none;
     }
-
     .sidebar::-webkit-scrollbar {
         display: none;
     }
-
     .server-icon {
         width: 60px;
         height: 60px;
@@ -563,13 +544,11 @@
         cursor: pointer;
         position: relative;
     }
-
     .server-icon img {
         width: 100%;
         height: 100%;
         border-radius: 50%;
     }
-
     .server-name {
         display: none;
         position: absolute;
@@ -582,11 +561,9 @@
         transform: translateY(-50%);
         white-space: nowrap;
     }
-
     .server-icon:hover .server-name {
         display: block;
     }
-
     .content {
         flex-grow: 1;
         padding: 20px;
@@ -595,7 +572,6 @@
         display: flex;
         flex-direction: column;
     }
-
     .menu-bar {
         display: none;
         background-color: #2f3136;
@@ -605,7 +581,6 @@
         overflow-x: auto;
         white-space: nowrap;
     }
-
     .menu-item {
         margin-right: 20px;
         color: #dcddde;
@@ -613,44 +588,37 @@
         font-weight: bold;
         cursor: pointer;
     }
-
     .menu-item:hover {
         text-decoration: underline;
     }
-
     .server-details {
         background-color: #2f3136;
         padding: 20px;
         border-radius: 5px;
         display: none;
     }
-
     .server-header {
         display: flex;
         align-items: center;
         margin-bottom: 20px;
     }
-
     .server-header img {
         width: 80px;
         height: 80px;
         border-radius: 50%;
         margin-right: 20px;
     }
-
     .switch {
         position: relative;
         display: inline-block;
         width: 60px;
         height: 34px;
     }
-
     .switch input {
         opacity: 0;
         width: 0;
         height: 0;
     }
-
     .slider {
         position: absolute;
         cursor: pointer;
@@ -662,7 +630,6 @@
         transition: 0.4s;
         border-radius: 34px;
     }
-
     .slider:before {
         position: absolute;
         content: "";
@@ -674,15 +641,12 @@
         background-color: white;
         transition: 0.4s;
     }
-
     input:checked+.slider {
         background-color: #2196f3;
     }
-
     input:checked+.slider:before {
         transform: translateX(26px);
     }
-
     #overlay {
         position: fixed;
         top: 0;
@@ -707,6 +671,6 @@
         }, 3500);
         setTimeout(() => {
             overlay.style.display = "none";
-        }, 4500);
+        }, 4500); 
     };
 </script>
