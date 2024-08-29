@@ -29,17 +29,17 @@ async def home():
 
 @app.route("/login")
 async def login():
-    return redirect(f'{AUTH_URL}?client_id={baxi_data['client_id']}&redirect_uri={baxi_data['redirect_uri']}&response_type=code&scope=identify%20guilds%20email')
+    return redirect(f'{AUTH_URL}?client_id={int(baxi_data['client_id'])}&redirect_uri={baxi_data['redirect_uri']}&response_type=code&scope=identify%20guilds%20email')
 
 @app.route("/callback")
 async def callback():
     code = request.args.get('code')
     data = {
-        'client_id': baxi_data['client_id'],
-        'client_secret': baxi_data['client_secret'],
+        'client_id': int(baxi_data['client_id']),
+        'client_secret': str(baxi_data['client_secret']),
         'grant_type': 'authorization_code',
         'code': code,
-        'redirect_uri': baxi_data['redirect_uri']
+        'redirect_uri': str(baxi_data['redirect_uri'])
     }
     headers = {
         'Content-Type': 'application/x-www-form-urlencoded'
