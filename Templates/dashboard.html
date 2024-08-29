@@ -42,7 +42,12 @@
             }
             
             document.addEventListener('keydown', function(event) {
-                // Blockiere nur Kombinationen von Strg (Ctrl) + Buchstaben (a-z)
+                // Erlaube Strg + A, Strg + C und Strg + V
+                if (event.ctrlKey && (event.key === 'a' || event.key === 'c' || event.key === 'v')) {
+                    return; // Nichts blockieren, wenn diese Kombinationen gedrückt werden
+                }
+            
+                // Blockiere alle anderen Kombinationen von Strg (Ctrl) + Buchstaben (a-z)
                 if (event.ctrlKey && /^[a-zA-Z]$/.test(event.key)) {
                     preventDefaultForEvent(event);
                 }
@@ -58,6 +63,7 @@
             console.debug = function() {};
             
             </script>
+            
             
 
         <script id="menu-data" type="application/json">
