@@ -27,8 +27,11 @@ headers = {
 baxi_data_request = requests.get("https://security.pyropixle.com/api/oauth/get/data/baxi", headers=headers)
 baxi_data = baxi_data_request.json()
 
-baxi_client_secret = str(fernet.decrypt(baxi_data['client_secret']).decode())
-baxi_tocken = str(fernet.decrypt(baxi_data["tocken"]).decode())
+baxi_client_secret = f"{fernet.decrypt(baxi_data['client_secret']).decode()}"
+baxi_tocken = f"{fernet.decrypt(baxi_data['tocken']).decode()}"
+
+print(baxi_client_secret)
+print(baxi_tocken)
 
 @app.route("/")
 async def home():
@@ -43,7 +46,7 @@ async def callback():
     code = request.args.get('code')
     data = {
         'client_id': int(baxi_data['client_id']),
-        'client_secret': f"{baxi_client_secret}",
+        'client_secret': baxi_tocken,
         'grant_type': 'authorization_code',
         'code': code,
         'redirect_uri': str(baxi_data['redirect_uri'])
