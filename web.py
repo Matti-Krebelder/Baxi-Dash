@@ -8,15 +8,20 @@ app = Quart(__name__, template_folder="Templates")
 app = cors(app)
 app.secret_key = os.urandom(24)
 
-CLIENT_ID = '1277310867381158002'
-CLIENT_SECRET = '4doXCvWpIxOXeQTtxnkPPw9O7MNB-pV7'
-REDIRECT_URI = 'http://127.0.0.1:5000/callback'
 API_ENDPOINT = 'https://discord.com/api/v10'
 AUTH_URL = 'https://discord.com/api/oauth2/authorize'
 TOKEN_URL = 'https://discord.com/api/oauth2/token'
-BOT_TOKEN = 'MTI3NzMxMDg2NzM4MTE1ODAwMg.GL6Hjb.H8CWb5QTquw_42LG6zdOjeBi8kGrzRBe1mtUpM'
 PERMS_API = 'https://security.pyropixle.com/api/dash/check/staff/user/perms/'
 LOG_FILE = 'denied_access.json'
+
+
+headers = {
+    'Authorization': "BAXI-GET_DATA-770370c68e4ddd460d906987817cc70de4c83250e9d73a1d5add48ce30ac6071"
+}
+baxi_data_request = requests.get("https://secruity.pyropixle.com/api/oauth/get/data/baxi", headers=headers)
+baxi_data = baxi_data_request.json()
+
+
 
 @app.route("/")
 async def home():
@@ -24,17 +29,17 @@ async def home():
 
 @app.route("/login")
 async def login():
-    return redirect(f'{AUTH_URL}?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=identify%20guilds%20email')
+    return redirect(f'{AUTH_URL}?client_id={baxi_data['client_id']}&redirect_uri={baxi_data['redirect_uri']}&response_type=code&scope=identify%20guilds%20email')
 
 @app.route("/callback")
 async def callback():
     code = request.args.get('code')
     data = {
-        'client_id': CLIENT_ID,
-        'client_secret': CLIENT_SECRET,
+        'client_id': baxi_data['client_id'],
+        'client_secret': baxi_data['client_secret'],
         'grant_type': 'authorization_code',
         'code': code,
-        'redirect_uri': REDIRECT_URI
+        'redirect_uri': baxi_data['redirect_uri']
     }
     headers = {
         'Content-Type': 'application/x-www-form-urlencoded'
@@ -96,7 +101,7 @@ async def dashboard():
     user_guilds = user_guilds_response.json()
 
     bot_headers = {
-        'Authorization': f'Bot {BOT_TOKEN}'
+        'Authorization': f'Bot {baxi_data["tocken"]}'
     }
     bot_guilds_response = requests.get(f'{API_ENDPOINT}/users/@me/guilds', headers=bot_headers)
     bot_guilds_response.raise_for_status()
