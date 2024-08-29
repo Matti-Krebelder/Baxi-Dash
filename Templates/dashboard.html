@@ -389,9 +389,26 @@ Object.keys(data).forEach(key => {
     }
 }
 
-document.getElementsByName('image-input').addEventListener('input', function() {
-            localStorage.setItem("Image-Link", this.value)
-        });
+document.querySelector('input[name="image-input"]').addEventListener('input', function () {
+        localStorage.setItem("Image-Link", this.value);
+        updateimage()
+    });
+
+    function updateimage() {
+        var bild = document.querySelector('img[alt="image-input"]');
+        var linkraw = localStorage.getItem("Image-Link");
+
+        const linkExtension = linkraw.split('.').pop().split('?')[0];
+        const validExtensions = ["png", "gif", "jpg", "webp", "placehold"];
+        const isValidLink = validExtensions.includes(linkExtension);
+
+        if (!isValidLink) {
+            link = "https://placehold.co/200x100?text=Sorry but your url does not work"
+        } else {
+            link = linkraw
+        }
+        bild.src = link;
+    }
 
 
 
