@@ -389,7 +389,7 @@ Object.keys(data).forEach(key => {
     }
 }
 
-document.getElementById('image-input').addEventListener('input', function() {
+document.getElementsByName('image-input').addEventListener('input', function() {
             localStorage.setItem("Image-Link", this.value)
         });
 
