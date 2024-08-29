@@ -259,42 +259,127 @@
                 input.style.display = 'block';
                 input.style.marginBottom = '10px';
                 textOutput.appendChild(input);
+            }
+        });
 
-                // Event Listener hinzufügen, um Änderungen im Input-Feld zu überwachen
-                input.addEventListener('input', function() {
-                    updateImageBasedOnInput(this.value);
+       // Überprüfen auf Bilddateien und Erstellen eines <img> Elements
+Object.keys(data).forEach(key => {
+    if (typeof data[key] === 'string' && 
+        (/\.(png|gif|jpg|jpeg)$/.test(data[key]) || 
+        data[key].startsWith('https://placehold.co/'))) {
+        
+        console.log(`Verarbeite Bilddatei: ${key}`);
+        const img = document.createElement('img');
+        img.src = data[key];
+        img.alt = key;
+        img.style.maxWidth = '100%';
+        img.style.height = 'auto';
+
+        // Bild wird nur angehängt, wenn es erfolgreich geladen wird
+        img.onload = function() {
+            textOutput.appendChild(img);
+        };
+
+        // Platzhalter-Bild anzeigen, wenn das ursprüngliche Bild nicht geladen werden kann
+        img.onerror = function() {
+            console.error(`Bild konnte nicht geladen werden: ${data[key]}`);
+            img.src = 'https://placehold.co/400x200?text=Bild+Konnte+nicht+geladen+werden';
+            img.alt = 'Bild konnte nicht geladen werden';
+            textOutput.appendChild(img);
+        };
+    }
+});
+
+
+        // Sammle alle aktiven Drops in einer Map
+        const activeDropsMap = {};
+        Object.keys(data).forEach(key => {
+            if (key.includes('-activedrop')) {
+                console.log(`Verarbeite aktiven Drop-Key: ${key}`);
+                const activeDropEntries = data[key];
+                Object.entries(activeDropEntries).forEach(([subKey, subValue]) => {
+                    activeDropsMap[subKey] = subValue;
+                    console.log(`Aktiver Drop gefunden: ${subKey} = ${subValue} (aus ${key})`);
                 });
             }
         });
 
-        // Bilddateien überprüfen und ein <img> Element erstellen
+        // Verarbeite alle '-drop' Keys (z.B. -drop, -drop-1, -drop-2)
         Object.keys(data).forEach(key => {
-            if (typeof data[key] === 'string' && 
-                (/\.(png|gif|jpg|jpeg)$/.test(data[key]) || 
-                data[key].startsWith('https://placehold.co/'))) {
-                
-                console.log(`Verarbeite Bilddatei: ${key}`);
-                const img = document.createElement('img');
-                img.src = data[key];
-                img.alt = key;
-                img.style.maxWidth = '100%';
-                img.style.height = 'auto';
+            if (key.includes('-drop')) {
+                console.log(`Verarbeite Drop-Key: ${key}`);
+                const dropdown = document.createElement('select');
+                dropdown.name = key;
 
-                // Bild wird nur angehängt, wenn es erfolgreich geladen wird
-                img.onload = function() {
-                    textOutput.appendChild(img);
-                };
+                const dropEntries = data[key];
+                let selectedOptionFound = false;
 
-                // Platzhalter-Bild anzeigen, wenn das ursprüngliche Bild nicht geladen werden kann
-                img.onerror = function() {
-                    console.error(`Bild konnte nicht geladen werden: ${data[key]}`);
-                    img.src = 'https://placehold.co/400x200?text=Bild+Konnte+nicht+geladen+werden';
-                    img.alt = 'Bild konnte nicht geladen werden';
-                    textOutput.appendChild(img);
-                };
+                // Iteriere über alle Optionen in diesem Drop-Key
+                Object.entries(dropEntries).forEach(([subKey, subValue]) => {
+                    console.log(`Überprüfe Option: ${subKey} = ${subValue}`);
 
-                // Speichere das Bild-Element in einer Variablen, um es später zu aktualisieren
-                currentImageElement = img;
+                    const option = document.createElement('option');
+                    option.value = subKey;
+                    // Entferne das Suffix '-show' für die Anzeige
+                    option.textContent = subValue.endsWith('-show') ? subValue.replace('-show', '') : subValue;
+
+                    // Überprüfe, ob diese Option aktiv ist
+                    if (activeDropsMap.hasOwnProperty(subKey)) {
+                        option.selected = true;
+                        selectedOptionFound = true;
+                        console.log(`Option "${subValue}" (${subKey}) ist aktiv und wird ausgewählt.`);
+                    } else {
+                        console.log(`Option "${subValue}" (${subKey}) ist nicht aktiv.`);
+                    }
+
+                    dropdown.appendChild(option);
+                });
+
+                // Wenn keine aktive Option gefunden wurde, logge dies
+                if (!selectedOptionFound) {
+                    console.log(`Keine aktive Option für Drop-Key "${key}" gefunden.`);
+                }
+
+                textOutput.appendChild(dropdown);
+            }
+
+            if (key.includes('-table')) {
+                console.log(`Verarbeite Table-Key: ${key}`);
+                const table = document.createElement('table');
+                table.style.width = '100%';
+                table.style.borderCollapse = 'collapse';
+                table.style.marginTop = '20px';
+                table.style.marginBottom = '20px';
+
+                const tbody = document.createElement('tbody');
+
+                Object.entries(data[key]).forEach(([id, value]) => {
+                    const row = document.createElement('tr');
+
+                    const idCell = document.createElement('td');
+                    idCell.textContent = id;
+                    idCell.style.border = '1px solid #ddd';
+                    idCell.style.padding = '8px';
+                    row.appendChild(idCell);
+
+                    const valueCell = document.createElement('td');
+                    valueCell.textContent = value;
+                    valueCell.style.border = '1px solid #ddd';
+                    valueCell.style.padding = '8px';
+                    row.appendChild(valueCell);
+
+                    tbody.appendChild(row);
+                });
+
+                table.appendChild(tbody);
+                textOutput.appendChild(table);
+            }
+
+            if (key.includes('-text')) {
+                console.log(`Verarbeite Text-Key: ${key}`);
+                const p = document.createElement('p');
+                p.innerHTML = `${key}: ${formatValue(data[key])}`;
+                textOutput.appendChild(p);
             }
         });
 
@@ -304,19 +389,6 @@
     }
 }
 
-function updateImageBasedOnInput(inputValue) {
-    if (currentImageElement) {
-        // Wenn der Input-Wert eine gültige URL zu einem Bild ist, aktualisiere das Bild
-        if (/\.(png|gif|jpg|jpeg)$/.test(inputValue) || inputValue.startsWith('https://placehold.co/')) {
-            currentImageElement.src = inputValue;
-        } else {
-            // Andernfalls setze ein Platzhalter-Bild
-            currentImageElement.src = 'https://placehold.co/400x200?text=Ungültige+Bild-URL';
-        }
-    }
-}
-
-let currentImageElement = null;
 
 
 
