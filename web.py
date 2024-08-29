@@ -20,7 +20,7 @@ LOG_FILE = 'denied_access.json'
 
 @app.route("/")
 async def home():
-    return '<a href="/login">Login with Discord</a>'
+    return redirect("https://baxi.pyropixle.com/dashboard")
 
 @app.route("/login")
 async def login():
