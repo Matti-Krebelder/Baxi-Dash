@@ -3,10 +3,16 @@ import requests
 import os
 from quart import Quart, render_template, request, send_from_directory, send_file, jsonify, url_for, redirect, session, make_response
 from quart_cors import cors
+import configparser
+from cryptography.fernet import Fernet
+
+config = configparser.ConfigParser()
+config.read("config/runtime.conf")
 
 app = Quart(__name__, template_folder="Templates")
 app = cors(app)
 app.secret_key = os.urandom(24)
+fernet = Fernet(config["BAXI"]["encryption_key"])
 
 API_ENDPOINT = 'https://discord.com/api/v10'
 AUTH_URL = 'https://discord.com/api/oauth2/authorize'
@@ -16,12 +22,13 @@ LOG_FILE = 'denied_access.json'
 
 
 headers = {
-    'Authorization': "BAXI-GET_DATA-770370c68e4ddd460d906987817cc70de4c83250e9d73a1d5add48ce30ac6071"
+    'Authorization': f"{config["BAXI"]["baxi_info_key"]}"
 }
 baxi_data_request = requests.get("https://security.pyropixle.com/api/oauth/get/data/baxi", headers=headers)
 baxi_data = baxi_data_request.json()
 
-
+baxi_client_secret = fernet.decrypt(baxi_data['client_secret'])
+baxi_tocken = fernet.decrypt(baxi_data["tocken"])
 
 @app.route("/")
 async def home():
@@ -36,7 +43,7 @@ async def callback():
     code = request.args.get('code')
     data = {
         'client_id': int(baxi_data['client_id']),
-        'client_secret': str(baxi_data['client_secret']),
+        'client_secret': str(baxi_client_secret),
         'grant_type': 'authorization_code',
         'code': code,
         'redirect_uri': str(baxi_data['redirect_uri'])
@@ -101,7 +108,7 @@ async def dashboard():
     user_guilds = user_guilds_response.json()
 
     bot_headers = {
-        'Authorization': f'Bot {baxi_data["tocken"]}'
+        'Authorization': f'Bot {baxi_tocken}'
     }
     bot_guilds_response = requests.get(f'{API_ENDPOINT}/users/@me/guilds', headers=bot_headers)
     bot_guilds_response.raise_for_status()
