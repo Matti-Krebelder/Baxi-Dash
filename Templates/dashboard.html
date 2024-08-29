@@ -276,6 +276,7 @@
                         img.alt = key;
                         img.style.maxWidth = '100%';
                         img.style.height = 'auto';
+                        start_updater()
 
                         // Bild wird nur angehängt, wenn es erfolgreich geladen wird
                         img.onload = function () {
@@ -548,10 +549,12 @@
         }
     </script>
     <script>
+          function start_updater(){
         document.querySelector('input[name="image-input"]').addEventListener('input', function () {
         localStorage.setItem("Image-Link", this.value);
         updateimage()
     });
+    }
 
     function updateimage() {
         var bild = document.querySelector('img[alt="image-input"]');
