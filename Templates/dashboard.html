@@ -344,64 +344,67 @@
             }
         }
         function saveChanges() {
-            const updatedData = {};
-            const isActive = document.querySelector('#toggle-switch input').checked ? 1 : 0;
-            updatedData.active = isActive;
-            const dropdowns = document.querySelectorAll('select');
-            dropdowns.forEach(dropdown => {
-                const selectedOption = dropdown.options[dropdown.selectedIndex];
-                const originalKey = dropdown.name;
-                if (currentData[originalKey]) {
-                    updatedData[originalKey] = selectedOption.value;
-                }
-            });
-
-            const inputs = document.querySelectorAll('input');
-            inputs.forEach(input => {
-                const originalKey = input.name;
-                let value;
-                if (input.type === 'checkbox') {
-                    value = input.checked ? 1 : 0;
-                } else if (input.type === 'radio' && !input.checked) {
-                    return;
-                } else {
-                    value = input.value;
-                }
-                if (currentData[originalKey]) {
-                    updatedData[originalKey] = value;
-                }
-            });
-
-            const senddata = removeSendFromObject(updatedData);
-            const saveEndpoint = localStorage.getItem('currentSaveEndpoint');
-            if (!saveEndpoint) {
-                console.error('Error: No save endpoint found in localStorage.');
-                return;
-            }
-            console.log(senddata);
-            fetch(saveEndpoint, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': apiKey
-                },
-                body: JSON.stringify(senddata)
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    ApiEndpoint = localStorage.getItem("currentloadEndpoint")
-                    console.log('Save successful:', data);
-                    loadApiData(ApiEndpoint)
-                })
-                .catch(error => {
-                    console.error('Error saving data:', error);
-                });
+    const updatedData = {};
+    const isActive = document.querySelector('#toggle-switch input').checked ? 1 : 0;
+    updatedData.active = isActive;
+    const dropdowns = document.querySelectorAll('select');
+    dropdowns.forEach(dropdown => {
+        const selectedOption = dropdown.options[dropdown.selectedIndex];
+        const originalKey = dropdown.name;
+        if (currentData[originalKey]) {
+            updatedData[originalKey] = selectedOption.value;
         }
+    });
+
+    const inputs = document.querySelectorAll('input');
+    inputs.forEach(input => {
+        const originalKey = input.name;
+        let value;
+        if (input.type === 'checkbox') {
+            value = input.checked ? 1 : 0;
+        } else if (input.type === 'radio' && !input.checked) {
+            return;
+        } else {
+            value = input.value;
+        }
+        if (currentData[originalKey]) {
+            updatedData[originalKey] = value;
+        }
+    });
+
+    const senddata = removeSendFromObject(updatedData);
+    const saveEndpoint = localStorage.getItem('currentSaveEndpoint');
+    if (!saveEndpoint) {
+        console.error('Error: No save endpoint found in localStorage.');
+        alert('Fehler: Kein Speicher-Endpunkt in localStorage gefunden.');
+        return;
+    }
+    console.log(senddata);
+    fetch(saveEndpoint, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': apiKey
+        },
+        body: JSON.stringify(senddata)
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            ApiEndpoint = localStorage.getItem("currentloadEndpoint")
+            console.log('Save successful:', data);
+            loadApiData(ApiEndpoint);
+            alert('Änderungen erfolgreich gespeichert!');
+        })
+        .catch(error => {
+            console.error('Error saving data:', error);
+            alert('Fehler beim Speichern der Daten: ' + error.message);
+        });
+}
 
         /* -send attribut Remover */
         function removeSendFromObject(obj) {
