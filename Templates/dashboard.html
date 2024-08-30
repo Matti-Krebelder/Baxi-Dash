@@ -376,7 +376,6 @@
     const saveEndpoint = localStorage.getItem('currentSaveEndpoint');
     if (!saveEndpoint) {
         console.error('Error: No save endpoint found in localStorage.');
-        alert('Fehler: Kein Speicher-Endpunkt in localStorage gefunden.');
         return;
     }
     console.log(senddata);
@@ -398,11 +397,11 @@
             ApiEndpoint = localStorage.getItem("currentloadEndpoint")
             console.log('Save successful:', data);
             loadApiData(ApiEndpoint);
-            alert('Änderungen erfolgreich gespeichert!');
+            alert('API-Antwort: ' + JSON.stringify(data));
         })
         .catch(error => {
             console.error('Error saving data:', error);
-            alert('Fehler beim Speichern der Daten: ' + error.message);
+            alert('Fehler beim Speichern: ' + error.message);
         });
 }
 
