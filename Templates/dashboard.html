@@ -396,14 +396,18 @@
                     return response.json();
                 })
                 .then(data => {
-                    ApiEndpoint = localStorage.getItem("currentloadEndpoint")
+                    const apiEndpoint = localStorage.getItem("currentloadEndpoint");
                     console.log('Save successful:', data);
-                    loadApiData(ApiEndpoint);
-                    jsonoutput = JSON.stringify(data)
-                    for (const [key, value] of Object.entries(jsonoutput)) {
+                    loadApiData(apiEndpoint);
+
+                    const jsonOutput = JSON.stringify(data, null, 2);
+                    let output = '';
+
+                    for (const [key, value] of Object.entries(data)) {
                         output += `${key}: ${value}\n`;
                     }
-                    alert('API-Antwort: ' + output);
+
+                    alert('API-Antwort:\n' + output);
                 })
                 .catch(error => {
                     console.error('Error saving data:', error);
