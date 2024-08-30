@@ -397,7 +397,8 @@
             ApiEndpoint = localStorage.getItem("currentloadEndpoint")
             console.log('Save successful:', data);
             loadApiData(ApiEndpoint);
-            alert('API-Antwort: ' + JSON.stringify(data));
+            alert('API-Antwort: ' + JSON.stringify(data.key));
+            alert(data.key)
         })
         .catch(error => {
             console.error('Error saving data:', error);
