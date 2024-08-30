@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,6 +11,7 @@
     <iframe id="iframe" src="https://pyropixle.com/baxi_logon/"
         style="width: 100%; height: 100%; border: none;"></iframe>
 </div>
+
 <body>
     <div class="sidebar">
         {% if guild_details %} {% for guild in guild_details %}
@@ -140,7 +142,7 @@
                 ]
             }
         </script>
-        <!--Main Script-->
+    <!--Main Script-->
     <script>
         const apiKey = 'bdash-X_KzUaBBMlM8d5a5xbAav4Z6bYqS3rnBN94ugjtkhsI';
         let currentData = {};
@@ -344,67 +346,70 @@
             }
         }
         function saveChanges() {
-    const updatedData = {};
-    const isActive = document.querySelector('#toggle-switch input').checked ? 1 : 0;
-    updatedData.active = isActive;
-    const dropdowns = document.querySelectorAll('select');
-    dropdowns.forEach(dropdown => {
-        const selectedOption = dropdown.options[dropdown.selectedIndex];
-        const originalKey = dropdown.name;
-        if (currentData[originalKey]) {
-            updatedData[originalKey] = selectedOption.value;
-        }
-    });
+            const updatedData = {};
+            const isActive = document.querySelector('#toggle-switch input').checked ? 1 : 0;
+            updatedData.active = isActive;
+            const dropdowns = document.querySelectorAll('select');
+            dropdowns.forEach(dropdown => {
+                const selectedOption = dropdown.options[dropdown.selectedIndex];
+                const originalKey = dropdown.name;
+                if (currentData[originalKey]) {
+                    updatedData[originalKey] = selectedOption.value;
+                }
+            });
 
-    const inputs = document.querySelectorAll('input');
-    inputs.forEach(input => {
-        const originalKey = input.name;
-        let value;
-        if (input.type === 'checkbox') {
-            value = input.checked ? 1 : 0;
-        } else if (input.type === 'radio' && !input.checked) {
-            return;
-        } else {
-            value = input.value;
-        }
-        if (currentData[originalKey]) {
-            updatedData[originalKey] = value;
-        }
-    });
+            const inputs = document.querySelectorAll('input');
+            inputs.forEach(input => {
+                const originalKey = input.name;
+                let value;
+                if (input.type === 'checkbox') {
+                    value = input.checked ? 1 : 0;
+                } else if (input.type === 'radio' && !input.checked) {
+                    return;
+                } else {
+                    value = input.value;
+                }
+                if (currentData[originalKey]) {
+                    updatedData[originalKey] = value;
+                }
+            });
 
-    const senddata = removeSendFromObject(updatedData);
-    const saveEndpoint = localStorage.getItem('currentSaveEndpoint');
-    if (!saveEndpoint) {
-        console.error('Error: No save endpoint found in localStorage.');
-        return;
-    }
-    console.log(senddata);
-    fetch(saveEndpoint, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': apiKey
-        },
-        body: JSON.stringify(senddata)
-    })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
+            const senddata = removeSendFromObject(updatedData);
+            const saveEndpoint = localStorage.getItem('currentSaveEndpoint');
+            if (!saveEndpoint) {
+                console.error('Error: No save endpoint found in localStorage.');
+                return;
             }
-            return response.json();
-        })
-        .then(data => {
-            ApiEndpoint = localStorage.getItem("currentloadEndpoint")
-            console.log('Save successful:', data);
-            loadApiData(ApiEndpoint);
-            alert('API-Antwort: ' + JSON.stringify(data.key));
-            alert(data.key)
-        })
-        .catch(error => {
-            console.error('Error saving data:', error);
-            alert('Fehler beim Speichern: ' + error.message);
-        });
-}
+            console.log(senddata);
+            fetch(saveEndpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': apiKey
+                },
+                body: JSON.stringify(senddata)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    ApiEndpoint = localStorage.getItem("currentloadEndpoint")
+                    console.log('Save successful:', data);
+                    loadApiData(ApiEndpoint);
+                    jsonoutput = JSON.stringify(data)
+                    for (const [key, value] of Object.entries(jsonoutput)) {
+                        output += `${key}: ${value}\n`;
+                    }
+                    alert('API-Antwort: ' + output);
+                })
+                .catch(error => {
+                    console.error('Error saving data:', error);
+                    alert('Fehler beim Speichern: ' + error.message);
+                });
+        }
 
         /* -send attribut Remover */
         function removeSendFromObject(obj) {
@@ -475,30 +480,31 @@
         }
     </script>
     <script>
-          function start_updater(){
-        document.querySelector('input[name="image-input"]').addEventListener('input', function () {
-        localStorage.setItem("Image-Link", this.value);
-        updateimage()
-    });
-    }
-
-    function updateimage() {
-        var bild = document.querySelector('img[alt="image-input"]');
-        var linkraw = localStorage.getItem("Image-Link");
-
-        const linkExtension = linkraw.split('.').pop().split('?')[0];
-        const validExtensions = ["png", "gif", "jpg", "webp", "placehold"];
-        const isValidLink = validExtensions.includes(linkExtension);
-
-        if (!isValidLink) {
-            link = "https://placehold.co/200x100?text=Sorry but your url does not work"
-        } else {
-            link = linkraw
+        function start_updater() {
+            document.querySelector('input[name="image-input"]').addEventListener('input', function () {
+                localStorage.setItem("Image-Link", this.value);
+                updateimage()
+            });
         }
-        bild.src = link;
-    }
+
+        function updateimage() {
+            var bild = document.querySelector('img[alt="image-input"]');
+            var linkraw = localStorage.getItem("Image-Link");
+
+            const linkExtension = linkraw.split('.').pop().split('?')[0];
+            const validExtensions = ["png", "gif", "jpg", "webp", "placehold"];
+            const isValidLink = validExtensions.includes(linkExtension);
+
+            if (!isValidLink) {
+                link = "https://placehold.co/200x100?text=Sorry but your url does not work"
+            } else {
+                link = linkraw
+            }
+            bild.src = link;
+        }
     </script>
 </body>
+
 </html>
 <style>
     body {
@@ -520,9 +526,11 @@
         scrollbar-width: none;
         -ms-overflow-style: none;
     }
+
     .sidebar::-webkit-scrollbar {
         display: none;
     }
+
     .server-icon {
         width: 60px;
         height: 60px;
@@ -531,11 +539,13 @@
         cursor: pointer;
         position: relative;
     }
+
     .server-icon img {
         width: 100%;
         height: 100%;
         border-radius: 50%;
     }
+
     .server-name {
         display: none;
         position: absolute;
@@ -548,9 +558,11 @@
         transform: translateY(-50%);
         white-space: nowrap;
     }
+
     .server-icon:hover .server-name {
         display: block;
     }
+
     .content {
         flex-grow: 1;
         padding: 20px;
@@ -559,6 +571,7 @@
         display: flex;
         flex-direction: column;
     }
+
     .menu-bar {
         display: none;
         background-color: #2f3136;
@@ -568,6 +581,7 @@
         overflow-x: auto;
         white-space: nowrap;
     }
+
     .menu-item {
         margin-right: 20px;
         color: #dcddde;
@@ -575,37 +589,44 @@
         font-weight: bold;
         cursor: pointer;
     }
+
     .menu-item:hover {
         text-decoration: underline;
     }
+
     .server-details {
         background-color: #2f3136;
         padding: 20px;
         border-radius: 5px;
         display: none;
     }
+
     .server-header {
         display: flex;
         align-items: center;
         margin-bottom: 20px;
     }
+
     .server-header img {
         width: 80px;
         height: 80px;
         border-radius: 50%;
         margin-right: 20px;
     }
+
     .switch {
         position: relative;
         display: inline-block;
         width: 60px;
         height: 34px;
     }
+
     .switch input {
         opacity: 0;
         width: 0;
         height: 0;
     }
+
     .slider {
         position: absolute;
         cursor: pointer;
@@ -617,6 +638,7 @@
         transition: 0.4s;
         border-radius: 34px;
     }
+
     .slider:before {
         position: absolute;
         content: "";
@@ -628,12 +650,15 @@
         background-color: white;
         transition: 0.4s;
     }
+
     input:checked+.slider {
         background-color: #2196f3;
     }
+
     input:checked+.slider:before {
         transform: translateX(26px);
     }
+
     #overlay {
         position: fixed;
         top: 0;
@@ -658,6 +683,6 @@
         }, 3500);
         setTimeout(() => {
             overlay.style.display = "none";
-        }, 4500); 
+        }, 4500);
     };
 </script>
