@@ -169,6 +169,7 @@
                     loadApiData(a.dataset.loadEndpoint);
                     document.getElementById('server-details').style.display = 'none';
                     localStorage.setItem('currentSaveEndpoint', a.dataset.saveEndpoint);
+                    localStorage.setItem('currentloadEndpoint', a.dataset.loadEndpoint);
                     document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('selected'));
                     a.classList.add('selected');
                 });
@@ -393,7 +394,9 @@
                     return response.json();
                 })
                 .then(data => {
+                    ApiEndpoint = localStorage.getItem("currentloadEndpoint")
                     console.log('Save successful:', data);
+                    loadApiData(ApiEndpoint)
                 })
                 .catch(error => {
                     console.error('Error saving data:', error);
