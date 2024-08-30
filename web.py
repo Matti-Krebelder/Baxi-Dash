@@ -17,14 +17,14 @@ fernet = Fernet(config["BAXI"]["encryption_key"])
 API_ENDPOINT = 'https://discord.com/api/v10'
 AUTH_URL = 'https://discord.com/api/oauth2/authorize'
 TOKEN_URL = 'https://discord.com/api/oauth2/token'
-PERMS_API = 'https://security.pyropixle.com/api/dash/check/staff/user/perms/'
+PERMS_API = 'https://baxi-backend.pyropixle.com/api/dash/check/staff/user/perms/'
 LOG_FILE = 'denied_access.json'
 
 
 headers = {
     'Authorization': f"{config["BAXI"]["baxi_info_key"]}"
 }
-baxi_data_request = requests.get("https://security.pyropixle.com/api/oauth/get/data/baxi", headers=headers)
+baxi_data_request = requests.get("https://baxi-backend.pyropixle.com/api/oauth/get/data/baxi", headers=headers)
 baxi_data = baxi_data_request.json()
 
 baxi_client_secret = f"{fernet.decrypt(baxi_data['client_secret']).decode()}"
