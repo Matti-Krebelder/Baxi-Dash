@@ -39,7 +39,8 @@ async def home():
 
 @app.route("/login")
 async def login():
-    return redirect(f'{AUTH_URL}?client_id={int(baxi_data['client_id'])}&redirect_uri={baxi_data['redirect_uri']}&response_type=code&scope=identify%20guilds%20email')
+    return redirect(f'{AUTH_URL}?client_id={int(baxi_data['client_id'])}&redirect_uri={baxi_data['redirect_uri']}&response_type=code&scope=identify%20guilds')
+
 
 @app.route("/callback")
 async def callback():
