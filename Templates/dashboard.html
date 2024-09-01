@@ -279,7 +279,6 @@
                         console.log(`Verarbeite Drop-Key: ${key}`);
                         const dropdown = document.createElement('select');
                         dropdown.name = key;
-
                         const dropEntries = data[key];
                         let selectedOptionFound = false;
                         Object.entries(dropEntries).forEach(([subKey, subValue]) => {
@@ -288,7 +287,11 @@
                             const option = document.createElement('option');
                             option.value = subKey;
                             option.textContent = subValue.endsWith('-show') ? subValue.replace('-show', '') : subValue;
-                            if (activeDropsMap.hasOwnProperty(subKey)) {
+                            if (subValue === "Please Select") {
+                                option.selected = true;
+                                selectedOptionFound = true;
+                                console.log(`Option "Please Select" (${subKey}) ist ausgewählt.`);
+                            } else if (activeDropsMap.hasOwnProperty(subKey)) {
                                 option.selected = true;
                                 selectedOptionFound = true;
                                 console.log(`Option "${subValue}" (${subKey}) ist aktiv und wird ausgewählt.`);
@@ -298,12 +301,13 @@
 
                             dropdown.appendChild(option);
                         });
-                        if (!selectedOptionFound) {
-                            console.log(`Keine aktive Option für Drop-Key "${key}" gefunden.`);
+                        if (!selectedOptionFound && dropdown.options.length > 0) {
+                            dropdown.selectedIndex = 0;
                         }
 
                         textOutput.appendChild(dropdown);
                     }
+
 
                     if (key.includes('-table')) {
                         console.log(`Verarbeite Table-Key: ${key}`);
