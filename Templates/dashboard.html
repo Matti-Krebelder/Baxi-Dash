@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pyropixle | Baxi Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/save.css') }}">
     <link rel="icon" type="image/x-icon" href="https://baxi-backend.pyropixle.com/_images_/pyro.png" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
@@ -28,7 +27,12 @@
         <h1>Baxi Dashboard</h1>
         <div id="menu-bar" class="menu-bar"></div>
         <div id="server-details" class="server-details"></div>
-        <div id="notification-card" class="card notify-info" style="display: none;">
+        <div id="notification-card" class="card notify-info" style="display:none;">
+            <svg id="wave" class="wave" viewBox="0 0 1440 320" xmlns="http://www.w3.org/2000/svg">
+                <path fill="currentColor" fill-opacity="1"
+                    d="M0,128L30,122.7C60,117,120,107,180,106.7C240,107,300,117,360,144C420,171,480,213,540,213.3C600,213,660,171,720,170.7C780,171,840,213,900,208C960,203,1020,149,1080,154.7C1140,160,1200,224,1260,213.3C1320,203,1380,117,1440,94.7L1440,32L1440,320L1410,320C1380,320,1320,320,1260,320C1200,320,1140,320,1080,320C1020,320,960,320,900,320C840,320,780,320,720,320C660,320,600,320,540,320C480,320,420,320,360,320C300,320,240,320,180,320C120,320,60,320,30,320L0,320Z">
+                </path>
+            </svg>
             <div id="icon-container" class="icon-container">
                 <i id="icon" class="icon fas"></i>
             </div>
@@ -37,7 +41,7 @@
                 <p id="sub-text" class="sub-text">Let me think!</p>
             </div>
             <i class="cross-icon fas fa-times" onclick="closeNotification()"></i>
-          </div>
+        </div>
         <div id="content-area" class="content-area">
             <label id="toggle-switch" class="switch" style="display: none;">
                 <input type="checkbox" id="toggle-input" />
@@ -331,37 +335,33 @@
             const iconContainer = document.getElementById("icon-container");
             const icon = document.getElementById("icon");
             const wave = document.getElementById("wave");
-
             notificationCard.className = `card ${msgType}`;
             iconContainer.className = `icon-container ${msgType}`;
             icon.className = `icon fas`;
-
             switch (msgType) {
                 case 'notify-info':
                     icon.classList.add('fa-info-circle', 'icon-info');
-                    icon.classList.add('fa-xl', 'icon-info');
-                    notificationCard.style.background = "linear-gradient(to right, darkblue, blue)";
+                    wave.style.fill = '#007bff';
                     break;
                 case 'notify-success':
                     icon.classList.add('fa-check-circle', 'icon-success');
-                    icon.classList.add('fa-xl', 'icon-success');
-                    notificationCard.style.background = "linear-gradient(to right, darkgreen, lime)";
+                    wave.style.fill = '#28a745';
                     break;
                 case 'notify-warn':
                     icon.classList.add('fa-exclamation-triangle', 'icon-warn');
-                    icon.classList.add('fa-xl', 'icon-warn');
-                    notificationCard.style.background = "linear-gradient(to right, darkorange, orange)";
+                    wave.style.fill = '#ffc107';
                     break;
                 case 'notify-error':
                     icon.classList.add('fa-times-circle', 'icon-error');
-                    icon.classList.add('fa-xl', 'icon-error');
-                    notificationCard.style.background = "linear-gradient(to right, darkred, red)";
+                    wave.style.fill = '#dc3545';
                     break;
             }
             messageText.textContent = msgContent;
             subText.textContent = "";
             notificationCard.style.display = 'flex';
-           
+            setTimeout(() => {
+                closeNotification();
+            }, 5000);
         }
         function closeNotification() {
             const notificationCard = document.getElementById("notification-card");
@@ -525,98 +525,3 @@
 </body>
 
 </html>
-
-<style>
-    .button {
-  --main-focus: #2d8cf0;
-  --font-color: #dedede;
-  --bg-color-sub: #222;
-  --bg-color: #323232;
-  --main-color: #dedede;
-  position: relative;
-  width: 150px;
-  height: 20px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  border: 2px solid var(--main-color);
-  box-shadow: 4px 4px var(--main-color);
-  background-color: var(--bg-color);
-  border-radius: 50px;
-  overflow: hidden;
-  transition: all 0.3s;
-}
-
-.button .button__text {
-  transform: translateX(33px);
-  color: var(--font-color);
-  font-weight: 600;
-  transition: all 0.3s;
-}
-
-.button .button__icon {
-  position: absolute;
-  transform: translateX(109px);
-  height: 100%;
-  width: 39px;
-  background-color: var(--bg-color-sub);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s;
-}
-
-.button .svg {
-  width: 20px;
-  fill: var(--main-color);
-}
-
-.button:hover {
-  background: var(--bg-color);
-}
-
-.button:hover .button__text {
-  color: transparent;
-}
-
-.button:hover .button__icon {
-  width: 148px;
-  transform: translateX(0);
-}
-
-.button:active {
-  transform: translate(3px, 3px);
-  box-shadow: 0px 0px var(--main-color);
-}
-
-/* Notification Card Styles */
-.card {
-  height: 20px;
-  display: none; /* Default is hidden */
-  position: fixed;
-  bottom: 40px;
-  right: 20px;
-  width: 300px;
-  padding: 15px;
-  border-radius: 80px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background-color: #323232;
-  color: #dedede;
-}
-
-.icon-container {
-  flex-shrink: 0;
-  margin-right: 15px;
-}
-
-.message-text-container {
-  flex-grow: 1;
-}
-
-.cross-icon {
-  cursor: pointer;
-}
-</style>
