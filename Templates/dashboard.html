@@ -202,6 +202,7 @@
                 a.addEventListener('click', event => {
                     event.preventDefault();
                     loadApiData(a.dataset.loadEndpoint);
+                    console.log(a.dataset.apiEndpoint);
                     document.getElementById('server-details').style.display = 'none';
                     localStorage.setItem('currentSaveEndpoint', a.dataset.saveEndpoint);
                     localStorage.setItem('currentloadEndpoint', a.dataset.loadEndpoint);
