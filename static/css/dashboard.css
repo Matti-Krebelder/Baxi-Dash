@@ -7,7 +7,7 @@ body {
 
 .sidebar {
     width: 80px;
-    background-color: #2f3136;
+    background-color: rgba(0, 0, 0, 0.75);
     height: 100vh;
     padding: 20px 0;
     display: flex;
@@ -57,7 +57,7 @@ body {
 .content {
     flex-grow: 1;
     padding: 20px;
-    background-color: #36393f;
+    background-color: #343434;
     color: #dcddde;
     display: flex;
     flex-direction: column;
@@ -65,7 +65,7 @@ body {
 
 .menu-bar {
     display: none;
-    background-color: #2f3136;
+    background-color: rgba(0, 0, 0, 0.5);
     padding: 10px;
     border-radius: 5px;
     margin-bottom: 20px;
