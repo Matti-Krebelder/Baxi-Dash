@@ -461,16 +461,12 @@
                     const apiEndpoint = localStorage.getItem("currentloadEndpoint");
                     console.log('Save successful:', data);
                     loadApiData(apiEndpoint);
-
                     const jsonOutput = JSON.stringify(data, null, 2);
                     let output = '';
-
                     for (const [key, value] of Object.entries(data)) {
                         output += `${key}: ${value}\n`;
                     }
-
-                    // Use the showNotification function instead of alert
-                    showNotification('notify-success', 'API-Antwort:\n' + output);
+                    showNotification('notify-success', output);
                 })
                 .catch(error => {
                     console.error('Error saving data:', error);
