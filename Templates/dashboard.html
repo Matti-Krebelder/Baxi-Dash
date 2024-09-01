@@ -201,7 +201,7 @@
 
                 currentData = data;
                 console.log(data)
-                
+
 
                 const toggleSwitch = document.getElementById('toggle-switch');
                 let showToggle = false;
@@ -418,7 +418,7 @@
                     return response.json();
                 })
                 .then(data => {
-                    console.alert('Save successful:', data);
+                    alert('Save successful:', data);
                     const apiEndpoint = localStorage.getItem("currentloadEndpoint");
                     loadApiData(apiEndpoint);
                     const entries = Object.entries(data);
