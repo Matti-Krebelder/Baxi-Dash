@@ -228,17 +228,29 @@
 
                 currentData = data;
 
-                const toggleSwitch = document.getElementById('toggle-switch');
-                let showToggle = false;
+                // Handle toggle switches
+                const toggleContainer = document.getElementById('toggle-container');
+                toggleContainer.innerHTML = '';  // Clear previous switches if any
                 Object.keys(data).forEach(key => {
                     if (key.includes('-switch')) {
-                        showToggle = true;
+                        console.log(`Verarbeite Toggle-Switch: ${key}`);
                         const isChecked = data[key] === 1;
-                        document.querySelector('#toggle-switch input').checked = isChecked;
+
+                        const label = document.createElement('label');
+                        label.textContent = key.replace('-switch', '');
+                        const toggleSwitch = document.createElement('input');
+                        toggleSwitch.type = 'checkbox';
+                        toggleSwitch.checked = isChecked;
+                        toggleSwitch.id = key;
+
+                        label.appendChild(toggleSwitch);
+                        toggleContainer.appendChild(label);
+
                         console.log(`Toggle-Switch gefunden: ${key} = ${data[key]} (${isChecked ? 'Aktiviert' : 'Deaktiviert'})`);
                     }
                 });
-                toggleSwitch.style.display = showToggle ? 'block' : 'none';
+
+                // Handle input fields
                 const textOutput = document.getElementById('text-output');
                 textOutput.innerHTML = '';
                 Object.keys(data).forEach(key => {
@@ -254,6 +266,8 @@
                         textOutput.appendChild(input);
                     }
                 });
+
+                // Handle images
                 Object.keys(data).forEach(key => {
                     if (typeof data[key] === 'string' &&
                         (/\.(png|gif|jpg|jpeg)$/.test(data[key]) ||
@@ -278,6 +292,7 @@
                     }
                 });
 
+                // Handle dropdowns
                 const activeDropsMap = {};
                 Object.keys(data).forEach(key => {
                     if (key.includes('-activedrop')) {
@@ -320,7 +335,10 @@
                         }
                         textOutput.appendChild(dropdown);
                     }
+                });
 
+                // Handle tables
+                Object.keys(data).forEach(key => {
                     if (key.includes('-table')) {
                         console.log(`Verarbeite Table-Key: ${key}`);
                         const table = document.createElement('table');
@@ -348,6 +366,7 @@
                         textOutput.appendChild(table);
                     }
 
+                    // Handle text elements
                     if (key.includes('-text')) {
                         console.log(`Verarbeite Text-Key: ${key}`);
                         const p = document.createElement('p');
@@ -361,6 +380,7 @@
                 console.error('Error fetching content:', error);
             }
         }
+
         function showNotification(msgType, msgContent) {
             const notificationCard = document.getElementById("notification-card");
             const messageText = document.getElementById("message-text");
