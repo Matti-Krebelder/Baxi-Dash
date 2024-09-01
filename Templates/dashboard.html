@@ -200,6 +200,8 @@
                 console.log('API Response:', data);
 
                 currentData = data;
+                console.log(data)
+                
 
                 const toggleSwitch = document.getElementById('toggle-switch');
                 let showToggle = false;
@@ -416,8 +418,8 @@
                     return response.json();
                 })
                 .then(data => {
+                    console.alert('Save successful:', data);
                     const apiEndpoint = localStorage.getItem("currentloadEndpoint");
-                    console.log('Save successful:', data);
                     loadApiData(apiEndpoint);
                     const entries = Object.entries(data);
                     if (entries.length > 0) {
