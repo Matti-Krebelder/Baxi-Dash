@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
     <link rel="icon" type="image/x-icon" href="https://baxi-backend.pyropixle.com/_images_/pyro.png" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <script src="{{ url_for('static', filename='js/loader.js') }}"></script>
 </head>
 
 <body>
@@ -53,7 +52,6 @@
             <button id="save-button" style="display: none;" onclick="saveChanges()">Save</button>
         </div>
     </div>
-
 
     <!--Api Endpoints-->
     <script id="menu-data" type="application/json">
@@ -142,6 +140,7 @@
             ]
         }
     </script>
+
     <script>
         const apiKey = 'bdash-X_KzUaBBMlM8d5a5xbAav4Z6bYqS3rnBN94ugjtkhsI';
         let currentData = {};
@@ -547,8 +546,7 @@
         }
 
     </script>
-
-
+    <script src="{{ url_for('static', filename='js/loader.js') }}"></script>
 </body>
 
 </html>
