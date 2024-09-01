@@ -416,7 +416,6 @@
                     return response.json();
                 })
                 .then(data => {
-                    alert('Save successful:', data);
                     const apiEndpoint = localStorage.getItem("currentloadEndpoint");
                     loadApiData(apiEndpoint);
                     const entries = Object.entries(data);
