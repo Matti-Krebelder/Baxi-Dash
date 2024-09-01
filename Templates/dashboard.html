@@ -27,21 +27,36 @@
         <h1>Baxi Dashboard</h1>
         <div id="menu-bar" class="menu-bar"></div>
         <div id="server-details" class="server-details"></div>
-        <div id="notification-card" class="card notify-info" style="display:none;">
-            <svg id="wave" class="wave" viewBox="0 0 1440 320" xmlns="http://www.w3.org/2000/svg">
-                <path fill="currentColor" fill-opacity="1"
-                    d="M0,128L30,122.7C60,117,120,107,180,106.7C240,107,300,117,360,144C420,171,480,213,540,213.3C600,213,660,171,720,170.7C780,171,840,213,900,208C960,203,1020,149,1080,154.7C1140,160,1200,224,1260,213.3C1320,203,1380,117,1440,94.7L1440,32L1440,320L1410,320C1380,320,1320,320,1260,320C1200,320,1140,320,1080,320C1020,320,960,320,900,320C840,320,780,320,720,320C660,320,600,320,540,320C480,320,420,320,360,320C300,320,240,320,180,320C120,320,60,320,30,320L0,320Z">
-                </path>
-            </svg>
-            <div id="icon-container" class="icon-container">
-                <i id="icon" class="icon fas"></i>
+        <div class="error">
+            <div class="error__icon">
+              <svg
+                fill="none"
+                height="24"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="m13 13h-2v-6h2zm0 4h-2v-2h2zm-1-15c-1.3132 0-2.61358.25866-3.82683.7612-1.21326.50255-2.31565 1.23915-3.24424 2.16773-1.87536 1.87537-2.92893 4.41891-2.92893 7.07107 0 2.6522 1.05357 5.1957 2.92893 7.0711.92859.9286 2.03098 1.6651 3.24424 2.1677 1.21325.5025 2.51363.7612 3.82683.7612 2.6522 0 5.1957-1.0536 7.0711-2.9289 1.8753-1.8754 2.9289-4.4189 2.9289-7.0711 0-1.3132-.2587-2.61358-.7612-3.82683-.5026-1.21326-1.2391-2.31565-2.1677-3.24424-.9286-.92858-2.031-1.66518-3.2443-2.16773-1.2132-.50254-2.5136-.7612-3.8268-.7612z"
+                  fill="#393a37"
+                ></path>
+              </svg>
             </div>
-            <div class="message-text-container">
-                <p id="message-text" class="message-text">Loading...</p>
-                <p id="sub-text" class="sub-text">Let me think!</p>
+            <div class="error__title">lorem ipsum dolor sit amet</div>
+            <div class="error__close">
+              <svg
+                height="20"
+                viewBox="0 0 20 20"
+                width="20"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="m15.8333 5.34166-1.175-1.175-4.6583 4.65834-4.65833-4.65834-1.175 1.175 4.65833 4.65834-4.65833 4.6583 1.175 1.175 4.65833-4.6583 4.6583 4.6583 1.175-1.175-4.6583-4.6583z"
+                  fill="#393a37"
+                ></path>
+              </svg>
             </div>
-            <i class="cross-icon fas fa-times" onclick="closeNotification()"></i>
-        </div>
+          </div>
         <div id="content-area" class="content-area">
             <label id="toggle-switch" class="switch" style="display: none;">
                 <input type="checkbox" id="toggle-input" />
@@ -328,41 +343,45 @@
                 console.error('Error fetching content:', error);
             }
         }
-        function showNotification(msgType, msgContent) {
-            const notificationCard = document.getElementById("notification-card");
-            const messageText = document.getElementById("message-text");
-            const subText = document.getElementById("sub-text");
-            const iconContainer = document.getElementById("icon-container");
-            const icon = document.getElementById("icon");
-            const wave = document.getElementById("wave");
-            notificationCard.className = `card ${msgType}`;
-            iconContainer.className = `icon-container ${msgType}`;
-            icon.className = `icon fas`;
+        function showNotification(msgType, msgContent, msgTitle = "Notification") {
+            const notificationCard = document.querySelector(".error"); // Updated to select the new error div
+            const messageText = notificationCard.querySelector(".error__title"); // Updated to select the title element
+            const icon = notificationCard.querySelector(".error__icon svg path"); // Updated to select the SVG path element
+
+            // Update the icon and its color based on the notification type
             switch (msgType) {
                 case 'notify-info':
-                    icon.classList.add('fa-info-circle', 'icon-info');
-                    wave.style.fill = '#007bff';
+                    icon.setAttribute("fill", "#007bff");
                     break;
                 case 'notify-success':
-                    icon.classList.add('fa-check-circle', 'icon-success');
-                    wave.style.fill = '#28a745';
+                    icon.setAttribute("fill", "#28a745");
                     break;
                 case 'notify-warn':
-                    icon.classList.add('fa-exclamation-triangle', 'icon-warn');
-                    wave.style.fill = '#ffc107';
+                    icon.setAttribute("fill", "#ffc107");
                     break;
                 case 'notify-error':
-                    icon.classList.add('fa-times-circle', 'icon-error');
-                    wave.style.fill = '#dc3545';
+                    icon.setAttribute("fill", "#dc3545");
                     break;
             }
+
+            // Set the title and content
             messageText.textContent = msgContent;
-            subText.textContent = "";
+
+            // Show the notification
             notificationCard.style.display = 'flex';
             setTimeout(() => {
                 closeNotification();
             }, 5000);
         }
+
+        function closeNotification() {
+            const notificationCard = document.querySelector(".error");
+            notificationCard.style.display = 'none';
+        }
+
+        // Event listener to close the notification when the close icon is clicked
+        document.querySelector(".error__close").addEventListener("click", closeNotification);
+
         function closeNotification() {
             const notificationCard = document.getElementById("notification-card");
             notificationCard.style.display = 'none';
