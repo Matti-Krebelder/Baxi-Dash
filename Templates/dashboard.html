@@ -46,23 +46,6 @@
                 <input type="checkbox" id="toggle-input" />
                 <span class="slider"></span>
             </label>
-            <label id="toggle-switch-2" class="switch" style="display: none;">
-                <input type="checkbox" id="toggle-input-2" />
-                <span class="slider"></span>
-            </label>
-            <label id="toggle-switch-3" class="switch" style="display: none;">
-                <input type="checkbox" id="toggle-input-3" />
-                <span class="slider"></span>
-            </label>
-            <label id="toggle-switch-4" class="switch" style="display: none;">
-                <input type="checkbox" id="toggle-input-4" />
-                <span class="slider"></span>
-            </label>
-            <label id="toggle-switch-5" class="switch" style="display: none;">
-                <input type="checkbox" id="toggle-input-5" />
-                <span class="slider"></span>
-            </label>
-
             <div id="text-output" class="text-output"></div>
             <button id="save-button" style="display: none;" onclick="saveChanges()">Save</button>
         </div>
@@ -244,22 +227,23 @@
                 console.log('API Response:', data);
 
                 currentData = data;
-                for (let i = 1; i <= 5; i++) {
-                    const toggleSwitch = document.getElementById(`toggle-switch-${i}`);
-                    const input = document.getElementById(`toggle-input-${i}`);
-                    if (data[`-switch-${i}`] !== undefined) {
-                        toggleSwitch.style.display = 'block';
-                        input.checked = data[`-switch-${i}`] === 1;
-                        console.log(`Toggle-Switch ${i} gefunden: -switch-${i} = ${data[`-switch-${i}`]} (${input.checked ? 'Aktiviert' : 'Deaktiviert'})`);
-                    } else {
-                        toggleSwitch.style.display = 'none';
-                    }
-                }
 
+                const toggleSwitch = document.getElementById('toggle-switch');
+                let showToggle = false;
+                Object.keys(data).forEach(key => {
+                    if (key.includes('-switch')) {
+                        showToggle = true;
+                        const isChecked = data[key] === 1;
+                        document.querySelector('#toggle-switch input').checked = isChecked;
+                        console.log(`Toggle-Switch gefunden: ${key} = ${data[key]} (${isChecked ? 'Aktiviert' : 'Deaktiviert'})`);
+                    }
+                });
+                toggleSwitch.style.display = showToggle ? 'block' : 'none';
                 const textOutput = document.getElementById('text-output');
                 textOutput.innerHTML = '';
                 Object.keys(data).forEach(key => {
                     if (key.includes('-input')) {
+                        console.log(`Verarbeite Input-Key: ${key}`);
                         const input = document.createElement('input');
                         input.name = key;
                         input.type = 'text';
