@@ -1,4 +1,3 @@
-/* Grundlegende Stile für den gesamten Body */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -6,7 +5,6 @@ body {
     display: flex;
 }
 
-/* Sidebar-Stile */
 .sidebar {
     width: 80px;
     background-color: #2f3136;
@@ -16,15 +14,14 @@ body {
     flex-direction: column;
     align-items: center;
     overflow: auto;
-    scrollbar-width: none; /* für Firefox */
-    -ms-overflow-style: none; /* für IE 10+ */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
 }
 
 .sidebar::-webkit-scrollbar {
-    display: none; /* für Chrome, Safari und Opera */
+    display: none;
 }
 
-/* Stile für Server-Icons */
 .server-icon {
     width: 60px;
     height: 60px;
@@ -40,7 +37,6 @@ body {
     border-radius: 50%;
 }
 
-/* Tooltip für Server-Namen */
 .server-name {
     display: none;
     position: absolute;
@@ -58,7 +54,6 @@ body {
     display: block;
 }
 
-/* Stile für den Inhalt */
 .content {
     flex-grow: 1;
     padding: 20px;
@@ -68,7 +63,6 @@ body {
     flex-direction: column;
 }
 
-/* Menüleiste */
 .menu-bar {
     display: none;
     background-color: #2f3136;
@@ -79,7 +73,6 @@ body {
     white-space: nowrap;
 }
 
-/* Menüelemente */
 .menu-item {
     margin-right: 20px;
     color: #dcddde;
@@ -92,7 +85,6 @@ body {
     text-decoration: underline;
 }
 
-/* Server-Details-Bereich */
 .server-details {
     background-color: #2f3136;
     padding: 20px;
@@ -100,7 +92,6 @@ body {
     display: none;
 }
 
-/* Server-Header */
 .server-header {
     display: flex;
     align-items: center;
@@ -114,7 +105,6 @@ body {
     margin-right: 20px;
 }
 
-/* Schalter (Toggle Switch) */
 .switch {
     position: relative;
     display: inline-block;
@@ -152,22 +142,21 @@ body {
     transition: 0.4s;
 }
 
-input:checked + .slider {
+input:checked+.slider {
     background-color: #2196f3;
 }
 
-input:checked + .slider:before {
+input:checked+.slider:before {
     transform: translateX(26px);
 }
 
-/* Overlay für modale Fenster */
 #overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.7); /* leicht transparent für besseren Sichtkomfort */
+    background: rgba(0, 0, 0, 1);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -175,8 +164,6 @@ input:checked + .slider:before {
     transition: opacity 0.99s ease-out;
     z-index: 1000;
 }
-
-/* Karten-Layout */
 .card {
     width: 330px;
     height: 80px;
@@ -189,12 +176,10 @@ input:checked + .slider:before {
     overflow: hidden;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: space-around;
     gap: 15px;
     font-family: sans-serif;
 }
-
-/* Wellen-Design auf der Karte */
 .wave {
     position: absolute;
     transform: rotate(90deg);
@@ -202,9 +187,8 @@ input:checked + .slider:before {
     top: 32px;
     width: 80px;
     fill: white;
+    /* Default color */
 }
-
-/* Container für Icons */
 .icon-container {
     width: 35px;
     height: 35px;
@@ -214,13 +198,9 @@ input:checked + .slider:before {
     border-radius: 50%;
     margin-left: 8px;
 }
-
-/* Icon-Stile */
 .icon {
     font-size: 17px;
 }
-
-/* Nachrichtentext-Container */
 .message-text-container {
     display: flex;
     flex-direction: column;
@@ -228,59 +208,45 @@ input:checked + .slider:before {
     align-items: flex-start;
     flex-grow: 1;
 }
-
-/* Textstile für Nachrichten */
 .message-text,
 .sub-text {
     margin: 0;
     cursor: default;
 }
-
 .message-text {
     color: #ffffff;
     font-size: 17px;
     font-weight: 700;
 }
-
 .sub-text {
     font-size: 14px;
     color: #ffffff;
 }
-
-/* Stile für das Kreuz-Icon */
 .cross-icon {
     width: 18px;
     height: 18px;
     color: #555;
     cursor: pointer;
 }
-
-/* Benachrichtigungsstile */
 .notify-info {
     background-color: #007bff;
     color: #ffffff;
 }
-
 .notify-success {
     background-color: #28a745;
     color: #ffffff;
 }
-
 .notify-warn {
     background-color: #ffc107;
     color: #000000;
 }
-
 .notify-error {
     background-color: #dc3545;
     color: #ffffff;
 }
-
-/* Icon-Farben für Benachrichtigungen */
 .icon-info {
     color: #ffffff;
 }
-
 .icon-success {
     color: #ffffff;
 }
