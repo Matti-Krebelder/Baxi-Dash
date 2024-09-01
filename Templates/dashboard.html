@@ -28,11 +28,6 @@
         <div id="menu-bar" class="menu-bar"></div>
         <div id="server-details" class="server-details"></div>
         <div id="notification-card" class="card notify-info" style="display:none;">
-            <svg id="wave" class="wave" viewBox="0 0 1440 320" xmlns="http://www.w3.org/2000/svg">
-                <path fill="currentColor" fill-opacity="1"
-                    d="M0,128L30,122.7C60,117,120,107,180,106.7C240,107,300,117,360,144C420,171,480,213,540,213.3C600,213,660,171,720,170.7C780,171,840,213,900,208C960,203,1020,149,1080,154.7C1140,160,1200,224,1260,213.3C1320,203,1380,117,1440,94.7L1440,32L1440,320L1410,320C1380,320,1320,320,1260,320C1200,320,1140,320,1080,320C1020,320,960,320,900,320C840,320,780,320,720,320C660,320,600,320,540,320C480,320,420,320,360,320C300,320,240,320,180,320C120,320,60,320,30,320L0,320Z">
-                </path>
-            </svg>
             <div id="icon-container" class="icon-container">
                 <i id="icon" class="icon fas"></i>
             </div>
@@ -41,6 +36,7 @@
                 <p id="sub-text" class="sub-text">Let me think!</p>
             </div>
             <i class="cross-icon fas fa-times" onclick="closeNotification()"></i>
+
         </div>
         <div id="content-area" class="content-area">
             <label id="toggle-switch" class="switch" style="display: none;">
@@ -336,26 +332,28 @@
             const subText = document.getElementById("sub-text");
             const iconContainer = document.getElementById("icon-container");
             const icon = document.getElementById("icon");
-            const wave = document.getElementById("wave");
             notificationCard.className = `card ${msgType}`;
             iconContainer.className = `icon-container ${msgType}`;
             icon.className = `icon fas`;
             switch (msgType) {
                 case 'notify-info':
                     icon.classList.add('fa-info-circle', 'icon-info');
-                    wave.style.fill = '#007bff';
+                    notificationCard.style.background = "linear-gradient(270deg, rgba(0,129,138,1) 0%, rgba(10,70,108,1) 42%, rgba(0,66,142,1) 100%)";
                     break;
                 case 'notify-success':
                     icon.classList.add('fa-check-circle', 'icon-success');
-                    wave.style.fill = '#28a745';
+                    notificationCard.style.background = "linear-gradient(to right, darkgreen, lime)";
+
                     break;
                 case 'notify-warn':
                     icon.classList.add('fa-exclamation-triangle', 'icon-warn');
-                    wave.style.fill = '#ffc107';
+                    notificationCard.style.background = "linear-gradient(90deg, rgba(152,101,35,1) 0%, rgba(222,192,75,1) 100%)";
+
                     break;
                 case 'notify-error':
                     icon.classList.add('fa-times-circle', 'icon-error');
-                    wave.style.fill = '#dc3545';
+                    notificationCard.style.background = "linear-gradient(270deg, rgba(213,37,48,1) 0%, rgba(226,101,77,1) 100%)";
+
                     break;
             }
             messageText.textContent = msgContent;

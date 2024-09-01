@@ -166,8 +166,8 @@ input:checked+.slider:before {
 }
 .card {
     width: 330px;
-    height: 80px;
-    border-radius: 8px;
+    height: 45px;
+    border-radius: 50px;
     box-sizing: border-box;
     padding: 10px 15px;
     background-color: #494949;
@@ -180,26 +180,12 @@ input:checked+.slider:before {
     gap: 15px;
     font-family: sans-serif;
 }
-.wave {
-    position: absolute;
-    transform: rotate(90deg);
-    left: -31px;
-    top: 32px;
-    width: 80px;
-    fill: white;
-    /* Default color */
-}
-.icon-container {
-    width: 35px;
-    height: 35px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 50%;
-    margin-left: 8px;
-}
+
+
 .icon {
+  color: white;
     font-size: 17px;
+    background-color: transparent;
 }
 .message-text-container {
     display: flex;
@@ -215,7 +201,7 @@ input:checked+.slider:before {
 }
 .message-text {
     color: #ffffff;
-    font-size: 17px;
+    font-size: 12px;
     font-weight: 700;
 }
 .sub-text {
@@ -227,34 +213,4 @@ input:checked+.slider:before {
     height: 18px;
     color: #555;
     cursor: pointer;
-}
-.notify-info {
-    background-color: #007bff;
-    color: #ffffff;
-}
-.notify-success {
-    background-color: #28a745;
-    color: #ffffff;
-}
-.notify-warn {
-    background-color: #ffc107;
-    color: #000000;
-}
-.notify-error {
-    background-color: #dc3545;
-    color: #ffffff;
-}
-.icon-info {
-    color: #ffffff;
-}
-.icon-success {
-    color: #ffffff;
-}
-
-.icon-warn {
-    color: #000000;
-}
-
-.icon-error {
-    color: #ffffff;
 }
