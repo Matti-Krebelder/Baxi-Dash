@@ -461,17 +461,21 @@
                     const apiEndpoint = localStorage.getItem("currentloadEndpoint");
                     console.log('Save successful:', data);
                     loadApiData(apiEndpoint);
-                    const jsonOutput = JSON.stringify(data, null, 2);
-                    let output = '';
-                    for (const [key, value] of Object.entries(data)) {
-                        output += `${key}: ${value}\n`;
+
+                    // Erstelle ein Array von key-value Paaren
+                    const entries = Object.entries(data);
+
+                    // Falls es Einträge gibt, nimm das erste Paar für die Benachrichtigung
+                    if (entries.length > 0) {
+                        const [key, value] = entries[0];
+                        showNotification(key, value);
                     }
-                    showNotification('notify-success', output);
                 })
                 .catch(error => {
                     console.error('Error saving data:', error);
                     showNotification('notify-error', 'Fehler beim Speichern: ' + error.message);
                 });
+
         }
 
 
