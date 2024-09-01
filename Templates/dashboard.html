@@ -202,7 +202,6 @@
                 a.addEventListener('click', event => {
                     event.preventDefault();
                     loadApiData(a.dataset.loadEndpoint);
-                    console.log(a.dataset.apiEndpoint);
                     document.getElementById('server-details').style.display = 'none';
                     localStorage.setItem('currentSaveEndpoint', a.dataset.saveEndpoint);
                     localStorage.setItem('currentloadEndpoint', a.dataset.loadEndpoint);
@@ -242,7 +241,7 @@
                 if (!response.ok) throw new Error('Network response was not ok');
                 const dataraw = await response.json();
                 const data = replaceValue(dataraw, null, "null");
-                console.log('API Response:', data);
+                alert('API Response:', data);
 
                 currentData = data;
 
