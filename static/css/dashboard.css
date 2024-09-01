@@ -1,3 +1,4 @@
+/* Grundlegende Stile für den gesamten Body */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -5,6 +6,7 @@ body {
     display: flex;
 }
 
+/* Sidebar-Stile */
 .sidebar {
     width: 80px;
     background-color: #2f3136;
@@ -14,14 +16,15 @@ body {
     flex-direction: column;
     align-items: center;
     overflow: auto;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
+    scrollbar-width: none; /* für Firefox */
+    -ms-overflow-style: none; /* für IE 10+ */
 }
 
 .sidebar::-webkit-scrollbar {
-    display: none;
+    display: none; /* für Chrome, Safari und Opera */
 }
 
+/* Stile für Server-Icons */
 .server-icon {
     width: 60px;
     height: 60px;
@@ -37,6 +40,7 @@ body {
     border-radius: 50%;
 }
 
+/* Tooltip für Server-Namen */
 .server-name {
     display: none;
     position: absolute;
@@ -54,6 +58,7 @@ body {
     display: block;
 }
 
+/* Stile für den Inhalt */
 .content {
     flex-grow: 1;
     padding: 20px;
@@ -63,35 +68,31 @@ body {
     flex-direction: column;
 }
 
+/* Menüleiste */
 .menu-bar {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px; /* Abstand zwischen den Karten */
-}
-
-.menu-card {
-    flex: 1 1 calc(25% - 10px); /* Bis zu 4 Karten nebeneinander, Platz für Lücken */
-    box-sizing: border-box;
-    border: 1px solid #ddd;
-    border-radius: 5px;
+    display: none;
+    background-color: #2f3136;
     padding: 10px;
-    text-align: center;
-    background-color: #fff;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    margin-bottom: 20px;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+/* Menüelemente */
+.menu-item {
+    margin-right: 20px;
+    color: #dcddde;
+    text-decoration: none;
+    font-weight: bold;
     cursor: pointer;
-    transition: background-color 0.3s, box-shadow 0.3s;
 }
 
-.menu-card:hover {
-    background-color: #f0f0f0;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+.menu-item:hover {
+    text-decoration: underline;
 }
 
-.menu-card .card-title {
-    font-size: 1.2em;
-    margin: 10px 0;
-}
-
+/* Server-Details-Bereich */
 .server-details {
     background-color: #2f3136;
     padding: 20px;
@@ -99,6 +100,7 @@ body {
     display: none;
 }
 
+/* Server-Header */
 .server-header {
     display: flex;
     align-items: center;
@@ -112,6 +114,7 @@ body {
     margin-right: 20px;
 }
 
+/* Schalter (Toggle Switch) */
 .switch {
     position: relative;
     display: inline-block;
@@ -149,21 +152,22 @@ body {
     transition: 0.4s;
 }
 
-input:checked+.slider {
+input:checked + .slider {
     background-color: #2196f3;
 }
 
-input:checked+.slider:before {
+input:checked + .slider:before {
     transform: translateX(26px);
 }
 
+/* Overlay für modale Fenster */
 #overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 1);
+    background: rgba(0, 0, 0, 0.7); /* leicht transparent für besseren Sichtkomfort */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -172,6 +176,7 @@ input:checked+.slider:before {
     z-index: 1000;
 }
 
+/* Karten-Layout */
 .card {
     width: 330px;
     height: 80px;
@@ -184,11 +189,12 @@ input:checked+.slider:before {
     overflow: hidden;
     display: flex;
     align-items: center;
-    justify-content: space-around;
+    justify-content: space-between;
     gap: 15px;
     font-family: sans-serif;
 }
 
+/* Wellen-Design auf der Karte */
 .wave {
     position: absolute;
     transform: rotate(90deg);
@@ -198,6 +204,7 @@ input:checked+.slider:before {
     fill: white;
 }
 
+/* Container für Icons */
 .icon-container {
     width: 35px;
     height: 35px;
@@ -208,10 +215,12 @@ input:checked+.slider:before {
     margin-left: 8px;
 }
 
+/* Icon-Stile */
 .icon {
     font-size: 17px;
 }
 
+/* Nachrichtentext-Container */
 .message-text-container {
     display: flex;
     flex-direction: column;
@@ -220,6 +229,7 @@ input:checked+.slider:before {
     flex-grow: 1;
 }
 
+/* Textstile für Nachrichten */
 .message-text,
 .sub-text {
     margin: 0;
@@ -237,6 +247,7 @@ input:checked+.slider:before {
     color: #ffffff;
 }
 
+/* Stile für das Kreuz-Icon */
 .cross-icon {
     width: 18px;
     height: 18px;
@@ -244,6 +255,7 @@ input:checked+.slider:before {
     cursor: pointer;
 }
 
+/* Benachrichtigungsstile */
 .notify-info {
     background-color: #007bff;
     color: #ffffff;
@@ -264,6 +276,7 @@ input:checked+.slider:before {
     color: #ffffff;
 }
 
+/* Icon-Farben für Benachrichtigungen */
 .icon-info {
     color: #ffffff;
 }
