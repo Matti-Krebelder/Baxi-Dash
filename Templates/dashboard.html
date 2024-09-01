@@ -368,45 +368,35 @@
             const iconContainer = document.getElementById("icon-container");
             const icon = document.getElementById("icon");
             const wave = document.getElementById("wave");
-
-            // Update card classes and icon based on the message type
             notificationCard.className = `card ${msgType}`;
             iconContainer.className = `icon-container ${msgType}`;
             icon.className = `icon fas`;
-
-            // Set the appropriate Font Awesome icon and wave color based on msgType
             switch (msgType) {
                 case 'notify-info':
                     icon.classList.add('fa-info-circle', 'icon-info');
-                    wave.style.fill = '#007bff'; // Blue for info
+                    wave.style.fill = '#007bff';
                     break;
                 case 'notify-success':
                     icon.classList.add('fa-check-circle', 'icon-success');
-                    wave.style.fill = '#28a745'; // Green for success
+                    wave.style.fill = '#28a745';
                     break;
                 case 'notify-warn':
                     icon.classList.add('fa-exclamation-triangle', 'icon-warn');
-                    wave.style.fill = '#ffc107'; // Yellow for warn
+                    wave.style.fill = '#ffc107';
                     break;
                 case 'notify-error':
                     icon.classList.add('fa-times-circle', 'icon-error');
-                    wave.style.fill = '#dc3545'; // Red for error
+                    wave.style.fill = '#dc3545';
                     break;
             }
-
             messageText.textContent = msgContent;
             subText.textContent = "";
-
-            // Show the notification card
             notificationCard.style.display = 'flex';
         }
-
         function closeNotification() {
             const notificationCard = document.getElementById("notification-card");
             notificationCard.style.display = 'none';
         }
-
-        // Modify the saveChanges function
         function saveChanges() {
             const updatedData = {};
             const isActive = document.querySelector('#toggle-switch input').checked ? 1 : 0;
@@ -419,7 +409,6 @@
                     updatedData[originalKey] = selectedOption.value;
                 }
             });
-
             const inputs = document.querySelectorAll('input');
             inputs.forEach(input => {
                 const originalKey = input.name;
@@ -435,7 +424,6 @@
                     updatedData[originalKey] = value;
                 }
             });
-
             const senddata = removeSendFromObject(updatedData);
             const saveEndpoint = localStorage.getItem('currentSaveEndpoint');
             if (!saveEndpoint) {
@@ -461,11 +449,7 @@
                     const apiEndpoint = localStorage.getItem("currentloadEndpoint");
                     console.log('Save successful:', data);
                     loadApiData(apiEndpoint);
-
-                    // Erstelle ein Array von key-value Paaren
                     const entries = Object.entries(data);
-
-                    // Falls es Einträge gibt, nimm das erste Paar für die Benachrichtigung
                     if (entries.length > 0) {
                         const [key, value] = entries[0];
                         showNotification(key, value);
@@ -475,11 +459,7 @@
                     console.error('Error saving data:', error);
                     showNotification('notify-error', 'Fehler beim Speichern: ' + error.message);
                 });
-
         }
-
-
-        /* -send attribut Remover */
         function removeSendFromObject(obj) {
             if (typeof obj === 'string') {
                 return obj.replace("-send", "");
@@ -497,21 +477,17 @@
                 return obj;
             }
         }
-
-        /* Object formatter not needed anymore? */
         function formatValue(value) {
             if (typeof value === 'object' && value !== null) {
                 return Object.entries(value).map(([k, v]) => `${k}: ${v}`).join(', ');
             }
             return value;
         }
-
         function loadServerDetails(serverId) {
             history.pushState(null, '', '?server=' + serverId);
 
             const serverDetails = {{ guild_details | tojson | safe
         }}.find(guild => guild.id === serverId);
-
         if (serverDetails) {
             const detailsHtml = `
                         <div class="server-header">
@@ -538,7 +514,6 @@
             loadMenuContent();
         }
             }
-
         window.onload = function () {
             const urlParams = new URLSearchParams(window.location.search);
             const serverId = urlParams.get('server');
@@ -554,15 +529,12 @@
                 updateimage()
             });
         }
-
         function updateimage() {
             var bild = document.querySelector('img[alt="image-input"]');
             var linkraw = localStorage.getItem("Image-Link");
-
             const linkExtension = linkraw.split('.').pop().split('?')[0];
             const validExtensions = ["png", "gif", "jpg", "webp", "placehold"];
             const isValidLink = validExtensions.includes(linkExtension);
-
             if (!isValidLink) {
                 link = "https://placehold.co/200x100?text=Sorry but your url does not work"
             } else {
@@ -572,7 +544,6 @@
         }
     </script>
 </body>
-
 </html>
 <style>
     body {
@@ -581,7 +552,6 @@
         padding: 0;
         display: flex;
     }
-
     .sidebar {
         width: 80px;
         background-color: #2f3136;
@@ -594,11 +564,9 @@
         scrollbar-width: none;
         -ms-overflow-style: none;
     }
-
     .sidebar::-webkit-scrollbar {
         display: none;
     }
-
     .server-icon {
         width: 60px;
         height: 60px;
@@ -607,13 +575,11 @@
         cursor: pointer;
         position: relative;
     }
-
     .server-icon img {
         width: 100%;
         height: 100%;
         border-radius: 50%;
     }
-
     .server-name {
         display: none;
         position: absolute;
@@ -626,11 +592,9 @@
         transform: translateY(-50%);
         white-space: nowrap;
     }
-
     .server-icon:hover .server-name {
         display: block;
     }
-
     .content {
         flex-grow: 1;
         padding: 20px;
@@ -639,7 +603,6 @@
         display: flex;
         flex-direction: column;
     }
-
     .menu-bar {
         display: none;
         background-color: #2f3136;
@@ -649,7 +612,6 @@
         overflow-x: auto;
         white-space: nowrap;
     }
-
     .menu-item {
         margin-right: 20px;
         color: #dcddde;
@@ -657,44 +619,37 @@
         font-weight: bold;
         cursor: pointer;
     }
-
     .menu-item:hover {
         text-decoration: underline;
     }
-
     .server-details {
         background-color: #2f3136;
         padding: 20px;
         border-radius: 5px;
         display: none;
     }
-
     .server-header {
         display: flex;
         align-items: center;
         margin-bottom: 20px;
     }
-
     .server-header img {
         width: 80px;
         height: 80px;
         border-radius: 50%;
         margin-right: 20px;
     }
-
     .switch {
         position: relative;
         display: inline-block;
         width: 60px;
         height: 34px;
     }
-
     .switch input {
         opacity: 0;
         width: 0;
         height: 0;
     }
-
     .slider {
         position: absolute;
         cursor: pointer;
@@ -706,7 +661,6 @@
         transition: 0.4s;
         border-radius: 34px;
     }
-
     .slider:before {
         position: absolute;
         content: "";
@@ -718,15 +672,12 @@
         background-color: white;
         transition: 0.4s;
     }
-
     input:checked+.slider {
         background-color: #2196f3;
     }
-
     input:checked+.slider:before {
         transform: translateX(26px);
     }
-
     #overlay {
         position: fixed;
         top: 0;
@@ -742,9 +693,7 @@
         z-index: 1000;
     }
 </style>
-
 <!--Notify-->
-
 <style>
     .card {
         width: 330px;
@@ -762,7 +711,6 @@
         gap: 15px;
         font-family: sans-serif;
     }
-
     .wave {
         position: absolute;
         transform: rotate(90deg);
@@ -772,7 +720,6 @@
         fill: white;
         /* Default color */
     }
-
     .icon-container {
         width: 35px;
         height: 35px;
@@ -782,11 +729,9 @@
         border-radius: 50%;
         margin-left: 8px;
     }
-
     .icon {
         font-size: 17px;
     }
-
     .message-text-container {
         display: flex;
         flex-direction: column;
@@ -794,77 +739,55 @@
         align-items: flex-start;
         flex-grow: 1;
     }
-
     .message-text,
     .sub-text {
         margin: 0;
         cursor: default;
     }
-
     .message-text {
         color: #ffffff;
         font-size: 17px;
         font-weight: 700;
     }
-
     .sub-text {
         font-size: 14px;
         color: #ffffff;
     }
-
     .cross-icon {
         width: 18px;
         height: 18px;
         color: #555;
         cursor: pointer;
     }
-
-    /* Notification Types */
     .notify-info {
         background-color: #007bff;
-        /* Blue for info */
         color: #ffffff;
     }
-
     .notify-success {
         background-color: #28a745;
-        /* Green for success */
         color: #ffffff;
     }
-
     .notify-warn {
         background-color: #ffc107;
-        /* Yellow for warn */
         color: #000000;
     }
-
     .notify-error {
         background-color: #dc3545;
-        /* Red for error */
         color: #ffffff;
     }
-
     .icon-info {
         color: #ffffff;
-        /* White for info */
     }
-
     .icon-success {
         color: #ffffff;
-        /* White for success */
     }
-
     .icon-warn {
         color: #000000;
-        /* Black for warn */
     }
-
     .icon-error {
         color: #ffffff;
-        /* White for error */
     }
 </style>
-
 <!--Bxi Loading Screen-->
 <script>
     window.onload = function () {
