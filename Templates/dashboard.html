@@ -279,19 +279,22 @@
                         console.log(`Verarbeite Drop-Key: ${key}`);
                         const dropdown = document.createElement('select');
                         dropdown.name = key;
-                        const placeholderOption = document.createElement('option');
-                        placeholderOption.value = "placeholder_none-send";
-                        placeholderOption.textContent = "Please select";
-                        dropdown.appendChild(placeholderOption);
 
                         const dropEntries = data[key];
                         let selectedOptionFound = false;
+                        let placeholderOption = null; // Variable für die "Please select" Option
+
                         Object.entries(dropEntries).forEach(([subKey, subValue]) => {
                             console.log(`Überprüfe Option: ${subKey} = ${subValue}`);
 
                             const option = document.createElement('option');
                             option.value = subKey;
                             option.textContent = subValue.endsWith('-show') ? subValue.replace('-show', '') : subValue;
+
+                            if (option.textContent.includes('Please select')) {
+                                placeholderOption = option; // Speichert die "Please select" Option
+                            }
+
                             if (activeDropsMap.hasOwnProperty(subKey)) {
                                 option.selected = true;
                                 selectedOptionFound = true;
@@ -299,12 +302,18 @@
                             } else {
                                 console.log(`Option "${subValue}" (${subKey}) ist nicht aktiv.`);
                             }
+
                             dropdown.appendChild(option);
                         });
-                        if (!selectedOptionFound) {
+
+                        if (!selectedOptionFound && placeholderOption) {
+                            // Wenn keine aktive Option gefunden wurde und "Please select" existiert, wähle diese aus
                             placeholderOption.selected = true;
-                            console.log(`Keine aktive Option für Drop-Key "${key}" gefunden. "Please select" wird ausgewählt.`);
+                            console.log(`Keine aktive Option gefunden. "Please select" wird vorausgewählt.`);
+                        } else if (!selectedOptionFound) {
+                            console.log(`Keine aktive Option für Drop-Key "${key}" gefunden.`);
                         }
+
                         textOutput.appendChild(dropdown);
                     }
                 });
