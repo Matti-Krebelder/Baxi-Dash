@@ -64,25 +64,32 @@ body {
 }
 
 .menu-bar {
-    display: none;
-    background-color: #2f3136;
-    padding: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; /* Abstand zwischen den Karten */
+}
+
+.menu-card {
+    flex: 1 1 calc(25% - 10px); /* Bis zu 4 Karten nebeneinander, Platz für Lücken */
+    box-sizing: border-box;
+    border: 1px solid #ddd;
     border-radius: 5px;
-    margin-bottom: 20px;
-    overflow-x: auto;
-    white-space: nowrap;
-}
-
-.menu-item {
-    margin-right: 20px;
-    color: #dcddde;
-    text-decoration: none;
-    font-weight: bold;
+    padding: 10px;
+    text-align: center;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     cursor: pointer;
+    transition: background-color 0.3s, box-shadow 0.3s;
 }
 
-.menu-item:hover {
-    text-decoration: underline;
+.menu-card:hover {
+    background-color: #f0f0f0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.menu-card .card-title {
+    font-size: 1.2em;
+    margin: 10px 0;
 }
 
 .server-details {

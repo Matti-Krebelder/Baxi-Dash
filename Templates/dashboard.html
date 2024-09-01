@@ -147,29 +147,39 @@
                 document.getElementById('menu-bar').style.display = 'none';
                 return;
             }
+
             const menuData = JSON.parse(document.getElementById('menu-data').textContent);
             const menuBar = document.getElementById('menu-bar');
             menuBar.innerHTML = '';
+
             menuData.menu_items.forEach(item => {
-                const a = document.createElement('a');
-                a.href = '#';
-                a.textContent = item.name;
-                a.className = 'menu-item';
-                a.dataset.loadEndpoint = item.endpoints.load.replace('{guild_id}', serverId);
-                a.dataset.saveEndpoint = item.endpoints.save.replace('{guild_id}', serverId);
-                a.addEventListener('click', event => {
+                const card = document.createElement('div');
+                card.className = 'menu-card';
+                card.dataset.loadEndpoint = item.endpoints.load.replace('{guild_id}', serverId);
+                card.dataset.saveEndpoint = item.endpoints.save.replace('{guild_id}', serverId);
+
+                const title = document.createElement('div');
+                title.className = 'card-title';
+                title.textContent = item.name;
+
+                card.appendChild(title);
+
+                card.addEventListener('click', event => {
                     event.preventDefault();
-                    loadApiData(a.dataset.loadEndpoint);
+                    loadApiData(card.dataset.loadEndpoint);
                     document.getElementById('server-details').style.display = 'none';
-                    localStorage.setItem('currentSaveEndpoint', a.dataset.saveEndpoint);
-                    localStorage.setItem('currentloadEndpoint', a.dataset.loadEndpoint);
-                    document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('selected'));
-                    a.classList.add('selected');
+                    localStorage.setItem('currentSaveEndpoint', card.dataset.saveEndpoint);
+                    localStorage.setItem('currentloadEndpoint', card.dataset.loadEndpoint);
+                    document.querySelectorAll('.menu-card').forEach(card => card.classList.remove('selected'));
+                    card.classList.add('selected');
                 });
-                menuBar.appendChild(a);
+
+                menuBar.appendChild(card);
             });
+
             menuBar.style.display = 'flex';
         }
+
         function replaceValue(data, targetValue, replacementValue) {
             if (data === targetValue) {
                 return replacementValue;
