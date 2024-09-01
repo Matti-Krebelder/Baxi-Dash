@@ -279,6 +279,11 @@
                         console.log(`Verarbeite Drop-Key: ${key}`);
                         const dropdown = document.createElement('select');
                         dropdown.name = key;
+                        const placeholderOption = document.createElement('option');
+                        placeholderOption.value = "placeholder_none-send";
+                        placeholderOption.textContent = "Please select";
+                        dropdown.appendChild(placeholderOption);
+
                         const dropEntries = data[key];
                         let selectedOptionFound = false;
                         Object.entries(dropEntries).forEach(([subKey, subValue]) => {
@@ -287,67 +292,63 @@
                             const option = document.createElement('option');
                             option.value = subKey;
                             option.textContent = subValue.endsWith('-show') ? subValue.replace('-show', '') : subValue;
-                            if (subValue === "Please select") {
-                                option.selected = true;
-                                selectedOptionFound = true;
-                                console.log(`Option "Please Select" (${subKey}) ist ausgewählt.`);
-                            } else if (activeDropsMap.hasOwnProperty(subKey)) {
+                            if (activeDropsMap.hasOwnProperty(subKey)) {
                                 option.selected = true;
                                 selectedOptionFound = true;
                                 console.log(`Option "${subValue}" (${subKey}) ist aktiv und wird ausgewählt.`);
                             } else {
                                 console.log(`Option "${subValue}" (${subKey}) ist nicht aktiv.`);
                             }
-
                             dropdown.appendChild(option);
                         });
-                        if (!selectedOptionFound && dropdown.options.length > 0) {
-                            dropdown.selectedIndex = 0;
+                        if (!selectedOptionFound) {
+                            placeholderOption.selected = true;
+                            console.log(`Keine aktive Option für Drop-Key "${key}" gefunden. "Please select" wird ausgewählt.`);
                         }
-
                         textOutput.appendChild(dropdown);
-                    }
-
-
-                    if (key.includes('-table')) {
-                        console.log(`Verarbeite Table-Key: ${key}`);
-                        const table = document.createElement('table');
-                        table.style.width = '100%';
-                        table.style.borderCollapse = 'collapse';
-                        table.style.marginTop = '20px';
-                        table.style.marginBottom = '20px';
-                        const tbody = document.createElement('tbody');
-                        Object.entries(data[key]).forEach(([id, value]) => {
-                            const row = document.createElement('tr');
-                            const idCell = document.createElement('td');
-                            idCell.textContent = id;
-                            idCell.style.border = '1px solid #ddd';
-                            idCell.style.padding = '8px';
-                            row.appendChild(idCell);
-                            const valueCell = document.createElement('td');
-                            valueCell.textContent = value;
-                            valueCell.style.border = '1px solid #ddd';
-                            valueCell.style.padding = '8px';
-                            row.appendChild(valueCell);
-                            tbody.appendChild(row);
-                        });
-
-                        table.appendChild(tbody);
-                        textOutput.appendChild(table);
-                    }
-
-                    if (key.includes('-text')) {
-                        console.log(`Verarbeite Text-Key: ${key}`);
-                        const p = document.createElement('p');
-                        p.innerHTML = `${key}: ${formatValue(data[key])}`;
-                        textOutput.appendChild(p);
                     }
                 });
 
-                document.getElementById('save-button').style.display = 'block';
-            } catch (error) {
-                console.error('Error fetching content:', error);
-            }
+
+                if (key.includes('-table')) {
+                    console.log(`Verarbeite Table-Key: ${key}`);
+                    const table = document.createElement('table');
+                    table.style.width = '100%';
+                    table.style.borderCollapse = 'collapse';
+                    table.style.marginTop = '20px';
+                    table.style.marginBottom = '20px';
+                    const tbody = document.createElement('tbody');
+                    Object.entries(data[key]).forEach(([id, value]) => {
+                        const row = document.createElement('tr');
+                        const idCell = document.createElement('td');
+                        idCell.textContent = id;
+                        idCell.style.border = '1px solid #ddd';
+                        idCell.style.padding = '8px';
+                        row.appendChild(idCell);
+                        const valueCell = document.createElement('td');
+                        valueCell.textContent = value;
+                        valueCell.style.border = '1px solid #ddd';
+                        valueCell.style.padding = '8px';
+                        row.appendChild(valueCell);
+                        tbody.appendChild(row);
+                    });
+
+                    table.appendChild(tbody);
+                    textOutput.appendChild(table);
+                }
+
+                if (key.includes('-text')) {
+                    console.log(`Verarbeite Text-Key: ${key}`);
+                    const p = document.createElement('p');
+                    p.innerHTML = `${key}: ${formatValue(data[key])}`;
+                    textOutput.appendChild(p);
+                }
+            });
+
+            document.getElementById('save-button').style.display = 'block';
+        } catch (error) {
+            console.error('Error fetching content:', error);
+        }
         }
         function saveChanges() {
             const updatedData = {};
