@@ -14,10 +14,6 @@
 </div>
 
 <body>
-
-    
-
-
     <div class="sidebar">
         {% if guild_details %} {% for guild in guild_details %}
         <div class="server-icon" onclick="loadServerDetails('{{ guild.id }}')">
@@ -46,6 +42,7 @@
                 </div>
                 <i class="cross-icon fas fa-times" onclick="closeNotification()"></i>
             </div>
+
             <label id="toggle-switch" class="switch" style="display: none;">
                 <input type="checkbox" id="toggle-input" />
                 <span class="slider"></span>
@@ -367,11 +364,21 @@
         }
         function showNotification(msgType, msgContent) {
             const notificationCard = document.getElementById("notification-card");
+            if (!notificationCard) {
+                console.error('Notification card element is missing.');
+                return;
+            }
+
             const messageText = document.getElementById("message-text");
             const subText = document.getElementById("sub-text");
             const iconContainer = document.getElementById("icon-container");
             const icon = document.getElementById("icon");
             const wave = document.getElementById("wave");
+
+            if (!messageText || !subText || !iconContainer || !icon || !wave) {
+                console.error('One or more required elements are missing.');
+                return;
+            }
 
             // Update card classes and icon based on the message type
             notificationCard.className = `card ${msgType}`;
@@ -404,6 +411,7 @@
             // Show the notification card
             notificationCard.style.display = 'flex';
         }
+
 
         function closeNotification() {
             const notificationCard = document.getElementById("notification-card");
@@ -766,14 +774,17 @@
         gap: 15px;
         font-family: sans-serif;
     }
+
     .wave {
         position: absolute;
         transform: rotate(90deg);
         left: -31px;
         top: 32px;
         width: 80px;
-        fill: white; /* Default color */
+        fill: white;
+        /* Default color */
     }
+
     .icon-container {
         width: 35px;
         height: 35px;
@@ -783,9 +794,11 @@
         border-radius: 50%;
         margin-left: 8px;
     }
+
     .icon {
         font-size: 17px;
     }
+
     .message-text-container {
         display: flex;
         flex-direction: column;
@@ -793,20 +806,24 @@
         align-items: flex-start;
         flex-grow: 1;
     }
+
     .message-text,
     .sub-text {
         margin: 0;
         cursor: default;
     }
+
     .message-text {
         color: #ffffff;
         font-size: 17px;
         font-weight: 700;
     }
+
     .sub-text {
         font-size: 14px;
         color: #ffffff;
     }
+
     .cross-icon {
         width: 18px;
         height: 18px;
@@ -816,33 +833,47 @@
 
     /* Notification Types */
     .notify-info {
-        background-color: #007bff; /* Blue for info */
+        background-color: #007bff;
+        /* Blue for info */
         color: #ffffff;
     }
+
     .notify-success {
-        background-color: #28a745; /* Green for success */
+        background-color: #28a745;
+        /* Green for success */
         color: #ffffff;
     }
+
     .notify-warn {
-        background-color: #ffc107; /* Yellow for warn */
+        background-color: #ffc107;
+        /* Yellow for warn */
         color: #000000;
     }
+
     .notify-error {
-        background-color: #dc3545; /* Red for error */
+        background-color: #dc3545;
+        /* Red for error */
         color: #ffffff;
     }
 
     .icon-info {
-        color: #ffffff; /* White for info */
+        color: #ffffff;
+        /* White for info */
     }
+
     .icon-success {
-        color: #ffffff; /* White for success */
+        color: #ffffff;
+        /* White for success */
     }
+
     .icon-warn {
-        color: #000000; /* Black for warn */
+        color: #000000;
+        /* Black for warn */
     }
+
     .icon-error {
-        color: #ffffff; /* White for error */
+        color: #ffffff;
+        /* White for error */
     }
 </style>
 
