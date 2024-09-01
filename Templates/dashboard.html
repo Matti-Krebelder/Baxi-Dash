@@ -228,11 +228,68 @@
 
                 currentData = data;
 
-                // Leere den Container für neue Inhalte
+                const toggleSwitch = document.getElementById('toggle-switch');
+                let showToggle = false;
+                Object.keys(data).forEach(key => {
+                    if (key.includes('-switch')) {
+                        showToggle = true;
+                        const isChecked = data[key] === 1;
+                        document.querySelector('#toggle-switch input').checked = isChecked;
+                        console.log(`Toggle-Switch gefunden: ${key} = ${data[key]} (${isChecked ? 'Aktiviert' : 'Deaktiviert'})`);
+                    }
+                });
+                toggleSwitch.style.display = showToggle ? 'block' : 'none';
                 const textOutput = document.getElementById('text-output');
                 textOutput.innerHTML = '';
+                Object.keys(data).forEach(key => {
+                    if (key.includes('-input')) {
+                        console.log(`Verarbeite Input-Key: ${key}`);
+                        const input = document.createElement('input');
+                        input.name = key;
+                        input.type = 'text';
+                        input.placeholder = data[key] === "null" ? 'Enter text...' : data[key];
+                        input.value = data[key] === "null" ? '' : data[key];
+                        input.style.display = 'block';
+                        input.style.marginBottom = '10px';
+                        textOutput.appendChild(input);
+                    }
+                });
+                Object.keys(data).forEach(key => {
+                    if (typeof data[key] === 'string' &&
+                        (/\.(png|gif|jpg|jpeg)$/.test(data[key]) ||
+                            data[key].startsWith('https://placehold.co/'))) {
 
-                // Erstelle Dropdowns und Toggle-Switches
+                        console.log(`Verarbeite Bilddatei: ${key}`);
+                        const img = document.createElement('img');
+                        img.src = data[key];
+                        img.alt = key;
+                        img.style.maxWidth = '100%';
+                        img.style.height = 'auto';
+                        start_updater()
+                        img.onload = function () {
+                            textOutput.appendChild(img);
+                        };
+                        img.onerror = function () {
+                            console.error(`Bild konnte nicht geladen werden: ${data[key]}`);
+                            img.src = 'https://placehold.co/400x200?text=Bild+Konnte+nicht+geladen+werden';
+                            img.alt = 'Bild konnte nicht geladen werden';
+                            textOutput.appendChild(img);
+                        };
+                    }
+                });
+
+                const activeDropsMap = {};
+                Object.keys(data).forEach(key => {
+                    if (key.includes('-activedrop')) {
+                        console.log(`Verarbeite aktiven Drop-Key: ${key}`);
+                        const activeDropEntries = data[key];
+                        Object.entries(activeDropEntries).forEach(([subKey, subValue]) => {
+                            activeDropsMap[subKey] = subValue;
+                            console.log(`Aktiver Drop gefunden: ${subKey} = ${subValue} (aus ${key})`);
+                        });
+                    }
+                });
+
                 Object.keys(data).forEach(key => {
                     if (key.includes('-drop')) {
                         console.log(`Verarbeite Drop-Key: ${key}`);
@@ -262,53 +319,9 @@
                             console.log(`Keine aktive Option für Drop-Key "${key}" gefunden.`);
                         }
                         textOutput.appendChild(dropdown);
+                    }
 
-                    } else if (key.includes('-switch')) {
-                        console.log(`Verarbeite Toggle-Switch-Key: ${key}`);
-                        const label = document.createElement('label');
-                        label.textContent = key.replace('-switch', ''); // Label-Text anpassen
-                        label.style.display = 'block'; // Block-Display für bessere Sichtbarkeit
-
-                        const toggleSwitch = document.createElement('input');
-                        toggleSwitch.type = 'checkbox';
-                        toggleSwitch.name = key;
-                        toggleSwitch.checked = data[key] === 1;
-
-                        label.appendChild(toggleSwitch);
-                        textOutput.appendChild(label);
-
-                        console.log(`Toggle-Switch "${key}" ${data[key] === 1 ? 'Aktiviert' : 'Deaktiviert'}`);
-                    } else if (key.includes('-input')) {
-                        console.log(`Verarbeite Input-Key: ${key}`);
-                        const input = document.createElement('input');
-                        input.name = key;
-                        input.type = 'text';
-                        input.placeholder = data[key] === "null" ? 'Enter text...' : data[key];
-                        input.value = data[key] === "null" ? '' : data[key];
-                        input.style.display = 'block';
-                        input.style.marginBottom = '10px';
-                        textOutput.appendChild(input);
-                    } else if (typeof data[key] === 'string' &&
-                        (/\.(png|gif|jpg|jpeg)$/.test(data[key]) ||
-                            data[key].startsWith('https://placehold.co/'))) {
-
-                        console.log(`Verarbeite Bilddatei: ${key}`);
-                        const img = document.createElement('img');
-                        img.src = data[key];
-                        img.alt = key;
-                        img.style.maxWidth = '100%';
-                        img.style.height = 'auto';
-                        start_updater()
-                        img.onload = function () {
-                            textOutput.appendChild(img);
-                        };
-                        img.onerror = function () {
-                            console.error(`Bild konnte nicht geladen werden: ${data[key]}`);
-                            img.src = 'https://placehold.co/400x200?text=Bild+Konnte+nicht+geladen+werden';
-                            img.alt = 'Bild konnte nicht geladen werden';
-                            textOutput.appendChild(img);
-                        };
-                    } else if (key.includes('-table')) {
+                    if (key.includes('-table')) {
                         console.log(`Verarbeite Table-Key: ${key}`);
                         const table = document.createElement('table');
                         table.style.width = '100%';
@@ -333,7 +346,9 @@
 
                         table.appendChild(tbody);
                         textOutput.appendChild(table);
-                    } else if (key.includes('-text')) {
+                    }
+
+                    if (key.includes('-text')) {
                         console.log(`Verarbeite Text-Key: ${key}`);
                         const p = document.createElement('p');
                         p.innerHTML = `${key}: ${formatValue(data[key])}`;
@@ -346,7 +361,6 @@
                 console.error('Error fetching content:', error);
             }
         }
-
         function showNotification(msgType, msgContent) {
             const notificationCard = document.getElementById("notification-card");
             const messageText = document.getElementById("message-text");
