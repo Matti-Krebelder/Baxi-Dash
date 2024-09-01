@@ -27,16 +27,18 @@
         <h1>Baxi Dashboard</h1>
         <div id="menu-bar" class="menu-bar"></div>
         <div id="server-details" class="server-details"></div>
-        <div id="notification-card" class="card notify-info" style="display:none;">
-            <div id="icon-container" class="icon-container">
-                <i id="icon" class="icon fas"></i>
-            </div>
-            <div class="message-text-container">
-                <p id="message-text" class="message-text">Loading...</p>
-                <p id="sub-text" class="sub-text">Let me think!</p>
-            </div>
-            <i class="cross-icon fas fa-times" onclick="closeNotification()"></i>
+        <div style="display: flex; justify-content: center;">
+            <div id="notification-card" class="card notify-info" style="display:none;">
+                <div id="icon-container" class="icon-container">
+                    <i id="icon" class="icon fas"></i>
+                </div>
+                <div class="message-text-container">
+                    <p id="message-text" class="message-text">Loading...</p>
+                    <p id="sub-text" class="sub-text">Let me think!</p>
+                </div>
+                <i class="cross-icon fas fa-times" onclick="closeNotification()"></i>
 
+            </div>
         </div>
         <div id="content-area" class="content-area">
             <label id="toggle-switch" class="switch" style="display: none;">
