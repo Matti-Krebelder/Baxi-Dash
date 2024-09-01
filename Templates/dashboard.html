@@ -14,24 +14,6 @@
 </div>
 
 <body>
-
-    <div id="notification-card" class="card notify-info" style="display:none;">
-        <svg id="wave" class="wave" viewBox="0 0 1440 320" xmlns="http://www.w3.org/2000/svg">
-            <path fill="currentColor" fill-opacity="1"
-                d="M0,128L30,122.7C60,117,120,107,180,106.7C240,107,300,117,360,144C420,171,480,213,540,213.3C600,213,660,171,720,170.7C780,171,840,213,900,208C960,203,1020,149,1080,154.7C1140,160,1200,224,1260,213.3C1320,203,1380,117,1440,94.7L1440,32L1440,320L1410,320C1380,320,1320,320,1260,320C1200,320,1140,320,1080,320C1020,320,960,320,900,320C840,320,780,320,720,320C660,320,600,320,540,320C480,320,420,320,360,320C300,320,240,320,180,320C120,320,60,320,30,320L0,320Z">
-            </path>
-        </svg>
-        <div id="icon-container" class="icon-container">
-            <i id="icon" class="icon fas"></i>
-        </div>
-        <div class="message-text-container">
-            <p id="message-text" class="message-text">Loading...</p>
-            <p id="sub-text" class="sub-text">Let me think!</p>
-        </div>
-        <i class="cross-icon fas fa-times" onclick="closeNotification()"></i>
-    </div>
-
-
     <div class="sidebar">
         {% if guild_details %} {% for guild in guild_details %}
         <div class="server-icon" onclick="loadServerDetails('{{ guild.id }}')">
@@ -44,6 +26,21 @@
         <h1>Baxi Dashboard</h1>
         <div id="menu-bar" class="menu-bar"></div>
         <div id="server-details" class="server-details"></div>
+        <div id="notification-card" class="card notify-info" style="display:none;">
+            <svg id="wave" class="wave" viewBox="0 0 1440 320" xmlns="http://www.w3.org/2000/svg">
+                <path fill="currentColor" fill-opacity="1"
+                    d="M0,128L30,122.7C60,117,120,107,180,106.7C240,107,300,117,360,144C420,171,480,213,540,213.3C600,213,660,171,720,170.7C780,171,840,213,900,208C960,203,1020,149,1080,154.7C1140,160,1200,224,1260,213.3C1320,203,1380,117,1440,94.7L1440,32L1440,320L1410,320C1380,320,1320,320,1260,320C1200,320,1140,320,1080,320C1020,320,960,320,900,320C840,320,780,320,720,320C660,320,600,320,540,320C480,320,420,320,360,320C300,320,240,320,180,320C120,320,60,320,30,320L0,320Z">
+                </path>
+            </svg>
+            <div id="icon-container" class="icon-container">
+                <i id="icon" class="icon fas"></i>
+            </div>
+            <div class="message-text-container">
+                <p id="message-text" class="message-text">Loading...</p>
+                <p id="sub-text" class="sub-text">Let me think!</p>
+            </div>
+            <i class="cross-icon fas fa-times" onclick="closeNotification()"></i>
+        </div>
         <div id="content-area" class="content-area">
             <label id="toggle-switch" class="switch" style="display: none;">
                 <input type="checkbox" id="toggle-input" />
@@ -765,14 +762,17 @@
         gap: 15px;
         font-family: sans-serif;
     }
+
     .wave {
         position: absolute;
         transform: rotate(90deg);
         left: -31px;
         top: 32px;
         width: 80px;
-        fill: white; /* Default color */
+        fill: white;
+        /* Default color */
     }
+
     .icon-container {
         width: 35px;
         height: 35px;
@@ -782,9 +782,11 @@
         border-radius: 50%;
         margin-left: 8px;
     }
+
     .icon {
         font-size: 17px;
     }
+
     .message-text-container {
         display: flex;
         flex-direction: column;
@@ -792,20 +794,24 @@
         align-items: flex-start;
         flex-grow: 1;
     }
+
     .message-text,
     .sub-text {
         margin: 0;
         cursor: default;
     }
+
     .message-text {
         color: #ffffff;
         font-size: 17px;
         font-weight: 700;
     }
+
     .sub-text {
         font-size: 14px;
         color: #ffffff;
     }
+
     .cross-icon {
         width: 18px;
         height: 18px;
@@ -815,33 +821,47 @@
 
     /* Notification Types */
     .notify-info {
-        background-color: #007bff; /* Blue for info */
+        background-color: #007bff;
+        /* Blue for info */
         color: #ffffff;
     }
+
     .notify-success {
-        background-color: #28a745; /* Green for success */
+        background-color: #28a745;
+        /* Green for success */
         color: #ffffff;
     }
+
     .notify-warn {
-        background-color: #ffc107; /* Yellow for warn */
+        background-color: #ffc107;
+        /* Yellow for warn */
         color: #000000;
     }
+
     .notify-error {
-        background-color: #dc3545; /* Red for error */
+        background-color: #dc3545;
+        /* Red for error */
         color: #ffffff;
     }
 
     .icon-info {
-        color: #ffffff; /* White for info */
+        color: #ffffff;
+        /* White for info */
     }
+
     .icon-success {
-        color: #ffffff; /* White for success */
+        color: #ffffff;
+        /* White for success */
     }
+
     .icon-warn {
-        color: #000000; /* Black for warn */
+        color: #000000;
+        /* Black for warn */
     }
+
     .icon-error {
-        color: #ffffff; /* White for error */
+        color: #ffffff;
+        /* White for error */
     }
 </style>
 
