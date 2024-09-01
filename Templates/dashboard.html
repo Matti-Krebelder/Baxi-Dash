@@ -231,26 +231,36 @@
                 const textOutput = document.getElementById('text-output');
                 textOutput.innerHTML = '';
 
+                // Verarbeite Toggle-Switch
+                let showToggleSwitches = false;
                 Object.keys(data).forEach(key => {
                     if (key.includes('-switch')) {
-                        console.log(`Verarbeite Switch-Key: ${key}`);
+                        showToggleSwitches = true;
                         const isChecked = data[key] === 1;
-                        const switchDiv = document.createElement('div');
-                        switchDiv.className = 'switch-container';
 
-                        const label = document.createElement('label');
-                        label.className = 'switch';
-                        label.innerHTML = `
-                    <input type="checkbox" name="${key}" ${isChecked ? 'checked' : ''}>
-                    <span class="slider"></span>
-                `;
+                        const toggleSwitch = document.createElement('label');
+                        toggleSwitch.className = 'switch';
+                        toggleSwitch.style.display = 'block';
 
-                        switchDiv.appendChild(label);
-                        textOutput.appendChild(switchDiv);
+                        const input = document.createElement('input');
+                        input.type = 'checkbox';
+                        input.name = key;
+                        input.checked = isChecked;
+
+                        const slider = document.createElement('span');
+                        slider.className = 'slider';
+
+                        toggleSwitch.appendChild(input);
+                        toggleSwitch.appendChild(slider);
+                        textOutput.appendChild(toggleSwitch);
+
+                        console.log(`Toggle-Switch gefunden: ${key} = ${data[key]} (${isChecked ? 'Aktiviert' : 'Deaktiviert'})`);
                     }
                 });
 
+                // Die Verarbeitung von Inputs, Dropdowns, Bildern und Tabellen bleibt unverändert
                 Object.keys(data).forEach(key => {
+                    // Verarbeite Input-Elemente
                     if (key.includes('-input')) {
                         console.log(`Verarbeite Input-Key: ${key}`);
                         const input = document.createElement('input');
@@ -262,9 +272,8 @@
                         input.style.marginBottom = '10px';
                         textOutput.appendChild(input);
                     }
-                });
 
-                Object.keys(data).forEach(key => {
+                    // Verarbeite Bilddateien
                     if (typeof data[key] === 'string' &&
                         (/\.(png|gif|jpg|jpeg)$/.test(data[key]) ||
                             data[key].startsWith('https://placehold.co/'))) {
@@ -275,7 +284,6 @@
                         img.alt = key;
                         img.style.maxWidth = '100%';
                         img.style.height = 'auto';
-                        start_updater();
                         img.onload = function () {
                             textOutput.appendChild(img);
                         };
@@ -286,9 +294,8 @@
                             textOutput.appendChild(img);
                         };
                     }
-                });
 
-                Object.keys(data).forEach(key => {
+                    // Verarbeite Dropdowns
                     if (key.includes('-drop')) {
                         console.log(`Verarbeite Drop-Key: ${key}`);
                         const dropdown = document.createElement('select');
@@ -319,6 +326,7 @@
                         textOutput.appendChild(dropdown);
                     }
 
+                    // Verarbeite Tabellen
                     if (key.includes('-table')) {
                         console.log(`Verarbeite Table-Key: ${key}`);
                         const table = document.createElement('table');
@@ -346,6 +354,7 @@
                         textOutput.appendChild(table);
                     }
 
+                    // Verarbeite Text-Elemente
                     if (key.includes('-text')) {
                         console.log(`Verarbeite Text-Key: ${key}`);
                         const p = document.createElement('p');
