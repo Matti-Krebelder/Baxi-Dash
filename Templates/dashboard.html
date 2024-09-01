@@ -42,7 +42,7 @@
             <i class="cross-icon fas fa-times" onclick="closeNotification()"></i>
         </div>
         <div id="content-area" class="content-area">
-            <div id="toggle-switches-container"></div>
+            <label id="toggle-switch" class="switch" style="display: none;">
                 <input type="checkbox" id="toggle-input" />
                 <span class="slider"></span>
             </label>
@@ -234,18 +234,21 @@
         // Verarbeite alle Schalter
         Object.keys(data).forEach(key => {
             if (key.includes('-switch')) {
-                const switchContainer = document.createElement('div');
-                switchContainer.className = 'switch-container';
-
-                const switchLabel = document.createElement('label');
-                switchLabel.textContent = key.replace('-switch', '');
-                switchContainer.appendChild(switchLabel);
+                const switchContainer = document.createElement('label');
+                switchContainer.className = 'switch';
+                switchContainer.style.display = 'block'; // Stelle sicher, dass der Schalter sichtbar ist
 
                 const switchInput = document.createElement('input');
                 switchInput.type = 'checkbox';
-                switchInput.name = key;
+                switchInput.id = `toggle-input-${key}`;
                 switchInput.checked = data[key] === 1;
+                switchInput.name = key;
+
+                const switchSlider = document.createElement('span');
+                switchSlider.className = 'slider';
+
                 switchContainer.appendChild(switchInput);
+                switchContainer.appendChild(switchSlider);
 
                 toggleSwitchesContainer.appendChild(switchContainer);
 
