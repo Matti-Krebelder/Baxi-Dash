@@ -338,21 +338,25 @@
             switch (msgType) {
                 case 'notify-info':
                     icon.classList.add('fa-info-circle', 'icon-info');
-                    notificationCard.style.background = "linear-gradient(270deg, rgba(0,129,138,1) 0%, rgba(10,70,108,1) 42%, rgba(0,66,142,1) 100%)";
+                    icon.classList.add('fa-xl', 'icon-info');
+                    notificationCard.style.background = "linear-gradient(90deg, rgba(16,38,121,1) 0%, rgba(54,98,227,1) 100%)";
                     break;
                 case 'notify-success':
                     icon.classList.add('fa-check-circle', 'icon-success');
-                    notificationCard.style.background = "linear-gradient(to right, darkgreen, lime)";
+                    icon.classList.add('fa-xl', 'icon-success');
+                    notificationCard.style.background = "linear-gradient(90deg, rgba(152,101,35,1) 0%, rgba(222,192,75,1) 100%)";
 
                     break;
                 case 'notify-warn':
                     icon.classList.add('fa-exclamation-triangle', 'icon-warn');
+                    icon.classList.add('fa-xl', 'icon-warn');
                     notificationCard.style.background = "linear-gradient(90deg, rgba(152,101,35,1) 0%, rgba(222,192,75,1) 100%)";
 
                     break;
                 case 'notify-error':
                     icon.classList.add('fa-times-circle', 'icon-error');
-                    notificationCard.style.background = "linear-gradient(270deg, rgba(213,37,48,1) 0%, rgba(226,101,77,1) 100%)";
+                    icon.classList.add('fa-xl', 'icon-error');
+                    notificationCard.style.background = "linear-gradient(90deg, rgba(170,46,38,1) 0%, rgba(214,140,81,1) 100%)";
 
                     break;
             }
