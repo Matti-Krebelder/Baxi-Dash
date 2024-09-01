@@ -7,7 +7,7 @@ body {
 
 .sidebar {
     width: 80px;
-    background-color: rgba(0, 0, 0, 0.75);
+    background-color: black;
     height: 100vh;
     padding: 20px 0;
     display: flex;
