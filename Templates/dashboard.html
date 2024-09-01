@@ -15,7 +15,6 @@
         <iframe id="iframe" src="https://pyropixle.com/baxi_logon/"
             style="width: 100%; height: 100%; border: none;"></iframe>
     </div>
-
     <div class="sidebar">
         {% if guild_details %} {% for guild in guild_details %}
         <div class="server-icon" onclick="loadServerDetails('{{ guild.id }}')">
@@ -52,7 +51,6 @@
             <button id="save-button" style="display: none;" onclick="saveChanges()">Save</button>
         </div>
     </div>
-
     <!--Api Endpoints-->
     <script id="menu-data" type="application/json">
         {
@@ -143,18 +141,15 @@
     <script>
         const apiKey = 'bdash-X_KzUaBBMlM8d5a5xbAav4Z6bYqS3rnBN94ugjtkhsI';
         let currentData = {};
-
         function loadMenuContent() {
             const serverId = new URLSearchParams(window.location.search).get('server');
             if (!serverId) {
                 document.getElementById('menu-bar').style.display = 'none';
                 return;
             }
-
             const menuData = JSON.parse(document.getElementById('menu-data').textContent);
             const menuBar = document.getElementById('menu-bar');
             menuBar.innerHTML = '';
-
             menuData.menu_items.forEach(item => {
                 const a = document.createElement('a');
                 a.href = '#';
@@ -162,7 +157,6 @@
                 a.className = 'menu-item';
                 a.dataset.loadEndpoint = item.endpoints.load.replace('{guild_id}', serverId);
                 a.dataset.saveEndpoint = item.endpoints.save.replace('{guild_id}', serverId);
-
                 a.addEventListener('click', event => {
                     event.preventDefault();
                     loadApiData(a.dataset.loadEndpoint);
@@ -176,7 +170,6 @@
             });
             menuBar.style.display = 'flex';
         }
-
         function replaceValue(data, targetValue, replacementValue) {
             if (data === targetValue) {
                 return replacementValue;
@@ -194,7 +187,6 @@
                 return data;
             }
         }
-
         async function loadApiData(endpoint) {
             try {
                 const response = await fetch(endpoint, {
@@ -258,7 +250,6 @@
                         };
                     }
                 });
-
                 const activeDropsMap = {};
                 Object.keys(data).forEach(key => {
                     if (key.includes('-activedrop')) {
@@ -270,7 +261,6 @@
                         });
                     }
                 });
-
                 Object.keys(data).forEach(key => {
                     if (key.includes('-drop')) {
                         console.log(`Verarbeite Drop-Key: ${key}`);
@@ -301,7 +291,6 @@
                         }
                         textOutput.appendChild(dropdown);
                     }
-
                     if (key.includes('-table')) {
                         console.log(`Verarbeite Table-Key: ${key}`);
                         const table = document.createElement('table');
@@ -324,11 +313,9 @@
                             row.appendChild(valueCell);
                             tbody.appendChild(row);
                         });
-
                         table.appendChild(tbody);
                         textOutput.appendChild(table);
                     }
-
                     if (key.includes('-text')) {
                         console.log(`Verarbeite Text-Key: ${key}`);
                         const p = document.createElement('p');
@@ -336,7 +323,6 @@
                         textOutput.appendChild(p);
                     }
                 });
-
                 document.getElementById('save-button').style.display = 'block';
             } catch (error) {
                 console.error('Error fetching content:', error);
@@ -465,36 +451,44 @@
             return value;
         }
         function loadServerDetails(serverId) {
+            // Update URL with the selected server ID
             history.pushState(null, '', '?server=' + serverId);
 
-            const serverDetails = {{ guild_details | tojson | safe
-        }}.find(guild => guild.id === serverId);
-        if (serverDetails) {
-            const detailsHtml = `
-                        <div class="server-header">
-                            <img src="${serverDetails.icon_url}" alt="${serverDetails.name}" style="width: 80px; height: 80px; border-radius: 50%; margin-right: 20px;">
-                            <h2>${serverDetails.name}</h2>
-                        </div>
-                        <p>ID: ${serverDetails.id}</p>
-                        <p>Members: ${serverDetails.member_count}</p>
-                        <p>Owner: ${serverDetails.owner_username}</p>
-                        <p>Region: ${serverDetails.region}</p>
-                        <p>Description: ${serverDetails.description}</p>
-                        <p>Verification Level: ${serverDetails.verification_level}</p>
-                    `;
-            document.getElementById('server-details').innerHTML = detailsHtml;
-            document.getElementById('server-details').style.display = 'block';
-            document.getElementById('content-area').innerHTML = `
-                        <label id="toggle-switch" class="switch" style="display: none;">
-                            <input type="checkbox" id="toggle-input">
-                            <span class="slider"></span>
-                        </label>
-                        <div id="text-output" class="text-output"></div>
-                        <button id="save-button" style="display: none;" onclick="saveChanges()">Save</button>
-                    `;
-            loadMenuContent();
-        }
+            // Extract server details from the JSON data
+            const serverDetails = JSON.parse('{{ guild_details | tojson | safe }}').find(guild => guild.id === serverId);
+
+            if (serverDetails) {
+                // Create HTML content for server details
+                const detailsHtml = `
+            <div class="server-header">
+                <img src="${serverDetails.icon_url}" alt="${serverDetails.name}" style="width: 80px; height: 80px; border-radius: 50%; margin-right: 20px;">
+                <h2>${serverDetails.name}</h2>
+            </div>
+            <p>ID: ${serverDetails.id}</p>
+            <p>Members: ${serverDetails.member_count}</p>
+            <p>Owner: ${serverDetails.owner_username}</p>
+            <p>Region: ${serverDetails.region}</p>
+            <p>Description: ${serverDetails.description}</p>
+            <p>Verification Level: ${serverDetails.verification_level}</p>
+        `;
+
+                // Update HTML content and display
+                document.getElementById('server-details').innerHTML = detailsHtml;
+                document.getElementById('server-details').style.display = 'block';
+                document.getElementById('content-area').innerHTML = `
+            <label id="toggle-switch" class="switch" style="display: none;">
+                <input type="checkbox" id="toggle-input">
+                <span class="slider"></span>
+            </label>
+            <div id="text-output" class="text-output"></div>
+            <button id="save-button" style="display: none;" onclick="saveChanges()">Save</button>
+        `;
+
+                // Load menu content
+                loadMenuContent();
             }
+        }
+
         window.onload = function () {
             const urlParams = new URLSearchParams(window.location.search);
             const serverId = urlParams.get('server');
@@ -523,7 +517,6 @@
             }
             bild.src = link;
         }
-
     </script>
     <script src="{{ url_for('static', filename='js/loader.js') }}"></script>
 </body>
