@@ -46,6 +46,23 @@
                 <input type="checkbox" id="toggle-input" />
                 <span class="slider"></span>
             </label>
+            <label id="toggle-switch-2" class="switch" style="display: none;">
+                <input type="checkbox" id="toggle-input-2" />
+                <span class="slider"></span>
+            </label>
+            <label id="toggle-switch-3" class="switch" style="display: none;">
+                <input type="checkbox" id="toggle-input-3" />
+                <span class="slider"></span>
+            </label>
+            <label id="toggle-switch-4" class="switch" style="display: none;">
+                <input type="checkbox" id="toggle-input-4" />
+                <span class="slider"></span>
+            </label>
+            <label id="toggle-switch-5" class="switch" style="display: none;">
+                <input type="checkbox" id="toggle-input-5" />
+                <span class="slider"></span>
+            </label>
+
             <div id="text-output" class="text-output"></div>
             <button id="save-button" style="display: none;" onclick="saveChanges()">Save</button>
         </div>
@@ -228,17 +245,22 @@
 
                 currentData = data;
 
-                const toggleSwitch = document.getElementById('toggle-switch');
-                let showToggle = false;
-                Object.keys(data).forEach(key => {
-                    if (key.includes('-switch')) {
-                        showToggle = true;
+                // Handle toggle switches
+                const toggleSwitches = document.querySelectorAll('label[id^="toggle-switch-"]');
+                toggleSwitches.forEach(switchElem => {
+                    const input = switchElem.querySelector('input');
+                    const switchId = switchElem.id.split('-').pop(); // Get switch number
+                    const key = `-switch-${switchId}`;
+                    if (data.hasOwnProperty(key)) {
                         const isChecked = data[key] === 1;
-                        document.querySelector('#toggle-switch input').checked = isChecked;
-                        console.log(`Toggle-Switch gefunden: ${key} = ${data[key]} (${isChecked ? 'Aktiviert' : 'Deaktiviert'})`);
+                        input.checked = isChecked;
+                        console.log(`Toggle-Switch ${switchId} gefunden: ${key} = ${data[key]} (${isChecked ? 'Aktiviert' : 'Deaktiviert'})`);
+                        switchElem.style.display = 'block';
+                    } else {
+                        switchElem.style.display = 'none';
                     }
                 });
-                toggleSwitch.style.display = showToggle ? 'block' : 'none';
+
                 const textOutput = document.getElementById('text-output');
                 textOutput.innerHTML = '';
                 Object.keys(data).forEach(key => {
@@ -406,11 +428,16 @@
             notificationCard.style.display = 'none';
         }
 
-        // Modify the saveChanges function
         function saveChanges() {
             const updatedData = {};
-            const isActive = document.querySelector('#toggle-switch input').checked ? 1 : 0;
-            updatedData.active = isActive;
+
+            const toggleSwitches = document.querySelectorAll('label[id^="toggle-switch-"]');
+            toggleSwitches.forEach(switchElem => {
+                const input = switchElem.querySelector('input');
+                const switchId = switchElem.id.split('-').pop();
+                updatedData[`-switch-${switchId}`] = input.checked ? 1 : 0;
+            });
+
             const dropdowns = document.querySelectorAll('select');
             dropdowns.forEach(dropdown => {
                 const selectedOption = dropdown.options[dropdown.selectedIndex];
@@ -475,7 +502,6 @@
                     console.error('Error saving data:', error);
                     showNotification('notify-error', 'Fehler beim Speichern: ' + error.message);
                 });
-
         }
 
 
