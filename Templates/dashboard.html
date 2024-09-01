@@ -228,17 +228,20 @@
 
                 currentData = data;
 
-                const toggleSwitch = document.getElementById('toggle-switch');
-                let showToggle = false;
-                Object.keys(data).forEach(key => {
-                    if (key.includes('-switch')) {
-                        showToggle = true;
-                        const isChecked = data[key] === 1;
-                        document.querySelector('#toggle-switch input').checked = isChecked;
-                        console.log(`Toggle-Switch gefunden: ${key} = ${data[key]} (${isChecked ? 'Aktiviert' : 'Deaktiviert'})`);
+                for (let i = 0; i < 5; i++) {
+                    const switchKey = `-switch-${i}`;
+                    const switchLabel = document.getElementById(`toggle-switch-${i}`);
+                    if (data[switchKey] !== undefined) {
+                        const isChecked = data[switchKey] === 1;
+                        switchLabel.style.display = 'block'; // Schalter sichtbar machen
+                        const switchInput = switchLabel.querySelector('input[type="checkbox"]');
+                        switchInput.checked = isChecked;
+                    } else {
+                        const switchLabel = document.getElementById(`toggle-switch-${i}`);
+                        switchLabel.style.display = 'none'; // Schalter verstecken, wenn nicht vorhanden
                     }
-                });
-                toggleSwitch.style.display = showToggle ? 'block' : 'none';
+                }
+
                 const textOutput = document.getElementById('text-output');
                 textOutput.innerHTML = '';
                 Object.keys(data).forEach(key => {
@@ -361,6 +364,7 @@
                 console.error('Error fetching content:', error);
             }
         }
+
         function showNotification(msgType, msgContent) {
             const notificationCard = document.getElementById("notification-card");
             const messageText = document.getElementById("message-text");
@@ -409,8 +413,13 @@
         // Modify the saveChanges function
         function saveChanges() {
             const updatedData = {};
-            const isActive = document.querySelector('#toggle-switch input').checked ? 1 : 0;
-            updatedData.active = isActive;
+            for (let i = 0; i < 5; i++) {
+                const switchInput = document.getElementById(`toggle-input-${i}`);
+                if (switchInput) {
+                    updatedData[`-switch-${i}`] = switchInput.checked ? 1 : 0;
+                }
+            }
+
             const dropdowns = document.querySelectorAll('select');
             dropdowns.forEach(dropdown => {
                 const selectedOption = dropdown.options[dropdown.selectedIndex];
@@ -465,17 +474,27 @@
                     // Erstelle ein Array von key-value Paaren
                     const entries = Object.entries(data);
 
-                    // Falls es Einträge gibt, nimm das erste Paar für die Benachrichtigung
+                    // Falls es Einträge gibt, nimm den ersten und zeige die Benachrichtigung
                     if (entries.length > 0) {
                         const [key, value] = entries[0];
-                        showNotification(key, value);
+                        showNotification('Speicherung erfolgreich', `${key}: ${value}`);
                     }
                 })
                 .catch(error => {
-                    console.error('Error saving data:', error);
-                    showNotification('notify-error', 'Fehler beim Speichern: ' + error.message);
+                    console.error('Fehler beim Speichern:', error);
                 });
+        }
 
+        // Helper-Funktion um die Benachrichtigung zu zeigen
+        function showNotification(title, message) {
+            // Implementiere hier deine Benachrichtigungslogik
+            console.log(`${title}: ${message}`);
+        }
+
+        // Initiale API-Daten laden
+        const apiEndpoint = localStorage.getItem("currentloadEndpoint");
+        if (apiEndpoint) {
+            loadApiData(apiEndpoint);
         }
 
 
