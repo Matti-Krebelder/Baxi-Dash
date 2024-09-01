@@ -139,10 +139,6 @@
         }
     </script>
     <script>
-        async function Sleep(ms) {
-            return new Promise(resolve => setTimeout(() => resolve(), ms));
-        }
-
         const apiKey = 'bdash-X_KzUaBBMlM8d5a5xbAav4Z6bYqS3rnBN94ugjtkhsI';
         let currentData = {};
         function loadMenuContent() {
@@ -363,8 +359,9 @@
             messageText.textContent = msgContent;
             subText.textContent = "";
             notificationCard.style.display = 'flex';
-            Sleep(5000);
-            closeNotification()
+            setTimeout(() => {
+                closeNotification();
+            }, 5000);
         }
         function closeNotification() {
             const notificationCard = document.getElementById("notification-card");
