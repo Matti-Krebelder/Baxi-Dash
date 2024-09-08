@@ -10,21 +10,19 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 
-<!-- Open Graph Meta Tags -->
-<meta property="og:title" content="Pyropixle | Baxi Dashboard" />
-<meta property="og:description"
-    content="Das Baxi Dashboard von Pyropixle bietet eine umfassende Übersicht über alle Ihre Daten." />
-<meta property="og:image" content="https://baxi.pyropixle.com/_images_/pyro.png" />
-<meta property="og:url" content="https://baxi.pyropixle.com" />
-<meta property="og:type" content="website" />
-
-<!-- Twitter Card Meta Tags -->
-<meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="Pyropixle | Baxi Dashboard" />
-<meta name="twitter:description"
-    content="Das Baxi Dashboard von Pyropixle bietet eine umfassende Übersicht über alle Ihre Daten." />
-<meta name="twitter:image" content="https://baxi.pyropixle.com/_images_/pyro.png" />
-<meta name="twitter:url" content="https://baxi.pyropixle.com" />
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Pyropixle | Baxi Dashboard" />
+    <meta property="og:description" content="Das Baxi Dashboard von Pyropixle bietet eine umfassende Übersicht über alle Ihre Daten." />
+    <meta property="og:image" content="https://baxi.pyropixle.com/_images_/pyro.png" />
+    <meta property="og:url" content="https://baxi.pyropixle.com" />
+    <meta property="og:type" content="website" />
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Pyropixle | Baxi Dashboard" />
+    <meta name="twitter:description" content="Das Baxi Dashboard von Pyropixle bietet eine umfassende Übersicht über alle Ihre Daten." />
+    <meta name="twitter:image" content="https://baxi.pyropixle.com/_images_/pyro.png" />
+    <meta name="twitter:url" content="https://baxi.pyropixle.com" />
 </head>
 
 <body>
@@ -149,7 +147,14 @@
                         "load": "https://baxi-backend.pyropixle.com/api/dash/settings/load/sec/{guild_id}",
                         "save": "https://baxi-backend.pyropixle.com/api/dash/settings/save/sec/{guild_id}"
                     }
-                }
+                },
+                {
+                    "name": "Auto Role",
+                    "id": "auto_roles",
+                    "endpoints": {
+                        "load": "https://baxi-backend.pyropixle.com/api/dash/settings/load/auto_roles/{guild_id}",
+                        "save": "https://baxi-backend.pyropixle.com/api/dash/settings/save/auto_roles/{guild_id}"
+                    }
             ]
         }
     </script>
@@ -157,52 +162,34 @@
         const apiKey = 'bdash-X_KzUaBBMlM8d5a5xbAav4Z6bYqS3rnBN94ugjtkhsI';
         let currentData = {};
         function loadMenuContent() {
-    const serverId = new URLSearchParams(window.location.search).get('server');
-    if (!serverId) {
-        document.getElementById('menu-bar').style.display = 'none';
-        return;
-    }
-    const menuData = JSON.parse(document.getElementById('menu-data').textContent);
-    const menuBar = document.getElementById('menu-bar');
-    menuBar.innerHTML = '';
-    
-    menuData.menu_items.forEach(item => {
-        // Erstelle die Karte
-        const card = document.createElement('div');
-        card.className = 'menu-item';
-        card.dataset.loadEndpoint = item.endpoints.load.replace('{guild_id}', serverId);
-        card.dataset.saveEndpoint = item.endpoints.save.replace('{guild_id}', serverId);
-        
-        // Erstelle das Bild
-        const img = document.createElement('img');
-        img.src = item.image || 'default-image-url'; // Füge hier die URL zum Bild hinzu oder benutze ein Standardbild
-        img.alt = item.name;
-        card.appendChild(img);
-        
-        // Erstelle den Titel
-        const title = document.createElement('div');
-        title.className = 'card-title';
-        title.textContent = item.name;
-        card.appendChild(title);
-        
-        // Füge Event-Listener hinzu
-        card.addEventListener('click', event => {
-            event.preventDefault();
-            loadApiData(card.dataset.loadEndpoint);
-            document.getElementById('server-details').style.display = 'none';
-            localStorage.setItem('currentSaveEndpoint', card.dataset.saveEndpoint);
-            localStorage.setItem('currentloadEndpoint', card.dataset.loadEndpoint);
-            document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('selected'));
-            card.classList.add('selected');
-        });
-        
-        menuBar.appendChild(card);
-    });
-    
-    menuBar.style.display = 'flex';
-}
-
-
+            const serverId = new URLSearchParams(window.location.search).get('server');
+            if (!serverId) {
+                document.getElementById('menu-bar').style.display = 'none';
+                return;
+            }
+            const menuData = JSON.parse(document.getElementById('menu-data').textContent);
+            const menuBar = document.getElementById('menu-bar');
+            menuBar.innerHTML = '';
+            menuData.menu_items.forEach(item => {
+                const a = document.createElement('a');
+                a.href = '#';
+                a.textContent = item.name;
+                a.className = 'menu-item';
+                a.dataset.loadEndpoint = item.endpoints.load.replace('{guild_id}', serverId);
+                a.dataset.saveEndpoint = item.endpoints.save.replace('{guild_id}', serverId);
+                a.addEventListener('click', event => {
+                    event.preventDefault();
+                    loadApiData(a.dataset.loadEndpoint);
+                    document.getElementById('server-details').style.display = 'none';
+                    localStorage.setItem('currentSaveEndpoint', a.dataset.saveEndpoint);
+                    localStorage.setItem('currentloadEndpoint', a.dataset.loadEndpoint);
+                    document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('selected'));
+                    a.classList.add('selected');
+                });
+                menuBar.appendChild(a);
+            });
+            menuBar.style.display = 'flex';
+        }
         function replaceValue(data, targetValue, replacementValue) {
             if (data === targetValue) {
                 return replacementValue;
@@ -354,7 +341,7 @@
                     if (key.includes('-label')) {
                         console.log(`Verarbeite Text-Key: ${key}`);
                         const p = document.createElement('p');
-                        p.innerHTML = `${formatValue(data[key] + ":")}`;
+                        p.innerHTML = `${formatValue(data[key]+":")}`;
                         textOutput.appendChild(p);
                     }
                 });
