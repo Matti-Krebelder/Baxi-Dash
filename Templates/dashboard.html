@@ -157,44 +157,51 @@
         const apiKey = 'bdash-X_KzUaBBMlM8d5a5xbAav4Z6bYqS3rnBN94ugjtkhsI';
         let currentData = {};
         function loadMenuContent() {
-            const serverId = new URLSearchParams(window.location.search).get('server');
-            if (!serverId) {
-                document.getElementById('menu-bar').style.display = 'none';
-                return;
-            }
-            const menuData = JSON.parse(document.getElementById('menu-data').textContent);
-            const menuBar = document.getElementById('menu-bar');
-            menuBar.innerHTML = '';
-            menuData.menu_items.forEach(item => {
-                const card = document.createElement('div');
-                card.className = 'menu-item';
-                card.dataset.loadEndpoint = item.endpoints.load.replace('{guild_id}', serverId);
-                card.dataset.saveEndpoint = item.endpoints.save.replace('{guild_id}', serverId);
+    const serverId = new URLSearchParams(window.location.search).get('server');
+    if (!serverId) {
+        document.getElementById('menu-bar').style.display = 'none';
+        return;
+    }
+    const menuData = JSON.parse(document.getElementById('menu-data').textContent);
+    const menuBar = document.getElementById('menu-bar');
+    menuBar.innerHTML = '';
+    
+    menuData.menu_items.forEach(item => {
+        // Erstelle die Karte
+        const card = document.createElement('div');
+        card.className = 'menu-item';
+        card.dataset.loadEndpoint = item.endpoints.load.replace('{guild_id}', serverId);
+        card.dataset.saveEndpoint = item.endpoints.save.replace('{guild_id}', serverId);
+        
+        // Erstelle das Bild
+        const img = document.createElement('img');
+        img.src = item.image || 'default-image-url'; // Füge hier die URL zum Bild hinzu oder benutze ein Standardbild
+        img.alt = item.name;
+        card.appendChild(img);
+        
+        // Erstelle den Titel
+        const title = document.createElement('div');
+        title.className = 'card-title';
+        title.textContent = item.name;
+        card.appendChild(title);
+        
+        // Füge Event-Listener hinzu
+        card.addEventListener('click', event => {
+            event.preventDefault();
+            loadApiData(card.dataset.loadEndpoint);
+            document.getElementById('server-details').style.display = 'none';
+            localStorage.setItem('currentSaveEndpoint', card.dataset.saveEndpoint);
+            localStorage.setItem('currentloadEndpoint', card.dataset.loadEndpoint);
+            document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('selected'));
+            card.classList.add('selected');
+        });
+        
+        menuBar.appendChild(card);
+    });
+    
+    menuBar.style.display = 'flex';
+}
 
-                const img = document.createElement('img');
-                img.src = item.image; // Füge ein Bild hinzu, falls vorhanden
-                img.alt = item.name;
-
-                const title = document.createElement('div');
-                title.textContent = item.name;
-
-                card.appendChild(img);
-                card.appendChild(title);
-
-                card.addEventListener('click', event => {
-                    event.preventDefault();
-                    loadApiData(card.dataset.loadEndpoint);
-                    document.getElementById('server-details').style.display = 'none';
-                    localStorage.setItem('currentSaveEndpoint', card.dataset.saveEndpoint);
-                    localStorage.setItem('currentloadEndpoint', card.dataset.loadEndpoint);
-                    document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('selected'));
-                    card.classList.add('selected');
-                });
-
-                menuBar.appendChild(card);
-            });
-            menuBar.style.display = 'flex';
-        }
 
         function replaceValue(data, targetValue, replacementValue) {
             if (data === targetValue) {
