@@ -149,14 +149,6 @@
               "load": "https://baxi-backend.pyropixle.com/api/dash/settings/load/sec/{guild_id}",
               "save": "https://baxi-backend.pyropixle.com/api/dash/settings/save/sec/{guild_id}"
             }
-          },
-          {
-            "name": "Auto roles",
-            "id": "auto_roles",
-            "endpoints": {
-              "load": "https://baxi-backend.pyropixle.com/api/dash/settings/load/auto_roles/{guild_id}",
-              "save": "https://baxi-backend.pyropixle.com/api/dash/settings/save/auto_roles/{guild_id}"
-            }
           }
         ]
       }
@@ -387,8 +379,11 @@
               console.log(`Verarbeite Text-Key: ${key}`);
               const p = document.createElement("p");
               let value = formatValue(data[key]);
+
+              // Füge den Doppelpunkt immer hinzu
               value += " :";
-              p.innerHTML = value;
+
+              p.innerHTML = value; // Zeigt den Wert mit dem angehängten Doppelpunkt an
               textOutput.appendChild(p);
             }
           });
