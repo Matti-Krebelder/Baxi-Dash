@@ -154,50 +154,42 @@ async def dashboard():
 
     return await render_template('dashboard.html', guild_details=guild_details)
 
-API_KEY = "bdash-X_KzUaBBMlM8d5a5xbAav4Z6bYqS3rnBN94ugjtkhsI"
-@app.route('/fetch-data', methods=['POST'])
-def fetch_data():
-    data = request.json
-    endpoint = data.get('endpoint')
-
-    if not endpoint:
-        return jsonify({"error": "Endpoint not provided"}), 400
-
-    try:
-        response = requests.get(endpoint, headers={'Authorization': API_KEY})
-
-        if not response.ok:
-            return jsonify({"error": "Failed to fetch data from external API"}), 500
-
-        data = response.json()
-        return jsonify(data)
-
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-@app.route('/save-data', methods=['POST'])
-def save_data():
-    data = request.json
-    save_endpoint = data.get('saveEndpoint')
-    save_data = data.get('data')
-
-    if not save_endpoint or not save_data:
-        return jsonify({"error": "Save endpoint or data not provided"}), 400
-
-    try:
-        response = requests.post(save_endpoint, json=save_data, headers={'Authorization': API_KEY})
-
-        if not response.ok:
-            return jsonify({"error": "Failed to save data"}), 500
-
-        return jsonify(response.json())
-
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
 @app.route('/dashboard-menu.json')
 async def menu():
     return await send_from_directory('templates', 'dashboard-menu.json')
+EXTERNAL_API_KEY = "bdash-X_KzUaBBMlM8d5a5xbAav4Z6bYqS3rnBN94ugjtkhsI"
+
+@app.route("/api/data", methods=["GET"])
+async def get_api_data():
+    endpoint = request.args.get('endpoint')
+    
+    if not endpoint:
+        return jsonify({"error": "No endpoint provided"}), 400
+    
+    headers = {
+        'Authorization': f'Bearer {EXTERNAL_API_KEY}'  # Include the API key here
+    }
+    
+    try:
+        response = requests.get(endpoint, headers=headers)
+        response.raise_for_status()
+        data = response.json()
+        
+        # Process data if needed
+        def replace_value(data, old, new):
+            if isinstance(data, dict):
+                return {k: replace_value(v, old, new) for k, v in data.items()}
+            elif isinstance(data, list):
+                return [replace_value(i, old, new) for i in data]
+            elif data == old:
+                return new
+            return data
+
+        processed_data = replace_value(data, None, "null")
+        return jsonify(processed_data)
+    
+    except requests.RequestException as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0")
