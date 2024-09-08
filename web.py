@@ -1,7 +1,7 @@
 import json
 import requests
 import os
-from quart import Quart, render_template, request, send_from_directory, send_file, jsonify, url_for, redirect, session, make_response
+from quart import Quart, render_template, request, send_from_directory, jsonify, redirect, session
 from quart_cors import cors
 import configparser
 from cryptography.fernet import Fernet
@@ -20,9 +20,8 @@ TOKEN_URL = 'https://discord.com/api/oauth2/token'
 PERMS_API = 'https://baxi-backend.pyropixle.com/api/dash/check/staff/user/perms/'
 LOG_FILE = 'denied_access.json'
 
-
 headers = {
-    'Authorization': f"{config["BAXI"]["baxi_info_key"]}"
+    'Authorization': f"{config['BAXI']['baxi_info_key']}"
 }
 baxi_data_request = requests.get("https://baxi-backend.pyropixle.com/api/oauth/get/data/baxi", headers=headers)
 baxi_data = baxi_data_request.json()
@@ -30,8 +29,8 @@ baxi_data = baxi_data_request.json()
 baxi_client_secret = f"{fernet.decrypt(baxi_data['client_secret']).decode()}"
 baxi_tocken = f"{fernet.decrypt(baxi_data['tocken']).decode()}"
 
-print(baxi_client_secret)
-print(baxi_tocken)
+# Define the maintenance variable
+maintenance = False  # Change to True when maintenance mode is active
 
 @app.route("/")
 async def home():
@@ -39,18 +38,17 @@ async def home():
 
 @app.route("/login")
 async def login():
-    return redirect(f'{AUTH_URL}?client_id={int(baxi_data['client_id'])}&redirect_uri={baxi_data['redirect_uri']}&response_type=code&scope=identify%20guilds')
-
+    return redirect(f'{AUTH_URL}?client_id={int(baxi_data["client_id"])}&redirect_uri={baxi_data["redirect_uri"]}&response_type=code&scope=identify%20guilds')
 
 @app.route("/callback")
 async def callback():
     code = request.args.get('code')
     data = {
-        'client_id': int(baxi_data['client_id']),
+        'client_id': int(baxi_data["client_id"]),
         'client_secret': str(baxi_client_secret),
         'grant_type': 'authorization_code',
         'code': code,
-        'redirect_uri': str(baxi_data['redirect_uri'])
+        'redirect_uri': str(baxi_data["redirect_uri"])
     }
     headers = {
         'Content-Type': 'application/x-www-form-urlencoded'
@@ -93,18 +91,21 @@ async def dashboard():
     user_info = user_info_response.json()
     user_id = user_info['id']
 
-    # Fetch permissions array from external API
-    perms_response = requests.get(PERMS_API)
-    perms_response.raise_for_status()
-    permitted_user_ids = perms_response.json()  # This should be a list of IDs
+    # Check maintenance mode
+    if maintenance:
+        # Fetch permissions array from external API only in maintenance mode
+        perms_response = requests.get(PERMS_API)
+        perms_response.raise_for_status()
+        permitted_user_ids = perms_response.json()  # This should be a list of IDs
 
-    # Check if the user ID is in the permitted list
-    print(int(user_id))
-    print(permitted_user_ids)
-    if int(user_id) not in permitted_user_ids:
-        ip_address = request.headers.get('X-Forwarded-For', request.remote_addr)
-        log_denied_access(ip_address, user_id)
-        return "Access Denied: You do not have permission to access this dashboard."
+        # Check if the user ID is in the permitted list
+        if int(user_id) not in permitted_user_ids:
+            ip_address = request.headers.get('X-Forwarded-For', request.remote_addr)
+            log_denied_access(ip_address, user_id)
+            return "Access Denied: You do not have permission to access this dashboard during maintenance."
+    else:
+        # No restrictions outside of maintenance mode
+        print(f"Access granted for user {user_id} (Maintenance: {maintenance})")
 
     # Fetch user guilds
     user_guilds_response = requests.get(f'{API_ENDPOINT}/users/@me/guilds', headers=headers)
