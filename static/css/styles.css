@@ -64,27 +64,39 @@ body {
 }
 
 .menu-bar {
-    display: none;
-    background-color: rgba(0, 0, 0, 0.5);
-    padding: 10px;
-    border-radius: 5px;
-    margin-bottom: 20px;
-    overflow-x: auto;
-    white-space: nowrap;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px; /* Abstand zwischen den Karten */
+    justify-content: space-between;
 }
 
 .menu-item {
-    margin-right: 20px;
-    color: #dcddde;
+    flex: 1 1 calc(25% - 16px); /* 4 Karten nebeneinander */
+    box-sizing: border-box;
+    background: #f4f4f4;
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
     text-decoration: none;
-    font-weight: bold;
-    cursor: pointer;
+    color: #333;
+    transition: background 0.3s, transform 0.3s;
 }
 
 .menu-item:hover {
-    text-decoration: underline;
+    background: #ddd;
+    transform: scale(1.05);
 }
 
+.menu-item img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+
+.menu-item.selected {
+    background: #e0e0e0;
+}
 .server-details {
     background-color: #2f3136;
     padding: 20px;
