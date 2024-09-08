@@ -10,29 +10,41 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 
+<!-- Open Graph Meta Tags -->
+<meta property="og:title" content="Pyropixle | Baxi Dashboard" />
+<meta property="og:description"
+    content="Das Baxi Dashboard von Pyropixle bietet eine umfassende Übersicht über alle Ihre Daten." />
+<meta property="og:image" content="https://baxi.pyropixle.com/_images_/pyro.png" />
+<meta property="og:url" content="https://baxi.pyropixle.com" />
+<meta property="og:type" content="website" />
+
+<!-- Twitter Card Meta Tags -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Pyropixle | Baxi Dashboard" />
+<meta name="twitter:description"
+    content="Das Baxi Dashboard von Pyropixle bietet eine umfassende Übersicht über alle Ihre Daten." />
+<meta name="twitter:image" content="https://baxi.pyropixle.com/_images_/pyro.png" />
+<meta name="twitter:url" content="https://baxi.pyropixle.com" />
+</head>
+
 <body>
     <div id="overlay">
         <iframe id="iframe" src="https://pyropixle.com/baxi_logon/"
             style="width: 100%; height: 100%; border: none;"></iframe>
     </div>
-
     <div class="sidebar">
-        {% if guild_details %} 
-        {% for guild in guild_details %}
+        {% if guild_details %} {% for guild in guild_details %}
         <div class="server-icon" onclick="loadServerDetails('{{ guild.id }}')">
             <img src="{{ guild.icon_url }}" alt="{{ guild.name }}" />
             <span class="server-name">{{ guild.name }}</span>
         </div>
-        {% endfor %} 
-        {% endif %}
+        {% endfor %} {% endif %}
     </div>
-
     <div class="content">
-        <div id="server-details" class="server-details">
-            <!-- Hier werden die Serverdetails dynamisch geladen -->
-        </div>
-
-        <div id="content-area" class="content-area">
+        <h1>Baxi Dashboard</h1>
+        <div id="menu-bar" class="menu-bar"></div>
+        <div id="server-details" class="server-details"></div>
+        <div style="display: flex; justify-content: center;">
             <div id="notification-card" class="card notify-info" style="display:none;">
                 <div id="icon-container" class="icon-container">
                     <i id="icon" class="icon fas"></i>
@@ -42,12 +54,10 @@
                     <p id="sub-text" class="sub-text">Let me think!</p>
                 </div>
                 <i class="cross-icon fas fa-times" onclick="closeNotification()"></i>
-            </div>
 
-            <div id="menu-bar" class="menu-bar">
-                <!-- Karten werden hier dynamisch geladen -->
             </div>
-
+        </div>
+        <div id="content-area" class="content-area">
             <label id="toggle-switch" class="switch" style="display: none;">
                 <input type="checkbox" id="toggle-input" />
                 <span class="slider"></span>
