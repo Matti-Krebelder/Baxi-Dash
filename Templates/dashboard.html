@@ -1,481 +1,555 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pyropixle | Baxi Dashboard</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    <link rel="icon" type="image/x-icon" href="https://baxi-backend.pyropixle.com/_images_/pyro.png" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-</head>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/styles.css') }}"
+    />
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="https://baxi-backend.pyropixle.com/_images_/pyro.png"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+  </head>
 
-<body>
+  <body>
     <div id="overlay">
-        <iframe id="iframe" src="https://pyropixle.com/baxi_logon/"
-            style="width: 100%; height: 100%; border: none;"></iframe>
+      <iframe
+        id="iframe"
+        src="https://pyropixle.com/baxi_logon/"
+        style="width: 100%; height: 100%; border: none"
+      ></iframe>
     </div>
     <div class="sidebar">
-        {% if guild_details %} {% for guild in guild_details %}
-        <div class="server-icon" onclick="loadServerDetails('{{ guild.id }}')">
-            <img src="{{ guild.icon_url }}" alt="{{ guild.name }}" />
-            <span class="server-name">{{ guild.name }}</span>
-        </div>
-        {% endfor %} {% endif %}
+      {% if guild_details %} {% for guild in guild_details %}
+      <div class="server-icon" onclick="loadServerDetails('{{ guild.id }}')">
+        <img src="{{ guild.icon_url }}" alt="{{ guild.name }}" />
+        <span class="server-name">{{ guild.name }}</span>
+      </div>
+      {% endfor %} {% endif %}
     </div>
     <div class="content">
-        <h1>Baxi Dashboard</h1>
-        <div id="menu-bar" class="menu-bar"></div>
-        <div id="server-details" class="server-details"></div>
-        <div style="display: flex; justify-content: center;">
-            <div id="notification-card" class="card notify-info" style="display:none;">
-                <div id="icon-container" class="icon-container">
-                    <i id="icon" class="icon fas"></i>
-                </div>
-                <div class="message-text-container">
-                    <p id="message-text" class="message-text">Loading...</p>
-                    <p id="sub-text" class="sub-text">Let me think!</p>
-                </div>
-                <i class="cross-icon fas fa-times" onclick="closeNotification()"></i>
-
-            </div>
+      <h1>Baxi Dashboard</h1>
+      <div id="menu-bar" class="menu-bar"></div>
+      <div id="server-details" class="server-details"></div>
+      <div style="display: flex; justify-content: center">
+        <div
+          id="notification-card"
+          class="card notify-info"
+          style="display: none"
+        >
+          <div id="icon-container" class="icon-container">
+            <i id="icon" class="icon fas"></i>
+          </div>
+          <div class="message-text-container">
+            <p id="message-text" class="message-text">Loading...</p>
+            <p id="sub-text" class="sub-text">Let me think!</p>
+          </div>
+          <i class="cross-icon fas fa-times" onclick="closeNotification()"></i>
         </div>
-        <div id="content-area" class="content-area">
-            <label id="toggle-switch" class="switch" style="display: none;">
-                <input type="checkbox" id="toggle-input" />
-                <span class="slider"></span>
-            </label>
-            <div id="text-output" class="text-output"></div>
-            <button id="save-button" style="display: none;" onclick="saveChanges()">Save</button>
-        </div>
+      </div>
+      <div id="content-area" class="content-area">
+        <label id="toggle-switch" class="switch" style="display: none">
+          <input type="checkbox" id="toggle-input" />
+          <span class="slider"></span>
+        </label>
+        <div id="text-output" class="text-output"></div>
+        <button id="save-button" style="display: none" onclick="saveChanges()">
+          Save
+        </button>
+      </div>
     </div>
     <!--Api Endpoints-->
     <script id="menu-data" type="application/json">
-        {
-            "menu_items": [
-                {
-                    "name": "Anti Raid",
-                    "id": "anti_raid",
-                    "endpoints": {
-                        "load": "https://baxi-backend.pyropixle.com/api/dash/settings/load/anti_raid/{guild_id}",
-                        "save": "https://baxi-backend.pyropixle.com/api/dash/settings/save/anti_raid/{guild_id}"
-                    }
-                },
-                {
-                    "name": "Minigame guessing",
-                    "id": "Minigame guessing",
-                    "endpoints": {
-                        "load": "https://baxi-backend.pyropixle.com/api/dash/settings/load/mgg/{guild_id}",
-                        "save": "https://baxi-backend.pyropixle.com/api/dash/settings/save/mgg/{guild_id}"
-                    }
-                },
-                {
-                    "name": "Counting game",
-                    "id": "countgame_data",
-                    "endpoints": {
-                        "load": "https://baxi-backend.pyropixle.com/api/dash/settings/load/mgc/{guild_id}",
-                        "save": "https://baxi-backend.pyropixle.com/api/dash/settings/save/mgc/{guild_id}"
-                    }
-                },
-                {
-                    "name": "Global chat",
-                    "id": "gc",
-                    "endpoints": {
-                        "load": "https://baxi-backend.pyropixle.com/api/dash/settings/load/gc/{guild_id}",
-                        "save": "https://baxi-backend.pyropixle.com/api/dash/settings/save/gc/{guild_id}"
-                    }
-                },
-                {
-                    "name": "Welcome system",
-                    "id": "welc",
-                    "endpoints": {
-                        "load": "https://baxi-backend.pyropixle.com/api/dash/settings/load/welc/{guild_id}",
-                        "save": "https://baxi-backend.pyropixle.com/api/dash/settings/save/welc/{guild_id}"
-                    }
-                },
-                {
-                    "name": "Verify system",
-                    "id": "verify",
-                    "endpoints": {
-                        "load": "https://baxi-backend.pyropixle.com/api/dash/settings/load/verify/{guild_id}",
-                        "save": "https://baxi-backend.pyropixle.com/api/dash/settings/save/verify/{guild_id}"
-                    }
-                },
-                {
-                    "name": "Suggestion system",
-                    "id": "Suggestions",
-                    "endpoints": {
-                        "load": "https://baxi-backend.pyropixle.com/api/dash/settings/load/sugg/{guild_id}",
-                        "save": "https://baxi-backend.pyropixle.com/api/dash/settings/save/sugg/{guild_id}"
-                    }
-                },
-                {
-                    "name": "Ticket system",
-                    "id": "ticket",
-                    "endpoints": {
-                        "load": "https://baxi-backend.pyropixle.com/api/dash/settings/load/ticket/{guild_id}",
-                        "save": "https://baxi-backend.pyropixle.com/api/dash/settings/save/ticket/{guild_id}"
-                    }
-                },
-                {
-                    "name": "Log system",
-                    "id": "log",
-                    "endpoints": {
-                        "load": "https://baxi-backend.pyropixle.com/api/dash/settings/load/log/{guild_id}",
-                        "save": "https://baxi-backend.pyropixle.com/api/dash/settings/save/log/{guild_id}"
-                    }
-                },
-                {
-                    "name": "Security system",
-                    "id": "sec",
-                    "endpoints": {
-                        "load": "https://baxi-backend.pyropixle.com/api/dash/settings/load/sec/{guild_id}",
-                        "save": "https://baxi-backend.pyropixle.com/api/dash/settings/save/sec/{guild_id}"
-                    }
-                },
-                {
-                    "name": "Auto roles",
-                    "id": "auto_roles",
-                    "endpoints": {
-                        "load": "https://baxi-backend.pyropixle.com/api/dash/settings/load/auto_roles/{guild_id}",
-                        "save": "https://baxi-backend.pyropixle.com/api/dash/settings/save/auto_roles/{guild_id}"
-                    }
-                }
-            ]
-        }
+      {
+        "menu_items": [
+          {
+            "name": "Anti Raid",
+            "id": "anti_raid",
+            "endpoints": {
+              "load": "https://baxi-backend.pyropixle.com/api/dash/settings/load/anti_raid/{guild_id}",
+              "save": "https://baxi-backend.pyropixle.com/api/dash/settings/save/anti_raid/{guild_id}"
+            }
+          },
+          {
+            "name": "Minigame guessing",
+            "id": "Minigame guessing",
+            "endpoints": {
+              "load": "https://baxi-backend.pyropixle.com/api/dash/settings/load/mgg/{guild_id}",
+              "save": "https://baxi-backend.pyropixle.com/api/dash/settings/save/mgg/{guild_id}"
+            }
+          },
+          {
+            "name": "Counting game",
+            "id": "countgame_data",
+            "endpoints": {
+              "load": "https://baxi-backend.pyropixle.com/api/dash/settings/load/mgc/{guild_id}",
+              "save": "https://baxi-backend.pyropixle.com/api/dash/settings/save/mgc/{guild_id}"
+            }
+          },
+          {
+            "name": "Global chat",
+            "id": "gc",
+            "endpoints": {
+              "load": "https://baxi-backend.pyropixle.com/api/dash/settings/load/gc/{guild_id}",
+              "save": "https://baxi-backend.pyropixle.com/api/dash/settings/save/gc/{guild_id}"
+            }
+          },
+          {
+            "name": "Welcome system",
+            "id": "welc",
+            "endpoints": {
+              "load": "https://baxi-backend.pyropixle.com/api/dash/settings/load/welc/{guild_id}",
+              "save": "https://baxi-backend.pyropixle.com/api/dash/settings/save/welc/{guild_id}"
+            }
+          },
+          {
+            "name": "Verify system",
+            "id": "verify",
+            "endpoints": {
+              "load": "https://baxi-backend.pyropixle.com/api/dash/settings/load/verify/{guild_id}",
+              "save": "https://baxi-backend.pyropixle.com/api/dash/settings/save/verify/{guild_id}"
+            }
+          },
+          {
+            "name": "Suggestion system",
+            "id": "Suggestions",
+            "endpoints": {
+              "load": "https://baxi-backend.pyropixle.com/api/dash/settings/load/sugg/{guild_id}",
+              "save": "https://baxi-backend.pyropixle.com/api/dash/settings/save/sugg/{guild_id}"
+            }
+          },
+          {
+            "name": "Ticket system",
+            "id": "ticket",
+            "endpoints": {
+              "load": "https://baxi-backend.pyropixle.com/api/dash/settings/load/ticket/{guild_id}",
+              "save": "https://baxi-backend.pyropixle.com/api/dash/settings/save/ticket/{guild_id}"
+            }
+          },
+          {
+            "name": "Log system",
+            "id": "log",
+            "endpoints": {
+              "load": "https://baxi-backend.pyropixle.com/api/dash/settings/load/log/{guild_id}",
+              "save": "https://baxi-backend.pyropixle.com/api/dash/settings/save/log/{guild_id}"
+            }
+          },
+          {
+            "name": "Security system",
+            "id": "sec",
+            "endpoints": {
+              "load": "https://baxi-backend.pyropixle.com/api/dash/settings/load/sec/{guild_id}",
+              "save": "https://baxi-backend.pyropixle.com/api/dash/settings/save/sec/{guild_id}"
+            }
+          },
+          {
+            "name": "Auto roles",
+            "id": "auto_roles",
+            "endpoints": {
+              "load": "https://baxi-backend.pyropixle.com/api/dash/settings/load/auto_roles/{guild_id}",
+              "save": "https://baxi-backend.pyropixle.com/api/dash/settings/save/auto_roles/{guild_id}"
+            }
+          }
+        ]
+      }
     </script>
     <script>
-        const apiKey = 'bdash-X_KzUaBBMlM8d5a5xbAav4Z6bYqS3rnBN94ugjtkhsI';
-        let currentData = {};
-        function loadMenuContent() {
-            const serverId = new URLSearchParams(window.location.search).get('server');
-            if (!serverId) {
-                document.getElementById('menu-bar').style.display = 'none';
-                return;
-            }
-            const menuData = JSON.parse(document.getElementById('menu-data').textContent);
-            const menuBar = document.getElementById('menu-bar');
-            menuBar.innerHTML = '';
-            menuData.menu_items.forEach(item => {
-                const a = document.createElement('a');
-                a.href = '#';
-                a.textContent = item.name;
-                a.className = 'menu-item';
-                a.dataset.loadEndpoint = item.endpoints.load.replace('{guild_id}', serverId);
-                a.dataset.saveEndpoint = item.endpoints.save.replace('{guild_id}', serverId);
-                a.addEventListener('click', event => {
-                    event.preventDefault();
-                    loadApiData(a.dataset.loadEndpoint);
-                    document.getElementById('server-details').style.display = 'none';
-                    localStorage.setItem('currentSaveEndpoint', a.dataset.saveEndpoint);
-                    localStorage.setItem('currentloadEndpoint', a.dataset.loadEndpoint);
-                    document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('selected'));
-                    a.classList.add('selected');
-                });
-                menuBar.appendChild(a);
-            });
-            menuBar.style.display = 'flex';
+      const apiKey = "bdash-X_KzUaBBMlM8d5a5xbAav4Z6bYqS3rnBN94ugjtkhsI";
+      let currentData = {};
+      function loadMenuContent() {
+        const serverId = new URLSearchParams(window.location.search).get(
+          "server"
+        );
+        if (!serverId) {
+          document.getElementById("menu-bar").style.display = "none";
+          return;
         }
-        function replaceValue(data, targetValue, replacementValue) {
-            if (data === targetValue) {
-                return replacementValue;
-            } else if (Array.isArray(data)) {
-                return data.map(item => replaceValue(item, targetValue, replacementValue));
-            } else if (typeof data === 'object' && data !== null) {
-                const result = {};
-                for (const key in data) {
-                    if (data.hasOwnProperty(key)) {
-                        result[key] = replaceValue(data[key], targetValue, replacementValue);
-                    }
+        const menuData = JSON.parse(
+          document.getElementById("menu-data").textContent
+        );
+        const menuBar = document.getElementById("menu-bar");
+        menuBar.innerHTML = "";
+        menuData.menu_items.forEach((item) => {
+          const a = document.createElement("a");
+          a.href = "#";
+          a.textContent = item.name;
+          a.className = "menu-item";
+          a.dataset.loadEndpoint = item.endpoints.load.replace(
+            "{guild_id}",
+            serverId
+          );
+          a.dataset.saveEndpoint = item.endpoints.save.replace(
+            "{guild_id}",
+            serverId
+          );
+          a.addEventListener("click", (event) => {
+            event.preventDefault();
+            loadApiData(a.dataset.loadEndpoint);
+            document.getElementById("server-details").style.display = "none";
+            localStorage.setItem("currentSaveEndpoint", a.dataset.saveEndpoint);
+            localStorage.setItem("currentloadEndpoint", a.dataset.loadEndpoint);
+            document
+              .querySelectorAll(".menu-item")
+              .forEach((item) => item.classList.remove("selected"));
+            a.classList.add("selected");
+          });
+          menuBar.appendChild(a);
+        });
+        menuBar.style.display = "flex";
+      }
+      function replaceValue(data, targetValue, replacementValue) {
+        if (data === targetValue) {
+          return replacementValue;
+        } else if (Array.isArray(data)) {
+          return data.map((item) =>
+            replaceValue(item, targetValue, replacementValue)
+          );
+        } else if (typeof data === "object" && data !== null) {
+          const result = {};
+          for (const key in data) {
+            if (data.hasOwnProperty(key)) {
+              result[key] = replaceValue(
+                data[key],
+                targetValue,
+                replacementValue
+              );
+            }
+          }
+          return result;
+        } else {
+          return data;
+        }
+      }
+      async function loadApiData(endpoint) {
+        try {
+          const response = await fetch(endpoint, {
+            headers: {
+              Authorization: apiKey,
+            },
+          });
+          if (!response.ok) throw new Error("Network response was not ok");
+          const dataraw = await response.json();
+          const data = replaceValue(dataraw, null, "null");
+          console.log("API Response:", data);
+
+          currentData = data;
+          console.log(data);
+
+          const toggleSwitch = document.getElementById("toggle-switch");
+          let showToggle = false;
+          Object.keys(data).forEach((key) => {
+            if (key.includes("-switch")) {
+              showToggle = true;
+              const isChecked = data[key] === 1;
+              document.querySelector("#toggle-switch input").checked =
+                isChecked;
+              console.log(
+                `Toggle-Switch gefunden: ${key} = ${data[key]} (${
+                  isChecked ? "Aktiviert" : "Deaktiviert"
+                })`
+              );
+            }
+          });
+          toggleSwitch.style.display = showToggle ? "block" : "none";
+          const textOutput = document.getElementById("text-output");
+          textOutput.innerHTML = "";
+          Object.keys(data).forEach((key) => {
+            if (key.includes("-input")) {
+              console.log(`Verarbeite Input-Key: ${key}`);
+              const input = document.createElement("input");
+              input.name = key;
+              input.type = "text";
+              input.placeholder =
+                data[key] === "null" ? "Enter text..." : data[key];
+              input.value = data[key] === "null" ? "" : data[key];
+              input.style.display = "block";
+              input.style.marginBottom = "10px";
+              textOutput.appendChild(input);
+            }
+          });
+          Object.keys(data).forEach((key) => {
+            if (
+              typeof data[key] === "string" &&
+              (/\.(png|gif|jpg|jpeg)$/.test(data[key]) ||
+                data[key].startsWith("https://placehold.co/"))
+            ) {
+              console.log(`Verarbeite Bilddatei: ${key}`);
+              const img = document.createElement("img");
+              img.src = data[key];
+              img.alt = key;
+              img.style.maxWidth = "100%";
+              img.style.height = "auto";
+              start_updater();
+              img.onload = function () {
+                textOutput.appendChild(img);
+              };
+              img.onerror = function () {
+                console.error(`Bild konnte nicht geladen werden: ${data[key]}`);
+                img.src =
+                  "https://placehold.co/400x200?text=Bild+Konnte+nicht+geladen+werden";
+                img.alt = "Bild konnte nicht geladen werden";
+                textOutput.appendChild(img);
+              };
+            }
+          });
+          const activeDropsMap = {};
+          Object.keys(data).forEach((key) => {
+            if (key.includes("-activedrop")) {
+              console.log(`Verarbeite aktiven Drop-Key: ${key}`);
+              const activeDropEntries = data[key];
+              Object.entries(activeDropEntries).forEach(
+                ([subKey, subValue]) => {
+                  activeDropsMap[subKey] = subValue;
+                  console.log(
+                    `Aktiver Drop gefunden: ${subKey} = ${subValue} (aus ${key})`
+                  );
                 }
-                return result;
-            } else {
-                return data;
+              );
             }
-        }
-        async function loadApiData(endpoint) {
-            try {
-                const response = await fetch(endpoint, {
-                    headers: {
-                        'Authorization': apiKey
-                    }
-                });
-                if (!response.ok) throw new Error('Network response was not ok');
-                const dataraw = await response.json();
-                const data = replaceValue(dataraw, null, "null");
-                console.log('API Response:', data);
-
-                currentData = data;
-                console.log(data)
-
-
-                const toggleSwitch = document.getElementById('toggle-switch');
-                let showToggle = false;
-                Object.keys(data).forEach(key => {
-                    if (key.includes('-switch')) {
-                        showToggle = true;
-                        const isChecked = data[key] === 1;
-                        document.querySelector('#toggle-switch input').checked = isChecked;
-                        console.log(`Toggle-Switch gefunden: ${key} = ${data[key]} (${isChecked ? 'Aktiviert' : 'Deaktiviert'})`);
-                    }
-                });
-                toggleSwitch.style.display = showToggle ? 'block' : 'none';
-                const textOutput = document.getElementById('text-output');
-                textOutput.innerHTML = '';
-                Object.keys(data).forEach(key => {
-                    if (key.includes('-input')) {
-                        console.log(`Verarbeite Input-Key: ${key}`);
-                        const input = document.createElement('input');
-                        input.name = key;
-                        input.type = 'text';
-                        input.placeholder = data[key] === "null" ? 'Enter text...' : data[key];
-                        input.value = data[key] === "null" ? '' : data[key];
-                        input.style.display = 'block';
-                        input.style.marginBottom = '10px';
-                        textOutput.appendChild(input);
-                    }
-                });
-                Object.keys(data).forEach(key => {
-                    if (typeof data[key] === 'string' &&
-                        (/\.(png|gif|jpg|jpeg)$/.test(data[key]) ||
-                            data[key].startsWith('https://placehold.co/'))) {
-
-                        console.log(`Verarbeite Bilddatei: ${key}`);
-                        const img = document.createElement('img');
-                        img.src = data[key];
-                        img.alt = key;
-                        img.style.maxWidth = '100%';
-                        img.style.height = 'auto';
-                        start_updater()
-                        img.onload = function () {
-                            textOutput.appendChild(img);
-                        };
-                        img.onerror = function () {
-                            console.error(`Bild konnte nicht geladen werden: ${data[key]}`);
-                            img.src = 'https://placehold.co/400x200?text=Bild+Konnte+nicht+geladen+werden';
-                            img.alt = 'Bild konnte nicht geladen werden';
-                            textOutput.appendChild(img);
-                        };
-                    }
-                });
-                const activeDropsMap = {};
-                Object.keys(data).forEach(key => {
-                    if (key.includes('-activedrop')) {
-                        console.log(`Verarbeite aktiven Drop-Key: ${key}`);
-                        const activeDropEntries = data[key];
-                        Object.entries(activeDropEntries).forEach(([subKey, subValue]) => {
-                            activeDropsMap[subKey] = subValue;
-                            console.log(`Aktiver Drop gefunden: ${subKey} = ${subValue} (aus ${key})`);
-                        });
-                    }
-                });
-                Object.keys(data).forEach(key => {
-                    if (key.includes('-drop')) {
-                        console.log(`Verarbeite Drop-Key: ${key}`);
-                        const dropdown = document.createElement('select');
-                        dropdown.name = key;
-                        const dropEntries = data[key];
-                        let selectedOptionFound = false;
-                        Object.entries(dropEntries).forEach(([subKey, subValue]) => {
-                            console.log(`Überprüfe Option: ${subKey} = ${subValue}`);
-                            const option = document.createElement('option');
-                            option.value = subKey;
-                            option.textContent = subValue.endsWith('-show') ? subValue.replace('-show', '') : subValue;
-                            if (subValue.includes("Please select")) {
-                                option.selected = true;
-                                selectedOptionFound = true;
-                                console.log(`Option "${subValue}" (${subKey}) ist ausgewählt, weil es "Please select" enthält.`);
-                            } else if (activeDropsMap.hasOwnProperty(subKey) && !selectedOptionFound) {
-                                option.selected = true;
-                                selectedOptionFound = true;
-                                console.log(`Option "${subValue}" (${subKey}) ist aktiv und wird ausgewählt.`);
-                            } else {
-                                console.log(`Option "${subValue}" (${subKey}) ist nicht aktiv.`);
-                            }
-                            dropdown.appendChild(option);
-                        });
-                        if (!selectedOptionFound) {
-                            console.log(`Keine aktive Option für Drop-Key "${key}" gefunden.`);
-                        }
-                        textOutput.appendChild(dropdown);
-                    }
-                    if (key.includes('-table')) {
-                        console.log(`Verarbeite Table-Key: ${key}`);
-                        const table = document.createElement('table');
-                        table.style.width = '100%';
-                        table.style.borderCollapse = 'collapse';
-                        table.style.marginTop = '20px';
-                        table.style.marginBottom = '20px';
-                        const tbody = document.createElement('tbody');
-                        Object.entries(data[key]).forEach(([id, value]) => {
-                            const row = document.createElement('tr');
-                            const idCell = document.createElement('td');
-                            idCell.textContent = id;
-                            idCell.style.border = '1px solid #ddd';
-                            idCell.style.padding = '8px';
-                            row.appendChild(idCell);
-                            const valueCell = document.createElement('td');
-                            valueCell.textContent = value;
-                            valueCell.style.border = '1px solid #ddd';
-                            valueCell.style.padding = '8px';
-                            row.appendChild(valueCell);
-                            tbody.appendChild(row);
-                        });
-                        table.appendChild(tbody);
-                        textOutput.appendChild(table);
-                    }
-                    if (key.includes('-label')) {
-                        console.log(`Verarbeite Text-Key: ${key}`);
-                        const p = document.createElement('p');
-                        p.innerHTML = `${key}: ${formatValue(data[key])}`;
-                        textOutput.appendChild(p);
-                    }
-                });
-                document.getElementById('save-button').style.display = 'block';
-            } catch (error) {
-                console.error('Error fetching content:', error);
-            }
-        }
-        function showNotification(msgType, msgContent) {
-            const notificationCard = document.getElementById("notification-card");
-            const messageText = document.getElementById("message-text");
-            const subText = document.getElementById("sub-text");
-            const iconContainer = document.getElementById("icon-container");
-            const icon = document.getElementById("icon");
-            notificationCard.className = `card ${msgType}`;
-            iconContainer.className = `icon-container ${msgType}`;
-            icon.className = `icon fas`;
-            switch (msgType) {
-                case 'notify-info':
-                    icon.classList.add('fa-info-circle', 'icon-info');
-                    icon.classList.add('fa-xl', 'icon-info');
-                    notificationCard.style.background = "linear-gradient(90deg, rgba(16,38,121,1) 0%, rgba(54,98,227,1) 100%)";
-                    break;
-                case 'notify-success':
-                    icon.classList.add('fa-check-circle', 'icon-success');
-                    icon.classList.add('fa-xl', 'icon-success');
-                    notificationCard.style.background = "linear-gradient(90deg, rgba(40,82,49,1) 0%, rgba(76,161,84,1) 100%)";
-
-                    break;
-                case 'notify-warn':
-                    icon.classList.add('fa-exclamation-triangle', 'icon-warn');
-                    icon.classList.add('fa-xl', 'icon-warn');
-                    notificationCard.style.background = "linear-gradient(90deg, rgba(152,101,35,1) 0%, rgba(222,192,75,1) 100%)";
-
-                    break;
-                case 'notify-error':
-                    icon.classList.add('fa-times-circle', 'icon-error');
-                    icon.classList.add('fa-xl', 'icon-error');
-                    notificationCard.style.background = "linear-gradient(90deg, rgba(170,46,38,1) 0%, rgba(214,140,81,1) 100%)";
-
-                    break;
-            }
-            messageText.textContent = msgContent;
-            subText.textContent = "";
-            notificationCard.style.display = 'flex';
-            setTimeout(() => {
-                closeNotification();
-            }, 5000);
-        }
-        function closeNotification() {
-            const notificationCard = document.getElementById("notification-card");
-            notificationCard.style.display = 'none';
-        }
-        function saveChanges() {
-            const updatedData = {};
-            const isActive = document.querySelector('#toggle-switch input').checked ? 1 : 0;
-            updatedData.active = isActive;
-            const dropdowns = document.querySelectorAll('select');
-            dropdowns.forEach(dropdown => {
-                const selectedOption = dropdown.options[dropdown.selectedIndex];
-                const originalKey = dropdown.name;
-                if (currentData[originalKey]) {
-                    updatedData[originalKey] = selectedOption.value;
-                }
-            });
-            const inputs = document.querySelectorAll('input');
-            inputs.forEach(input => {
-                const originalKey = input.name;
-                let value;
-                if (input.type === 'checkbox') {
-                    value = input.checked ? 1 : 0;
-                } else if (input.type === 'radio' && !input.checked) {
-                    return;
+          });
+          Object.keys(data).forEach((key) => {
+            if (key.includes("-drop")) {
+              console.log(`Verarbeite Drop-Key: ${key}`);
+              const dropdown = document.createElement("select");
+              dropdown.name = key;
+              const dropEntries = data[key];
+              let selectedOptionFound = false;
+              Object.entries(dropEntries).forEach(([subKey, subValue]) => {
+                console.log(`Überprüfe Option: ${subKey} = ${subValue}`);
+                const option = document.createElement("option");
+                option.value = subKey;
+                option.textContent = subValue.endsWith("-show")
+                  ? subValue.replace("-show", "")
+                  : subValue;
+                if (subValue.includes("Please select")) {
+                  option.selected = true;
+                  selectedOptionFound = true;
+                  console.log(
+                    `Option "${subValue}" (${subKey}) ist ausgewählt, weil es "Please select" enthält.`
+                  );
+                } else if (
+                  activeDropsMap.hasOwnProperty(subKey) &&
+                  !selectedOptionFound
+                ) {
+                  option.selected = true;
+                  selectedOptionFound = true;
+                  console.log(
+                    `Option "${subValue}" (${subKey}) ist aktiv und wird ausgewählt.`
+                  );
                 } else {
-                    value = input.value;
+                  console.log(
+                    `Option "${subValue}" (${subKey}) ist nicht aktiv.`
+                  );
                 }
-                if (currentData[originalKey]) {
-                    updatedData[originalKey] = value;
-                }
-            });
-            const senddata = removeSendFromObject(updatedData);
-            const saveEndpoint = localStorage.getItem('currentSaveEndpoint');
-            if (!saveEndpoint) {
-                console.error('Error: No save endpoint found in localStorage.');
-                return;
+                dropdown.appendChild(option);
+              });
+              if (!selectedOptionFound) {
+                console.log(
+                  `Keine aktive Option für Drop-Key "${key}" gefunden.`
+                );
+              }
+              textOutput.appendChild(dropdown);
             }
-            console.log(senddata);
-            fetch(saveEndpoint, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': apiKey
-                },
-                body: JSON.stringify(senddata)
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    const apiEndpoint = localStorage.getItem("currentloadEndpoint");
-                    loadApiData(apiEndpoint);
-                    const entries = Object.entries(data);
-                    if (entries.length > 0) {
-                        const [key, value] = entries[0];
-                        showNotification(key, value);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error saving data:', error);
-                    showNotification('notify-error', 'Fehler beim Speichern: ' + error.message);
-                });
-        }
-        function removeSendFromObject(obj) {
-            if (typeof obj === 'string') {
-                return obj.replace("-send", "");
-            } else if (Array.isArray(obj)) {
-                return obj.map(removeSendFromObject);
-            } else if (typeof obj === 'object' && obj !== null) {
-                const newObj = {};
-                for (let key in obj) {
-                    if (obj.hasOwnProperty(key)) {
-                        newObj[key] = removeSendFromObject(obj[key]);
-                    }
-                }
-                return newObj;
-            } else {
-                return obj;
+            if (key.includes("-table")) {
+              console.log(`Verarbeite Table-Key: ${key}`);
+              const table = document.createElement("table");
+              table.style.width = "100%";
+              table.style.borderCollapse = "collapse";
+              table.style.marginTop = "20px";
+              table.style.marginBottom = "20px";
+              const tbody = document.createElement("tbody");
+              Object.entries(data[key]).forEach(([id, value]) => {
+                const row = document.createElement("tr");
+                const idCell = document.createElement("td");
+                idCell.textContent = id;
+                idCell.style.border = "1px solid #ddd";
+                idCell.style.padding = "8px";
+                row.appendChild(idCell);
+                const valueCell = document.createElement("td");
+                valueCell.textContent = value;
+                valueCell.style.border = "1px solid #ddd";
+                valueCell.style.padding = "8px";
+                row.appendChild(valueCell);
+                tbody.appendChild(row);
+              });
+              table.appendChild(tbody);
+              textOutput.appendChild(table);
             }
-        }
-        function formatValue(value) {
-            if (typeof value === 'object' && value !== null) {
-                return Object.entries(value).map(([k, v]) => `${k}: ${v}`).join(', ');
+            if (key.includes("-label")) {
+              console.log(`Verarbeite Text-Key: ${key}`);
+              const p = document.createElement("p");
+              let value = formatValue(data[key]);
+              value += " :";
+              p.innerHTML = value;
+              textOutput.appendChild(p);
             }
-            return value;
+          });
+          document.getElementById("save-button").style.display = "block";
+        } catch (error) {
+          console.error("Error fetching content:", error);
         }
-        function loadServerDetails(serverId) {
-            // Update URL with the selected server ID
-            history.pushState(null, '', '?server=' + serverId);
+      }
+      function showNotification(msgType, msgContent) {
+        const notificationCard = document.getElementById("notification-card");
+        const messageText = document.getElementById("message-text");
+        const subText = document.getElementById("sub-text");
+        const iconContainer = document.getElementById("icon-container");
+        const icon = document.getElementById("icon");
+        notificationCard.className = `card ${msgType}`;
+        iconContainer.className = `icon-container ${msgType}`;
+        icon.className = `icon fas`;
+        switch (msgType) {
+          case "notify-info":
+            icon.classList.add("fa-info-circle", "icon-info");
+            icon.classList.add("fa-xl", "icon-info");
+            notificationCard.style.background =
+              "linear-gradient(90deg, rgba(16,38,121,1) 0%, rgba(54,98,227,1) 100%)";
+            break;
+          case "notify-success":
+            icon.classList.add("fa-check-circle", "icon-success");
+            icon.classList.add("fa-xl", "icon-success");
+            notificationCard.style.background =
+              "linear-gradient(90deg, rgba(40,82,49,1) 0%, rgba(76,161,84,1) 100%)";
 
-            // Extract server details from the JSON data
-            const serverDetails = JSON.parse('{{ guild_details | tojson | safe }}').find(guild => guild.id === serverId);
+            break;
+          case "notify-warn":
+            icon.classList.add("fa-exclamation-triangle", "icon-warn");
+            icon.classList.add("fa-xl", "icon-warn");
+            notificationCard.style.background =
+              "linear-gradient(90deg, rgba(152,101,35,1) 0%, rgba(222,192,75,1) 100%)";
 
-            if (serverDetails) {
-                // Create HTML content for server details
-                const detailsHtml = `
+            break;
+          case "notify-error":
+            icon.classList.add("fa-times-circle", "icon-error");
+            icon.classList.add("fa-xl", "icon-error");
+            notificationCard.style.background =
+              "linear-gradient(90deg, rgba(170,46,38,1) 0%, rgba(214,140,81,1) 100%)";
+
+            break;
+        }
+        messageText.textContent = msgContent;
+        subText.textContent = "";
+        notificationCard.style.display = "flex";
+        setTimeout(() => {
+          closeNotification();
+        }, 5000);
+      }
+      function closeNotification() {
+        const notificationCard = document.getElementById("notification-card");
+        notificationCard.style.display = "none";
+      }
+      function saveChanges() {
+        const updatedData = {};
+        const isActive = document.querySelector("#toggle-switch input").checked
+          ? 1
+          : 0;
+        updatedData.active = isActive;
+        const dropdowns = document.querySelectorAll("select");
+        dropdowns.forEach((dropdown) => {
+          const selectedOption = dropdown.options[dropdown.selectedIndex];
+          const originalKey = dropdown.name;
+          if (currentData[originalKey]) {
+            updatedData[originalKey] = selectedOption.value;
+          }
+        });
+        const inputs = document.querySelectorAll("input");
+        inputs.forEach((input) => {
+          const originalKey = input.name;
+          let value;
+          if (input.type === "checkbox") {
+            value = input.checked ? 1 : 0;
+          } else if (input.type === "radio" && !input.checked) {
+            return;
+          } else {
+            value = input.value;
+          }
+          if (currentData[originalKey]) {
+            updatedData[originalKey] = value;
+          }
+        });
+        const senddata = removeSendFromObject(updatedData);
+        const saveEndpoint = localStorage.getItem("currentSaveEndpoint");
+        if (!saveEndpoint) {
+          console.error("Error: No save endpoint found in localStorage.");
+          return;
+        }
+        console.log(senddata);
+        fetch(saveEndpoint, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: apiKey,
+          },
+          body: JSON.stringify(senddata),
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            }
+            return response.json();
+          })
+          .then((data) => {
+            const apiEndpoint = localStorage.getItem("currentloadEndpoint");
+            loadApiData(apiEndpoint);
+            const entries = Object.entries(data);
+            if (entries.length > 0) {
+              const [key, value] = entries[0];
+              showNotification(key, value);
+            }
+          })
+          .catch((error) => {
+            console.error("Error saving data:", error);
+            showNotification(
+              "notify-error",
+              "Fehler beim Speichern: " + error.message
+            );
+          });
+      }
+      function removeSendFromObject(obj) {
+        if (typeof obj === "string") {
+          return obj.replace("-send", "");
+        } else if (Array.isArray(obj)) {
+          return obj.map(removeSendFromObject);
+        } else if (typeof obj === "object" && obj !== null) {
+          const newObj = {};
+          for (let key in obj) {
+            if (obj.hasOwnProperty(key)) {
+              newObj[key] = removeSendFromObject(obj[key]);
+            }
+          }
+          return newObj;
+        } else {
+          return obj;
+        }
+      }
+      function formatValue(value) {
+        if (typeof value === "object" && value !== null) {
+          return Object.entries(value)
+            .map(([k, v]) => `${k}: ${v}`)
+            .join(", ");
+        }
+        return value;
+      }
+      function loadServerDetails(serverId) {
+        // Update URL with the selected server ID
+        history.pushState(null, "", "?server=" + serverId);
+
+        // Extract server details from the JSON data
+        const serverDetails = JSON.parse(
+          "{{ guild_details | tojson | safe }}"
+        ).find((guild) => guild.id === serverId);
+
+        if (serverDetails) {
+          // Create HTML content for server details
+          const detailsHtml = `
             <div class="server-header">
                 <img src="${serverDetails.icon_url}" alt="${serverDetails.name}" style="width: 80px; height: 80px; border-radius: 50%; margin-right: 20px;">
                 <h2>${serverDetails.name}</h2>
@@ -488,10 +562,10 @@
             <p>Verification Level: ${serverDetails.verification_level}</p>
         `;
 
-                // Update HTML content and display
-                document.getElementById('server-details').innerHTML = detailsHtml;
-                document.getElementById('server-details').style.display = 'block';
-                document.getElementById('content-area').innerHTML = `
+          // Update HTML content and display
+          document.getElementById("server-details").innerHTML = detailsHtml;
+          document.getElementById("server-details").style.display = "block";
+          document.getElementById("content-area").innerHTML = `
             <label id="toggle-switch" class="switch" style="display: none;">
                 <input type="checkbox" id="toggle-input">
                 <span class="slider"></span>
@@ -500,41 +574,42 @@
             <button id="save-button" style="display: none;" onclick="saveChanges()">Save</button>
         `;
 
-                // Load menu content
-                loadMenuContent();
-            }
+          // Load menu content
+          loadMenuContent();
         }
+      }
 
-        window.onload = function () {
-            const urlParams = new URLSearchParams(window.location.search);
-            const serverId = urlParams.get('server');
-            if (serverId) {
-                loadServerDetails(serverId);
-            }
+      window.onload = function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const serverId = urlParams.get("server");
+        if (serverId) {
+          loadServerDetails(serverId);
         }
+      };
 
-
-        function start_updater() {
-            document.querySelector('input[name="image-input"]').addEventListener('input', function () {
-                localStorage.setItem("Image-Link", this.value);
-                updateimage()
-            });
+      function start_updater() {
+        document
+          .querySelector('input[name="image-input"]')
+          .addEventListener("input", function () {
+            localStorage.setItem("Image-Link", this.value);
+            updateimage();
+          });
+      }
+      function updateimage() {
+        var bild = document.querySelector('img[alt="image-input"]');
+        var linkraw = localStorage.getItem("Image-Link");
+        const linkExtension = linkraw.split(".").pop().split("?")[0];
+        const validExtensions = ["png", "gif", "jpg", "webp", "placehold"];
+        const isValidLink = validExtensions.includes(linkExtension);
+        if (!isValidLink) {
+          link =
+            "https://placehold.co/200x100?text=Sorry but your url does not work";
+        } else {
+          link = linkraw;
         }
-        function updateimage() {
-            var bild = document.querySelector('img[alt="image-input"]');
-            var linkraw = localStorage.getItem("Image-Link");
-            const linkExtension = linkraw.split('.').pop().split('?')[0];
-            const validExtensions = ["png", "gif", "jpg", "webp", "placehold"];
-            const isValidLink = validExtensions.includes(linkExtension);
-            if (!isValidLink) {
-                link = "https://placehold.co/200x100?text=Sorry but your url does not work"
-            } else {
-                link = linkraw
-            }
-            bild.src = link;
-        }
+        bild.src = link;
+      }
     </script>
     <script src="{{ url_for('static', filename='js/loader.js') }}"></script>
-</body>
-
+  </body>
 </html>

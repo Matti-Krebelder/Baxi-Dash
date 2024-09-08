@@ -102,7 +102,7 @@ async def dashboard():
         if int(user_id) not in permitted_user_ids:
             ip_address = request.headers.get('X-Forwarded-For', request.remote_addr)
             log_denied_access(ip_address, user_id)
-            return "Access Denied: You do not have permission to access this dashboard during maintenance."
+            return "Sorry but we are currently in Maintenance!"
     else:
         # No restrictions outside of maintenance mode
         print(f"Access granted for user {user_id} (Maintenance: {maintenance})")
