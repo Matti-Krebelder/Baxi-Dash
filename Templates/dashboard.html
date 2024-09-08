@@ -147,14 +147,7 @@
                         "load": "https://baxi-backend.pyropixle.com/api/dash/settings/load/sec/{guild_id}",
                         "save": "https://baxi-backend.pyropixle.com/api/dash/settings/save/sec/{guild_id}"
                     }
-                },
-                {
-                    "name": "Auto Role",
-                    "id": "auto_roles",
-                    "endpoints": {
-                        "load": "https://baxi-backend.pyropixle.com/api/dash/settings/load/auto_roles/{guild_id}",
-                        "save": "https://baxi-backend.pyropixle.com/api/dash/settings/save/auto_roles/{guild_id}"
-                    }
+                }
             ]
         }
     </script>
@@ -341,7 +334,7 @@
                     if (key.includes('-label')) {
                         console.log(`Verarbeite Text-Key: ${key}`);
                         const p = document.createElement('p');
-                        p.innerHTML = `${formatValue(data[key]+":")}`;
+                        p.innerHTML = `${key}: ${formatValue(data[key])}`;
                         textOutput.appendChild(p);
                     }
                 });
