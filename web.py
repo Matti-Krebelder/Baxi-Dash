@@ -157,39 +157,6 @@ async def dashboard():
 @app.route('/dashboard-menu.json')
 async def menu():
     return await send_from_directory('templates', 'dashboard-menu.json')
-EXTERNAL_API_KEY = "bdash-X_KzUaBBMlM8d5a5xbAav4Z6bYqS3rnBN94ugjtkhsI"
-
-@app.route("/api/data", methods=["GET"])
-async def get_api_data():
-    endpoint = request.args.get('endpoint')
-    
-    if not endpoint:
-        return jsonify({"error": "No endpoint provided"}), 400
-    
-    headers = {
-        'Authorization': f'Bearer {EXTERNAL_API_KEY}'  # Include the API key here
-    }
-    
-    try:
-        response = requests.get(endpoint, headers=headers)
-        response.raise_for_status()
-        data = response.json()
-        
-        # Process data if needed
-        def replace_value(data, old, new):
-            if isinstance(data, dict):
-                return {k: replace_value(v, old, new) for k, v in data.items()}
-            elif isinstance(data, list):
-                return [replace_value(i, old, new) for i in data]
-            elif data == old:
-                return new
-            return data
-
-        processed_data = replace_value(data, None, "null")
-        return jsonify(processed_data)
-    
-    except requests.RequestException as e:
-        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0")
