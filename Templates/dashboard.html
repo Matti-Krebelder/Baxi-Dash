@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Discord Bot Dashboard</title>
     <style>
+        #baxihome{
+            background-image: url("/static/imgs/pyrologo.jpg");
+        }
         * {
             margin: 0;
             padding: 0;
@@ -115,7 +118,7 @@
 
 <body>
     <div class="sidebar">
-        <div class="server-icon" onclick="loadHome()">H</div>
+        <div class="server-icon" onclick="loadHome()" id="baxihome"></div>
         <div class="server-icon" onclick="loadServer(1)">1</div>
         <div class="server-icon" onclick="loadServer(2)">2</div>
         <div class="server-icon" onclick="loadServer(3)">3</div>
