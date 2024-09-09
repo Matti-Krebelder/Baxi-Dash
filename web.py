@@ -38,7 +38,7 @@ baxi_client_secret = f"{fernet.decrypt(baxi_data['client_secret']).decode()}"
 baxi_tocken = f"{fernet.decrypt(baxi_data['tocken']).decode()}"
 
 # Define the maintenance variable
-maintenance = False  # Change to True when maintenance mode is active
+maintenance = config.getboolean("DASH", "maintenance")
 
 
 @app.route("/")
