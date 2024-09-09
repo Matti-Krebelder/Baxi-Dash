@@ -118,10 +118,6 @@
 
 <body>
     <div class="sidebar">
-        <div class="server-icon" onclick="loadHome()" id="baxihome"></div>
-        <div class="server-icon" onclick="loadServer(1)">1</div>
-        <div class="server-icon" onclick="loadServer(2)">2</div>
-        <div class="server-icon" onclick="loadServer(3)">3</div>
     </div>
     <div class="main-content" id="mainContent">
         <!-- Content will be dynamically loaded here -->
@@ -210,7 +206,7 @@
 
             // Add the home icon
             sidebar.innerHTML += `
-            <div class="server-icon" onclick="loadHome() id="baxihome">H</div>
+            <div class="server-icon" onclick="loadHome()" id="baxihome"></div>
         `;
 
             // Add each server icon
