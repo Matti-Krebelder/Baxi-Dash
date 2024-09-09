@@ -39,6 +39,7 @@ baxi_tocken = f"{fernet.decrypt(baxi_data['tocken']).decode()}"
 
 # Define the maintenance variable
 maintenance = config.getboolean("DASH", "maintenance")
+print("maintenance mode: " + maintenance)
 
 
 @app.route("/")
