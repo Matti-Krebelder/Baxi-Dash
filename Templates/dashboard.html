@@ -6,11 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Discord Bot Dashboard</title>
     <style>
-        #baxihome{
+        #baxihome {
             background-image: url("/static/imgs/pyrologo.jpg");
             background-repeat: no-repeat;
             background-size: cover;
         }
+
         * {
             margin: 0;
             padding: 0;
@@ -46,6 +47,15 @@
             color: #dcddde;
             font-size: 20px;
             transition: border-radius 0.3s ease;
+            background-repeat: no-repeat;
+            background-size: cover;
+            /* Hier wird 'cover' festgelegt */
+            background-position: center;
+            /* Das Bild wird zentriert */
+        }
+
+        .server-icon img {
+            display: none;
         }
 
         .server-icon:hover {
@@ -214,11 +224,12 @@
             // Add each server icon
             servers.forEach(server => {
                 sidebar.innerHTML += `
-                <div class="server-icon" onclick="loadServer(${server.id})">
-                    <img src="${server.icon_url}" alt="${server.name}" title="${server.name}" style="width: 50px; height: 50px; border-radius: 50%;"/>
-                </div>
-            `;
+        <div class="server-icon" onclick="loadServer(${server.id})" 
+             style="background-image: url('${server.icon_url}');">
+        </div>
+    `;
             });
+
         }
 
         // Call loadServers when the page loads
