@@ -24,13 +24,14 @@ headers = {
     'Authorization': f"{config['BAXI']['baxi_info_key']}"
 }
 baxi_data_request = requests.get("https://baxi-backend.pyropixle.com/api/oauth/get/data/baxi", headers=headers)
+print(baxi_data_request.text)
 baxi_data = baxi_data_request.json()
 
 baxi_client_secret = f"{fernet.decrypt(baxi_data['client_secret']).decode()}"
 baxi_tocken = f"{fernet.decrypt(baxi_data['tocken']).decode()}"
 
 # Define the maintenance variable
-maintenance = False  # Change to True when maintenance mode is active
+maintenance = config.getboolean("DASH", "maintenance")
 
 @app.route("/")
 async def home():
@@ -152,7 +153,7 @@ async def dashboard():
             'verification_level': guild_info.get('verification_level', 'Unknown'),
         })
 
-    return await render_template('dashboard.html', guild_details=guild_details)
+    return await render_template('dashboard.html', guild_details=guild_details, api_key=str(config.get("BAXI", "api_key")))
 
 @app.route('/dashboard-menu.json')
 async def menu():
