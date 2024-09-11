@@ -242,9 +242,9 @@ async def load_module(module_id, guild_id):
         return jsonify({"error": "Modul nicht gefunden"}), 404
 
     load_url = menu_data[module_id]["load"]
-    
+
     headers = {
-        "Authorization": f"Bearer {API_KEY}",
+        "Authorization": {API_KEY},
         "Content-Type": "application/json"
     }
 
