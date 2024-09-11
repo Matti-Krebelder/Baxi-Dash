@@ -219,6 +219,8 @@ async def get_servers():
 async def menu():
     return await send_from_directory("templates", "dashboard-menu.json")
 
+API_KEY = "bdash-X_KzUaBBMlM8d5a5xbAav4Z6bYqS3rnBN94ugjtkhsI"
+
 @app.route("/api/module/<module_id>/<guild_id>", methods=["GET"])
 async def load_module(module_id, guild_id):
     menu_data = {
@@ -241,7 +243,8 @@ async def load_module(module_id, guild_id):
 
     load_url = menu_data[module_id]["load"]
 
-    headers = {"Authorization": f"Bearer {config['BAXI']['api_key']}"}
+    # API-Key in den Header einfügen
+    headers = {"Authorization": f"Bearer {API_KEY}"}
 
     try:
         response = requests.get(load_url, headers=headers)
@@ -251,8 +254,6 @@ async def load_module(module_id, guild_id):
     except requests.RequestException as e:
         print(f"Fehler beim Abrufen der Daten: {str(e)}")
         return jsonify({"error": "Fehler beim Abrufen der Daten"}), 500
-
-
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0")
