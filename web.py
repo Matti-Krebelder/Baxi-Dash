@@ -93,7 +93,6 @@ async def dashboard():
         return redirect("/login")
 
     headers = {"Authorization": f'Bearer {session["token"]}'}
-
     user_info_response = requests.get(f"{API_ENDPOINT}/users/@me", headers=headers)
     user_info_response.raise_for_status()
     user_info = user_info_response.json()
@@ -111,69 +110,65 @@ async def dashboard():
     else:
         print(f"Access granted for user {user_id} (Maintenance: {maintenance})")
 
-    user_guilds_response = requests.get(
-        f"{API_ENDPOINT}/users/@me/guilds", headers=headers
-    )
-    user_guilds_response.raise_for_status()
-    user_guilds = user_guilds_response.json()
-    print("User Guilds:", user_guilds)  # Debugging: print user guilds
+    try:
+        user_guilds_response = requests.get(f"{API_ENDPOINT}/users/@me/guilds", headers=headers)
+        user_guilds_response.raise_for_status()
+        user_guilds = user_guilds_response.json()
+        print("User Guilds:", user_guilds)
 
-    bot_headers = {"Authorization": f"Bot {str(baxi_tocken)}"}
-    bot_guilds_response = requests.get(
-        f"{API_ENDPOINT}/users/@me/guilds", headers=bot_headers
-    )
-    bot_guilds_response.raise_for_status()
-    bot_guilds = bot_guilds_response.json()
-    print("Bot Guilds:", bot_guilds)  # Debugging: print bot guilds
+        bot_headers = {"Authorization": f"Bot {str(baxi_tocken)}"}
+        bot_guilds_response = requests.get(f"{API_ENDPOINT}/users/@me/guilds", headers=bot_headers)
+        bot_guilds_response.raise_for_status()
+        bot_guilds = bot_guilds_response.json()
+        print("Bot Guilds:", bot_guilds)
 
-    common_guilds = []
-    for user_guild in user_guilds:
-        permissions = int(user_guild["permissions"])
-        if permissions & 0x8:
-            for bot_guild in bot_guilds:
-                if user_guild["id"] == bot_guild["id"]:
-                    common_guilds.append(user_guild)
-                    break
+        common_guilds = []
+        for user_guild in user_guilds:
+            permissions = int(user_guild["permissions"])
+            if permissions & 0x8:
+                for bot_guild in bot_guilds:
+                    if user_guild["id"] == bot_guild["id"]:
+                        common_guilds.append(user_guild)
+                        break
 
-    print("Common Guilds:", common_guilds)  # Debugging: print common guilds
+        print("Common Guilds:", common_guilds)
 
-    guild_details = []
-    for guild in common_guilds:
-        guild_id = guild["id"]
-        guild_info_response = requests.get(
-            f"{API_ENDPOINT}/guilds/{guild_id}?with_counts=true", headers=bot_headers
-        )
-        guild_info_response.raise_for_status()
-        guild_info = guild_info_response.json()
+        guild_details = []
+        for guild in common_guilds:
+            guild_id = guild["id"]
+            guild_info_response = requests.get(f"{API_ENDPOINT}/guilds/{guild_id}?with_counts=true", headers=bot_headers)
+            guild_info_response.raise_for_status()
+            guild_info = guild_info_response.json()
 
-        owner_id = guild_info.get("owner_id")
-        owner_info_response = requests.get(
-            f"{API_ENDPOINT}/users/{owner_id}", headers=bot_headers
-        )
-        owner_info_response.raise_for_status()
-        owner_info = owner_info_response.json()
-        owner_username = owner_info.get("username", "Unknown")
+            owner_id = guild_info.get("owner_id")
+            owner_info_response = requests.get(f"{API_ENDPOINT}/users/{owner_id}", headers=bot_headers)
+            owner_info_response.raise_for_status()
+            owner_info = owner_info_response.json()
+            owner_username = owner_info.get("username", "Unknown")
 
-        guild_details.append(
-            {
-                "name": guild_info["name"],
-                "id": guild_info["id"],
-                "icon_url": (
-                    f'https://cdn.discordapp.com/icons/{guild_info["id"]}/{guild_info["icon"]}.png'
-                    if guild_info["icon"]
-                    else DEFAULT_ICON
-                ),
-                "member_count": guild_info.get("approximate_member_count", "Unknown"),
-                "owner_username": owner_username,
-                "region": guild_info.get("region", "Unknown"),
-                "description": guild_info.get(
-                    "description", "No description available"
-                ),
-                "verification_level": guild_info.get("verification_level", "Unknown"),
-            }
-        )
+            guild_details.append(
+                {
+                    "name": guild_info["name"],
+                    "id": guild_info["id"],
+                    "icon_url": (
+                        f'https://cdn.discordapp.com/icons/{guild_info["id"]}/{guild_info["icon"]}.png'
+                        if guild_info["icon"]
+                        else DEFAULT_ICON
+                    ),
+                    "member_count": guild_info.get("approximate_member_count", "Unknown"),
+                    "owner_username": owner_username,
+                    "region": guild_info.get("region", "Unknown"),
+                    "description": guild_info.get("description", "No description available"),
+                    "verification_level": guild_info.get("verification_level", "Unknown"),
+                }
+            )
+
+    except requests.RequestException as e:
+        print(f"Error during API requests: {e}")
+        return "An error occurred while retrieving server information."
 
     return await render_template("dashboard.html", guild_details=guild_details)
+
 
 
 @app.route("/api/servers")
