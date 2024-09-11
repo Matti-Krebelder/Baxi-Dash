@@ -245,7 +245,7 @@ async def load_module(module_id, guild_id):
 
     # API-Key in den Header einfügen
     headers = {
-        "Authorization": f"Bearer {API_KEY}"
+        "Authorization": f"{API_KEY}"
     }
 
     try:
