@@ -99,7 +99,6 @@ async def dashboard():
     user_info = user_info_response.json()
     user_id = user_info["id"]
 
-
     if maintenance:
         perms_response = requests.get(PERMS_API)
         perms_response.raise_for_status()
@@ -117,6 +116,7 @@ async def dashboard():
     )
     user_guilds_response.raise_for_status()
     user_guilds = user_guilds_response.json()
+    print("User Guilds:", user_guilds)  # Debugging: print user guilds
 
     bot_headers = {"Authorization": f"Bot {str(baxi_tocken)}"}
     bot_guilds_response = requests.get(
@@ -124,6 +124,7 @@ async def dashboard():
     )
     bot_guilds_response.raise_for_status()
     bot_guilds = bot_guilds_response.json()
+    print("Bot Guilds:", bot_guilds)  # Debugging: print bot guilds
 
     common_guilds = []
     for user_guild in user_guilds:
@@ -133,6 +134,8 @@ async def dashboard():
                 if user_guild["id"] == bot_guild["id"]:
                     common_guilds.append(user_guild)
                     break
+
+    print("Common Guilds:", common_guilds)  # Debugging: print common guilds
 
     guild_details = []
     for guild in common_guilds:
@@ -219,23 +222,25 @@ async def get_servers():
 async def menu():
     return await send_from_directory("templates", "dashboard-menu.json")
 
+
 API_KEY = "bdash-X_KzUaBBMlM8d5a5xbAav4Z6bYqS3rnBN94ugjtkhsI"
+
 
 @app.route("/api/module/<module_id>/<guild_id>", methods=["GET"])
 async def load_module(module_id, guild_id):
     menu_data = {
         "anti_raid": {
             "load": f"https://baxi-backend.pyropixle.com/api/dash/settings/load/anti_raid/{guild_id}",
-            "save": f"https://baxi-backend.pyropixle.com/api/dash/settings/save/anti_raid/{guild_id}"
+            "save": f"https://baxi-backend.pyropixle.com/api/dash/settings/save/anti_raid/{guild_id}",
         },
         "Minigame guessing": {
             "load": f"https://baxi-backend.pyropixle.com/api/dash/settings/load/mgg/{guild_id}",
-            "save": f"https://baxi-backend.pyropixle.com/api/dash/settings/save/mgg/{guild_id}"
+            "save": f"https://baxi-backend.pyropixle.com/api/dash/settings/save/mgg/{guild_id}",
         },
         "countgame_data": {
             "load": f"https://baxi-backend.pyropixle.com/api/dash/settings/load/mgc/{guild_id}",
-            "save": f"https://baxi-backend.pyropixle.com/api/dash/settings/save/mgc/{guild_id}"
-        }
+            "save": f"https://baxi-backend.pyropixle.com/api/dash/settings/save/mgc/{guild_id}",
+        },
     }
 
     if module_id not in menu_data:
@@ -244,9 +249,7 @@ async def load_module(module_id, guild_id):
     load_url = menu_data[module_id]["load"]
 
     # API-Key in den Header einfügen
-    headers = {
-        "Authorization": f"{API_KEY}"
-    }
+    headers = {"Authorization": f"{API_KEY}"}
 
     try:
         response = requests.get(load_url, headers=headers)
@@ -255,13 +258,14 @@ async def load_module(module_id, guild_id):
             response.raise_for_status()
         dataraw = response.json()
         return jsonify(dataraw)
-        
+
     except requests.HTTPError as http_err:
         print(f"HTTP-Fehler: {http_err}")
         return jsonify({"error": "Fehler beim Abrufen der Daten"}), 500
     except Exception as err:
         print(f"Fehler: {err}")
         return jsonify({"error": "Fehler beim Abrufen der Daten"}), 500
+
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0")
