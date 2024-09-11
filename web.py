@@ -37,7 +37,6 @@ baxi_data = baxi_data_request.json()
 baxi_client_secret = f"{fernet.decrypt(baxi_data['client_secret']).decode()}"
 baxi_tocken = f"{fernet.decrypt(baxi_data['tocken']).decode()}"
 
-# Define the maintenance variable
 maintenance = config.getboolean("DASH", "maintenance")
 print(f"maintenance mode: {maintenance}")
 
@@ -95,29 +94,24 @@ async def dashboard():
 
     headers = {"Authorization": f'Bearer {session["token"]}'}
 
-    # Fetch user information
     user_info_response = requests.get(f"{API_ENDPOINT}/users/@me", headers=headers)
     user_info_response.raise_for_status()
     user_info = user_info_response.json()
     user_id = user_info["id"]
 
-    # Check maintenance mode
+
     if maintenance:
-        # Fetch permissions array from external API only in maintenance mode
         perms_response = requests.get(PERMS_API)
         perms_response.raise_for_status()
-        permitted_user_ids = perms_response.json()  # This should be a list of IDs
+        permitted_user_ids = perms_response.json()
 
-        # Check if the user ID is in the permitted list
         if int(user_id) not in permitted_user_ids:
             ip_address = request.headers.get("X-Forwarded-For", request.remote_addr)
             log_denied_access(ip_address, user_id)
             return "Access Denied: You do not have permission to access this dashboard during maintenance."
     else:
-        # No restrictions outside of maintenance mode
         print(f"Access granted for user {user_id} (Maintenance: {maintenance})")
 
-    # Fetch user guilds
     user_guilds_response = requests.get(
         f"{API_ENDPOINT}/users/@me/guilds", headers=headers
     )
@@ -224,6 +218,40 @@ async def get_servers():
 @app.route("/dashboard-menu.json")
 async def menu():
     return await send_from_directory("templates", "dashboard-menu.json")
+
+@app.route("/api/module/<module_id>/<guild_id>", methods=["GET"])
+async def load_module(module_id, guild_id):
+    menu_data = {
+        "anti_raid": {
+            "load": f"https://baxi-backend.pyropixle.com/api/dash/settings/load/anti_raid/{guild_id}",
+            "save": f"https://baxi-backend.pyropixle.com/api/dash/settings/save/anti_raid/{guild_id}"
+        },
+        "Minigame guessing": {
+            "load": f"https://baxi-backend.pyropixle.com/api/dash/settings/load/mgg/{guild_id}",
+            "save": f"https://baxi-backend.pyropixle.com/api/dash/settings/save/mgg/{guild_id}"
+        },
+        "countgame_data": {
+            "load": f"https://baxi-backend.pyropixle.com/api/dash/settings/load/mgc/{guild_id}",
+            "save": f"https://baxi-backend.pyropixle.com/api/dash/settings/save/mgc/{guild_id}"
+        }
+    }
+
+    if module_id not in menu_data:
+        return jsonify({"error": "Modul nicht gefunden"}), 404
+
+    load_url = menu_data[module_id]["load"]
+
+    headers = {"Authorization": f"Bearer {config['BAXI']['api_key']}"}
+
+    try:
+        response = requests.get(load_url, headers=headers)
+        response.raise_for_status()  
+        return jsonify(response.json())
+
+    except requests.RequestException as e:
+        print(f"Fehler beim Abrufen der Daten: {str(e)}")
+        return jsonify({"error": "Fehler beim Abrufen der Daten"}), 500
+
 
 
 if __name__ == "__main__":

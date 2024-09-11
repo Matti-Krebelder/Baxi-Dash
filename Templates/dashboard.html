@@ -205,8 +205,6 @@
       }
       async function loadServers() {
         const sidebar = document.querySelector(".sidebar");
-
-        // Fetch the server list from the backend
         const response = await fetch("/api/servers");
         if (!response.ok) {
           console.error("Failed to load servers");
@@ -214,16 +212,12 @@
         }
 
         const servers = await response.json();
-
-        // Clear the current sidebar content
         sidebar.innerHTML = "";
 
-        // Add the home icon
         sidebar.innerHTML += `
             <div class="server-icon" onclick="loadHome()" id="baxihome"></div>
         `;
 
-        // Add each server icon
         servers.forEach((server) => {
           sidebar.innerHTML += `
         <div class="server-icon" onclick="loadServer(${server.id})" 
@@ -233,63 +227,28 @@
         });
       }
 
-      // Call loadServers when the page loads
       loadServers();
       async function manageModule(moduleId, serverId) {
-        // Hole die Menüdaten aus dem script#menu-data Tag
-        const menuData = JSON.parse(
-          document.getElementById("menu-data").textContent
-        );
-
-        // Finde das Modul anhand der moduleId
-        const selectedModule = menuData.menu_items.find(
-          (item) => item.id === moduleId
-        );
-
-        if (!selectedModule) {
-          console.error(`Modul mit ID ${moduleId} nicht gefunden`);
-          return;
-        }
-
-        // Hole den API-Load-Endpunkt und ersetze {guild_id} mit der aktuellen Server-ID
-        const loadEndpoint = selectedModule.endpoints.load.replace(
-          "{guild_id}",
-          serverId
-        );
-
-        // Definiere deinen API-Schlüssel hier (normalerweise sollte dies sicher gehandhabt werden)
-        const apiKey = "DEIN_API_KEY_HIER"; // Setze deinen API-Schlüssel hier ein
-
-        try {
-          // Führe einen API-Aufruf zum Laden der Moduldaten durch mit API-Key im Header
-          const response = await fetch(loadEndpoint, {
-            method: "GET",
+    try {
+        const response = await fetch(`/api/module/${moduleId}/${serverId}`, {
+            method: 'GET',
             headers: {
-              Authorization: `Bearer ${apiKey}`, // Hier wird der API-Schlüssel in den Header eingefügt
-              "Content-Type": "application/json",
-            },
-          });
+                'Content-Type': 'application/json'
+            }
+        });
 
-          if (!response.ok) {
-            throw new Error(
-              `Fehler beim Laden der Daten für Modul ${moduleId} und Server ${serverId}`
-            );
-          }
-
-          const data = await response.json();
-          console.log(`Moduldaten für ${moduleId}:`, data);
-
-          // Hier kannst du den nächsten Schritt der Verarbeitung oder Anzeige der Moduldaten durchführen
-          alert(
-            `Erfolgreich geladen: ${selectedModule.name} für Server ${serverId}`
-          );
-        } catch (error) {
-          console.error(error.message);
-          alert(`Fehler: ${error.message}`);
+        if (!response.ok) {
+            throw new Error(`Fehler beim Laden der Daten für Modul ${moduleId} und Server ${serverId}`);
         }
-      }
 
-      // Lade die Startseite beim ersten Öffnen
+        const data = await response.json();
+        console.log(`Moduldaten für ${moduleId}:`, data);
+        alert(`Erfolgreich geladen: ${data}`);
+    } catch (error) {
+        console.error(error.message);
+        alert(`Fehler: ${error.message}`);
+    }
+}
       loadHome();
     </script>
   </body>
