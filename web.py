@@ -243,18 +243,24 @@ async def load_module(module_id, guild_id):
 
     load_url = menu_data[module_id]["load"]
 
+    # API-Key in den Header einfügen
     headers = {
-        "Authorization": {API_KEY},
-        "Content-Type": "application/json"
+        "Authorization": f"Bearer {API_KEY}"
     }
 
     try:
         response = requests.get(load_url, headers=headers)
-        response.raise_for_status()  
-        return jsonify(response.json())
-
-    except requests.RequestException as e:
-        print(f"Fehler beim Abrufen der Daten: {str(e)}")
+        # Fehlerbehandlung analog zu JavaScript
+        if not response.ok:
+            response.raise_for_status()
+        dataraw = response.json()
+        return jsonify(dataraw)
+        
+    except requests.HTTPError as http_err:
+        print(f"HTTP-Fehler: {http_err}")
+        return jsonify({"error": "Fehler beim Abrufen der Daten"}), 500
+    except Exception as err:
+        print(f"Fehler: {err}")
         return jsonify({"error": "Fehler beim Abrufen der Daten"}), 500
 
 if __name__ == "__main__":
