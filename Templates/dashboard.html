@@ -174,28 +174,34 @@
       `;
     }
 
-    function loadServer(serverId) {
-      const menuData = JSON.parse(document.getElementById("menu-data").textContent);
-      const mainContent = document.getElementById("mainContent");
-      let modulesHTML = "";
+    async function loadServers() {
+    const sidebar = document.querySelector(".sidebar");
+    try {
+        const response = await fetch("/api/servers");
+        if (!response.ok) {
+            throw new Error("Failed to load servers");
+        }
 
-      menuData.menu_items.forEach((item) => {
-        modulesHTML += `
-          <div class="module-card">
-            <h3>${item.name}</h3>
-            <p>Konfiguriere ${item.name.toLowerCase()} Einstellungen</p>
-            <button class="manage-btn" onclick="manageModule('${item.id}', ${serverId})">Verwalten</button>
-          </div>
+        const servers = await response.json();
+        sidebar.innerHTML = `
+            <div class="server-icon" onclick="loadHome()" id="baxihome"></div>
         `;
-      });
 
-      mainContent.innerHTML = `
-        <h2>Server ${serverId} Einstellungen</h2>
-        <div class="modules-grid">
-          ${modulesHTML}
-        </div>
-      `;
+        servers.forEach((server) => {
+            sidebar.innerHTML += `
+                <div class="server-icon" onclick="loadServer(${server.id})" 
+                     style="background-image: url('${server.icon_url}');">
+                </div>
+            `;
+        });
+    } catch (error) {
+        console.error("Error loading servers:", error);
+        sidebar.innerHTML = `<p>Error loading servers.</p>`;
     }
+}
+
+loadServers();
+
 
     async function loadServers() {
       const sidebar = document.querySelector(".sidebar");
