@@ -59,7 +59,8 @@ async def callback():
     session['token'] = r.json()['access_token']
     return redirect('/dashboard')
 
-DEFAULT_ICON = 'https://cdn.discordapp.com/embed/avatars/0.png'
+DEFAULT_ICON = 'https://cdn.discordapp.com/embed/avatars/0.png' 
+
 
 def log_denied_access(ip_address, user_id):
     """Append the IP address and user ID to the JSON log file."""
