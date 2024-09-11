@@ -165,5 +165,49 @@ async def dashboard():
 async def menu():
     return await send_from_directory('templates', 'dashboard-menu.json')
 
+API_KEY = "bdash-X_KzUaBBMlM8d5a5xbAav4Z6bYqS3rnBN94ugjtkhsI"
+
+@app.route("/api/module/<module_id>/<guild_id>", methods=["GET"])
+async def load_module(module_id, guild_id):
+    menu_data = {
+        "anti_raid": {
+            "load": f"https://baxi-backend.pyropixle.com/api/dash/settings/load/anti_raid/{guild_id}",
+            "save": f"https://baxi-backend.pyropixle.com/api/dash/settings/save/anti_raid/{guild_id}"
+        },
+        "Minigame guessing": {
+            "load": f"https://baxi-backend.pyropixle.com/api/dash/settings/load/mgg/{guild_id}",
+            "save": f"https://baxi-backend.pyropixle.com/api/dash/settings/save/mgg/{guild_id}"
+        },
+        "countgame_data": {
+            "load": f"https://baxi-backend.pyropixle.com/api/dash/settings/load/mgc/{guild_id}",
+            "save": f"https://baxi-backend.pyropixle.com/api/dash/settings/save/mgc/{guild_id}"
+        }
+    }
+
+    if module_id not in menu_data:
+        return jsonify({"error": "Modul nicht gefunden"}), 404
+
+    load_url = menu_data[module_id]["load"]
+
+    # API-Key in den Header einfügen
+    headers = {
+        "Authorization": f"{API_KEY}"
+    }
+
+    try:
+        response = requests.get(load_url, headers=headers)
+        # Fehlerbehandlung analog zu JavaScript
+        if not response.ok:
+            response.raise_for_status()
+        dataraw = response.json()
+        return jsonify(dataraw)
+        
+    except requests.HTTPError as http_err:
+        print(f"HTTP-Fehler: {http_err}")
+        return jsonify({"error": "Fehler beim Abrufen der Daten"}), 500
+    except Exception as err:
+        print(f"Fehler: {err}")
+        return jsonify({"error": "Fehler beim Abrufen der Daten"}), 500
+
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0")
