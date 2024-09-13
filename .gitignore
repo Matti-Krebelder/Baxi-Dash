@@ -1,2 +1,3 @@
 
 config/runtime.conf
+/assets/__pycache__
