@@ -3,6 +3,9 @@ from cryptography.fernet import Fernet
 from quart import Quart, render_template, request, send_from_directory, jsonify, redirect, session
 from quart_cors import cors
 from assets.get_data import Get_Data
+from reds_simple_logger import Logger
+
+logger = Logger()
 
 config = configparser.ConfigParser()
 config.read("config/runtime.conf")
