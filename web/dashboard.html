@@ -60,15 +60,15 @@
             margin-bottom: 20px;
         }
         .server-icon {
-            width: 40px;
-            height: 40px;
+            width: 60px;
+            height: 60px;
             background-color: #36393f;
             border-radius: 50%;
             margin-right: 15px;
             
         }
         .server-name {
-            font-size: 24px;
+            font-size: 36px;
             font-weight: bold;
         }
         .search-bar {
@@ -83,19 +83,21 @@
         .modules-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 15px;
+            gap: 40px;
             flex-wrap: wrap;
         }
         .module {
             background-color: #36393f;
             padding: 25px;
             border-radius: 8px;
+            margin-left: 1vw;
             transition: transform 0.2s;
-            height: 8vw;
-            width: 15vw;
+            transform: scale(1.2);
+
+
         }
         .module:hover {
-            transform: translateY(-5px);
+            transform: scale(1.25);
         }
         .module-header {
             display: flex;
