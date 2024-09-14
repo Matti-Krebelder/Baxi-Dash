@@ -26,6 +26,13 @@ async def login():
         return redirect("/")
     return redirect(f'{config["ENDPOINT"]["auth"]}?client_id={int(baxi_data.client_id)}&redirect_uri={baxi_data.redirect_uri}&response_type=code&scope=identify%20guilds')
 
+@app.route("/logout")
+async def logout():
+    if "token" in session:
+        session.clear()
+        return await render_template("logout.html")
+    else:
+        return redirect('/')
 
 @app.route("/callback")
 async def callback():
