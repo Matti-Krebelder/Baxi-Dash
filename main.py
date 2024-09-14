@@ -85,7 +85,7 @@ async def dash():
                 'verification_level': guild_info.get('verification_level', 'Unknown'),
             })
         logger.debug.info(guild_details)
-        return await render_template('dashboard.html', guild_details=guild_details)
+        return await render_template('dashboard.html', guild_details=guild_details, version=config["DASH"]["version"])
             
         
     except Exception as e:
