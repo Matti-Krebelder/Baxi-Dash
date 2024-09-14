@@ -1,255 +1,330 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Discord Bot Dashboard</title>
-  <style>
-    #baxihome {
-      background-image: url("/static/imgs/baxilogoanimated.gif");
-      background-repeat: no-repeat;
-      background-size: cover;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord-style Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1e1f22;
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+        }
+        .sidebar {
+            width: 64px;
+            background-color: #2f3136;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .sidebar img {
+            border-radius: 30px;
+            width: 40px;
+            margin-left: -1vw;
+            cursor: pointer;
+        }
+        #line {
+            height: 5px;
+            width: 40px;
+            margin-left: -1vw;
+            border-radius: 5px;
+            margin-top: -1vw;
+            background-color: rgb(26, 26, 26);
+        }
+        .container {
+            flex: 1;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .server-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #36393f;
+            border-radius: 50%;
+            margin-right: 15px;
+        }
+        .server-name {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .search-bar {
+            width: 100%;
+            padding: 10px;
+            background-color: #36393f;
+            border: none;
+            border-radius: 5px;
+            color: #ffffff;
+            margin-bottom: 20px;
+        }
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .module {
+            background-color: #36393f;
+            padding: 15px;
+            border-radius: 8px;
+            transition: transform 0.2s;
+        }
+        .module:hover {
+            transform: translateY(-5px);
+        }
+        .module-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .module-title {
+            font-weight: bold;
+        }
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .status-enabled {
+            background-color: #43b581;
+        }
+        .status-disabled {
+            background-color: #f04747;
+        }
+        .module-description {
+            font-size: 14px;
+            color: #b9bbbe;
+        }
+        .manage-button {
+            background-color: #7289da;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        .start-page, .module-page {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+        .start-page h1, .module-page h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+        .start-page p, .module-page p {
+            font-size: 18px;
+            color: #b9bbbe;
+            margin-bottom: 20px;
+        }
+        .hidden {
+            display: none;
+        }
+        .back-button {
+            background-color: #7289da;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .error-message {
+            color: #f04747;
+            margin-top: 20px;
+        }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f0f2f5;
-      display: flex;
-      height: 100vh;
-    }
-
-    .sidebar {
-      width: 70px;
-      background-color: #202225;
-      padding: 20px 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .server-icon {
-      width: 50px;
-      height: 50px;
-      background-color: #36393f;
-      border-radius: 50%;
-      margin-bottom: 10px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #dcddde;
-      font-size: 20px;
-      transition: border-radius 0.3s ease;
-      background-repeat: no-repeat;
-      background-size: cover;
-      background-position: center;
-    }
-
-    .server-icon img {
-      display: none;
-    }
-
-    .server-icon:hover {
-      border-radius: 30%;
-      background-color: #5865f2;
-    }
-
-    .main-content {
-      flex-grow: 1;
-      padding: 20px;
-      overflow-y: auto;
-    }
-
-    .welcome-screen {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100%;
-    }
-
-    .welcome-card {
-      background-color: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      text-align: center;
-    }
-
-    .modules-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: 20px;
-    }
-
-    .module-card {
-      background-color: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      padding: 20px;
-      transition: box-shadow 0.3s ease;
-    }
-
-    .module-card:hover {
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    }
-
-    .module-card h3 {
-      margin-bottom: 10px;
-      color: #5865f2;
-    }
-
-    .module-card p {
-      margin-bottom: 15px;
-      color: #4f5660;
-    }
-
-    .manage-btn {
-      background-color: #5865f2;
-      color: white;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-
-    .manage-btn:hover {
-      background-color: #4752c4;
-    }
-  </style>
+        @media (max-width: 1200px) {
+            .container {
+                max-width: 900px;
+            }
+            .modules-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+        }
+        @media (max-width: 900px) {
+            .container {
+                max-width: 600px;
+            }
+            .modules-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+        @media (max-width: 600px) {
+            .container {
+                max-width: 400px;
+            }
+            .modules-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="sidebar"></div>
-  <div class="main-content" id="mainContent">
-    <!-- Content will be dynamically loaded here -->
-  </div>
+    <div class="sidebar">
+       <img src="/static/images/baxi.png" alt="Baxi Image" onclick="showStartPage()">
+       <div id="line"></div>
+       <img src="/api/placeholder/40/40" alt="Discordserver1" onclick="showServer('Server 1')">
+       <img src="/api/placeholder/40/40" alt="Discordserver2" onclick="showServer('Server 2')">
+    </div>
 
-  <script id="menu-data" type="application/json">
-    {
-      "menu_items": [
-        {
-          "name": "Anti Raid",
-          "id": "anti_raid",
-          "endpoints": {
-            "load": "https://baxi-backend.pyropixle.com/api/dash/settings/load/anti_raid/{guild_id}",
-            "save": "https://baxi-backend.pyropixle.com/api/dash/settings/save/anti_raid/{guild_id}"
-          }
-        },
-        {
-          "name": "Minigame guessing",
-          "id": "Minigame guessing",
-          "endpoints": {
-            "load": "https://baxi-backend.pyropixle.com/api/dash/settings/load/mgg/{guild_id}",
-            "save": "https://baxi-backend.pyropixle.com/api/dash/settings/save/mgg/{guild_id}"
-          }
-        },
-        {
-          "name": "Counting game",
-          "id": "countgame_data",
-          "endpoints": {
-            "load": "https://baxi-backend.pyropixle.com/api/dash/settings/load/mgc/{guild_id}",
-            "save": "https://baxi-backend.pyropixle.com/api/dash/settings/save/mgc/{guild_id}"
-          }
-        }
-      ]
-    }
-  </script>
-
-  <script>
-    function loadHome() {
-      const mainContent = document.getElementById("mainContent");
-      mainContent.innerHTML = `
-        <div class="welcome-screen">
-          <div class="welcome-card">
-            <h2>Willkommen im Dashboard</h2>
-            <p>Wähle einen Server aus der Seitenleiste, um zu beginnen.</p>
-          </div>
+    <div class="container">
+        <div id="start-page" class="start-page">
+            <h1>Welcome to Your Dashboard</h1>
+            <p>Select a server from the sidebar to get started.</p>
         </div>
-      `;
-    }
 
-    async function loadServers() {
-    const sidebar = document.querySelector(".sidebar");
-    try {
-        const response = await fetch("/api/servers");
-        if (!response.ok) {
-            throw new Error("Failed to load servers");
+        <div id="server-content" class="hidden">
+            <div class="header">
+                <div class="server-icon"></div>
+                <h1 class="server-name" id="server-name"></h1>
+            </div>
+            
+            <input type="text" placeholder="Search" class="search-bar">
+            
+            <div class="modules-grid" id="modules-container">
+                <!-- Modules will be dynamically inserted here -->
+            </div>
+        </div>
+
+        <div id="module-page" class="module-page hidden">
+            <h1 id="module-page-title"></h1>
+            <p id="module-page-description"></p>
+            <div id="module-content">
+                <div id="loader" class="loader hidden"></div>
+                <div id="error-message" class="error-message hidden"></div>
+                <div id="module-data"></div>
+            </div>
+            <button class="back-button" onclick="showServer(currentServer)">Back to Modules</button>
+        </div>
+    </div>
+    
+    <script>
+        const guildId = 'YOUR_GUILD_ID'; 
+
+        const modules = [
+            { title: "TIKTOK", description: "Automatically post videos to TikTok", enabled: true, apiEndpoint: `https://baxi-backend.pyropixle.com/api/dash/settings/load/mgg/${guildId}`, saveApiEndpoint: "/api/tiktok/save" },
+            { title: "YT", description: "Automatically post videos to YouTube", enabled: true, apiEndpoint: `https://baxi-backend.pyropixle.com/api/dash/settings/load/mgg/${guildId}`, saveApiEndpoint: "/api/youtube/save" },
+            { title: "RTA", description: "Automatically respond to actions", enabled: true, apiEndpoint: `https://baxi-backend.pyropixle.com/api/dash/settings/load/mgg/${guildId}`, saveApiEndpoint: "/api/rta/save" },
+            { title: "Auto Purge", description: "Automatically delete old messages", enabled: true, apiEndpoint: `https://baxi-backend.pyropixle.com/api/dash/settings/load/mgg/${guildId}`, saveApiEndpoint: "/api/auto-purge/save" },
+            { title: "Announcements", description: "Manage server announcements", enabled: true, apiEndpoint: `https://baxi-backend.pyropixle.com/api/dash/settings/load/mgg/${guildId}`, saveApiEndpoint: "/api/announcements/save" },
+            { title: "Action Log", description: "Log all actions in the server", enabled: true, apiEndpoint: `https://baxi-backend.pyropixle.com/api/dash/settings/load/mgg/${guildId}`, saveApiEndpoint: "/api/action-log/save" },
+            { title: "Autorole", description: "Automatically assign roles to new members", enabled: true, apiEndpoint: `https://baxi-backend.pyropixle.com/api/dash/settings/load/mgg/${guildId}`, saveApiEndpoint: "/api/autorole/save" },
+            { title: "Punishments", description: "Manage server punishments", enabled: true, apiEndpoint: `https://baxi-backend.pyropixle.com/api/dash/settings/load/mgg/${guildId}`, saveApiEndpoint: "/api/punishments/save" },
+            { title: "Reminders", description: "Set and manage reminders", enabled: true, apiEndpoint: `https://baxi-backend.pyropixle.com/api/dash/settings/load/mgg/${guildId}`, saveApiEndpoint: "/api/reminders/save" },
+            { title: "Activities", description: "Manage server activities and events", enabled: true, apiEndpoint: `https://baxi-backend.pyropixle.com/api/dash/settings/load/mgg/${guildId}`, saveApiEndpoint: "/api/activities/save" },
+            { title: "Voice Statistics", description: "Track voice channel statistics", enabled: true, apiEndpoint: `https://baxi-backend.pyropixle.com/api/dash/settings/load/mgg/${guildId}`, saveApiEndpoint: "/api/voice-statistics/save" },
+            { title: "Moderation", description: "Moderation tools and settings", enabled: true, apiEndpoint: `https://baxi-backend.pyropixle.com/api/dash/settings/load/mgg/${guildId}`, saveApiEndpoint: "/api/moderation/save" },
+        ];
+    
+        const container = document.getElementById('modules-container');
+        const startPage = document.getElementById('start-page');
+        const serverContent = document.getElementById('server-content');
+        const modulePage = document.getElementById('module-page');
+        const serverNameElement = document.getElementById('server-name');
+        const modulePageTitle = document.getElementById('module-page-title');
+        const modulePageDescription = document.getElementById('module-page-description');
+
+        let currentServer = '';
+    
+        function showStartPage() {
+            startPage.classList.remove('hidden');
+            serverContent.classList.add('hidden');
+            modulePage.classList.add('hidden');
         }
 
-        const servers = await response.json();
-        sidebar.innerHTML = `
-            <div class="server-icon" onclick="loadHome()" id="baxihome"></div>
-        `;
-
-        servers.forEach((server) => {
-            sidebar.innerHTML += `
-                <div class="server-icon" onclick="loadServer(${server.id})" 
-                     style="background-image: url('${server.icon_url}');">
-                </div>
-            `;
-        });
-    } catch (error) {
-        console.error("Error loading servers:", error);
-        sidebar.innerHTML = `<p>Error loading servers.</p>`;
-    }
-}
-
-loadServers();
-
-
-    async function loadServers() {
-      const sidebar = document.querySelector(".sidebar");
-      const response = await fetch("/api/servers");
-
-      if (!response.ok) {
-        console.error("Failed to load servers");
-        return;
-      }
-
-      const servers = await response.json();
-      sidebar.innerHTML = `
-        <div class="server-icon" onclick="loadHome()" id="baxihome"></div>
-      `;
-
-      servers.forEach((server) => {
-        sidebar.innerHTML += `
-          <div class="server-icon" onclick="loadServer(${server.id})" 
-               style="background-image: url('${server.icon_url}');">
-          </div>
-        `;
-      });
-    }
-
-    async function manageModule(moduleId, serverId) {
-      try {
-        const response = await fetch(`/api/module/${moduleId}/${serverId}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        });
-
-        if (!response.ok) {
-          throw new Error(`Fehler beim Laden der Daten für Modul ${moduleId} und Server ${serverId}`);
+        function showServer(serverName) {
+            currentServer = serverName;
+            startPage.classList.add('hidden');
+            serverContent.classList.remove('hidden');
+            modulePage.classList.add('hidden');
+            serverNameElement.textContent = serverName;
+            
+            container.innerHTML = '';
+            
+            modules.forEach(module => {
+                const moduleElement = document.createElement('div');
+                moduleElement.className = 'module';
+                moduleElement.innerHTML = `
+                    <div class="module-header">
+                        <h3 class="module-title">${module.title}</h3>
+                        <div class="status-indicator ${module.enabled ? 'status-enabled' : 'status-disabled'}"></div>
+                    </div>
+                    <p class="module-description">${module.description}</p>
+                    <button class="manage-button" onclick="showModulePage('${module.title}', '${module.description}', '${module.apiEndpoint}', '${module.saveApiEndpoint}')">Verwalten</button>
+                `;
+                container.appendChild(moduleElement);
+            });
         }
 
-        const data = await response.json();
-        console.log(`Moduldaten für ${moduleId}:`, data);
-        alert(`Erfolgreich geladen: ${JSON.stringify(data)}`);
-      } catch (error) {
-        console.error(error.message);
-        alert(`Fehler: ${error.message}`);
-      }
-    }
+        async function showModulePage(title, description, apiEndpoint, saveApiEndpoint) {
+            startPage.classList.add('hidden');
+            serverContent.classList.add('hidden');
+            modulePage.classList.remove('hidden');
+            modulePageTitle.textContent = title;
+            modulePageDescription.textContent = description;
+            
+            const loader = document.getElementById('loader');
+            const errorMessage = document.getElementById('error-message');
+            const moduleData = document.getElementById('module-data');
 
-    loadServers();
-    loadHome();
-  </script>
+            loader.classList.remove('hidden');
+            errorMessage.classList.add('hidden');
+            moduleData.innerHTML = '';
+
+            try {
+                const response = await fetch(apiEndpoint, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                
+                moduleData.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+            } catch (error) {
+                console.error('Error:', error);
+                errorMessage.textContent = `Failed to load module data: ${error.message}`;
+                errorMessage.classList.remove('hidden');
+            } finally {
+                loader.classList.add('hidden');
+            }
+
+            console.log('Save API Endpoint:', saveApiEndpoint);
+        }
+    </script>
 </body>
 </html>
