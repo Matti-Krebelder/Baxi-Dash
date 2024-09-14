@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baxi Dash</title>
+    <meta property="og:title" content="Baxi Dashboard">
+    <meta property="og:description" content="Manage all your server's systems quickly and easily via the Baxi Dashboard. ">
+    <meta property="og:url" content="https://baxi.pyropixle.com/">
+    <meta property="og:image" content="https://pyropixle.com/img/pb-baxi.gif">
+    <meta property="og:type" content="website">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1e1f22;
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+        }
+        button {
+            background-color: crimson;
+            border-radius: 18%;
+            border-color: transparent;
+            padding: 5%;
+            margin: 5%
+        }
+        .sidebar {
+            width: 64px;
+            background-color: #2f3136;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .sidebar img {
+            border-radius: 30px;
+            width: 40px;
+            margin-left: -1vw;
+            cursor: pointer;
+        }
+        #line {
+            height: 5px;
+            width: 40px;
+            margin-left: -1vw;
+            border-radius: 5px;
+            margin-top: -1vw;
+            background-color: rgb(26, 26, 26);
+        }
+        .container {
+            flex: 1;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .server-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #36393f;
+            border-radius: 50%;
+            margin-right: 15px;
+        }
+        .server-name {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .search-bar {
+            width: 100%;
+            padding: 10px;
+            background-color: #36393f;
+            border: none;
+            border-radius: 5px;
+            color: #ffffff;
+            margin-bottom: 20px;
+        }
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .module {
+            background-color: #36393f;
+            padding: 15px;
+            border-radius: 8px;
+            transition: transform 0.2s;
+        }
+        .module:hover {
+            transform: translateY(-5px);
+        }
+        .module-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .module-title {
+            font-weight: bold;
+        }
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .status-enabled {
+            background-color: #43b581;
+        }
+        .status-disabled {
+            background-color: #f04747;
+        }
+        .module-description {
+            font-size: 14px;
+            color: #b9bbbe;
+        }
+        .manage-button {
+            background-color: #7289da;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        .start-page, .module-page {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+        .start-page h1, .module-page h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+        .start-page p, .module-page p {
+            font-size: 18px;
+            color: #b9bbbe;
+            margin-bottom: 20px;
+        }
+        .hidden {
+            display: none;
+        }
+        .back-button {
+            background-color: #7289da;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .error-message {
+            color: #f04747;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 1200px) {
+            .container {
+                max-width: 900px;
+            }
+            .modules-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+        }
+        @media (max-width: 900px) {
+            .container {
+                max-width: 600px;
+            }
+            .modules-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+        @media (max-width: 600px) {
+            .container {
+                max-width: 400px;
+            }
+            .modules-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+       <img src="/static/images/baxi.png" alt="Baxi Image" onclick="showStartPage()">
+       <div id="line"></div>
+       <img src="/api/placeholder/40/40" alt="Discordserver1" onclick="showServer('Server 1')">
+       <img src="/api/placeholder/40/40" alt="Discordserver2" onclick="showServer('Server 2')">
+    </div>
+
+    <div class="container">
+        <div id="start-page" class="start-page">
+            <h1>Welcome to Your Dashboard</h1>
+            <p>You must log in with your Discord account to continue.</p>
+            <a href="https://baxi.pyropixle.com/login"><button>Login</button></a>
+        </div>
+
+        
+    </div>
+    
+</body>
+</html>

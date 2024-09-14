@@ -49,7 +49,7 @@ async def callback():
 @app.route("/")
 async def dash():
     if "token" not in session:
-        return redirect("/login")
+        return await render_template("login.html")
     
     try:
         user_guilds = get_guilds.get_user_guilds(session["token"], config["ENDPOINT"]["discord_api"])
