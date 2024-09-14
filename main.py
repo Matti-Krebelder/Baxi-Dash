@@ -30,7 +30,7 @@ async def login():
 async def logout():
     if "token" in session:
         session.clear()
-        return await render_template("logout.html")
+        return await render_template("logout.html", version=config["DASH"]["version"])
     else:
         return redirect('/')
 
@@ -56,7 +56,7 @@ async def callback():
 @app.route("/")
 async def dash():
     if "token" not in session:
-        return await render_template("login.html")
+        return await render_template("login.html", version=config["DASH"]["version"])
     
     try:
         user_guilds = get_guilds.get_user_guilds(session["token"], config["ENDPOINT"]["discord_api"])
