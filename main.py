@@ -22,7 +22,7 @@ baxi_data = Get_Data(encryption_key=config.get("BAXI", "encryption_key"), api_ke
 
 @app.route("/login")
 async def login():
-    if "tocken" in session:
+    if "token" in session:
         return redirect("/")
     return redirect(f'{config["ENDPOINT"]["auth"]}?client_id={int(baxi_data.client_id)}&redirect_uri={baxi_data.redirect_uri}&response_type=code&scope=identify%20guilds')
 
