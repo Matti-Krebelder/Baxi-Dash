@@ -12,12 +12,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
+            font-family: "Quicksand", sans-serif;
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
         body {
-            font-family: Arial, sans-serif;
+            font-family: "Quicksand", sans-serif;
             background-color: #1e1f22;
             color: #ffffff;
             min-height: 100vh;
@@ -25,10 +26,12 @@
         }
         button {
             background-color: crimson;
-            border-radius: 18%;
+            border-radius: 18px;
             border-color: transparent;
-            padding: 5%;
-            margin: 5%
+            padding: 15px;
+        }
+        button:hover {
+            background-color: rgb(165, 16, 46);
         }
         .sidebar {
             width: 64px;
@@ -204,21 +207,12 @@
     </style>
 </head>
 <body>
-    <div class="sidebar">
-       <img src="/static/images/baxi.png" alt="Baxi Image" onclick="showStartPage()">
-       <div id="line"></div>
-       <img src="/api/placeholder/40/40" alt="Discordserver1" onclick="showServer('Server 1')">
-       <img src="/api/placeholder/40/40" alt="Discordserver2" onclick="showServer('Server 2')">
-    </div>
-
     <div class="container">
         <div id="start-page" class="start-page">
             <h1>Welcome to Your Dashboard</h1>
             <p>You must log in with your Discord account to continue.</p>
             <a href="https://baxi.pyropixle.com/login"><button>Login</button></a>
         </div>
-
-        
     </div>
     
 </body>
