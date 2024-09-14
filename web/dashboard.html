@@ -1,16 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Baxi Dash</title>
     <meta property="og:title" content="Baxi Dashboard">
-    <meta property="og:description" content="Manage all your server's systems quickly and easily via the Baxi Dashboard. ">
+    <meta property="og:description"
+        content="Manage all your server's systems quickly and easily via the Baxi Dashboard. ">
     <meta property="og:url" content="https://baxi.pyropixle.com/">
     <meta property="og:image" content="https://pyropixle.com/img/pb-baxi.gif">
     <meta property="og:type" content="website">
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
+
     <style>
         * {
             font-family: "Quicksand", sans-serif;
@@ -18,6 +20,7 @@
             padding: 0;
             box-sizing: border-box;
         }
+
         body {
             font-family: "Quicksand", sans-serif;
             background-color: #1e1f22;
@@ -25,6 +28,7 @@
             min-height: 100vh;
             display: flex;
         }
+
         .sidebar {
             width: 96px;
             background-color: #2f3136;
@@ -33,6 +37,7 @@
             flex-direction: column;
             gap: 20px;
         }
+
         .sidebar img {
             border-radius: 30px;
             width: 64px;
@@ -40,6 +45,7 @@
             cursor: pointer;
             margin-bottom: 0.8vw;
         }
+
         #line {
             height: 5px;
             width: 50px;
@@ -48,29 +54,34 @@
             margin-top: -1vw;
             background-color: rgb(26, 26, 26);
         }
+
         .container {
             flex: 1;
             padding: 20px;
             max-width: 1200px;
             margin: 0 auto;
         }
+
         .header {
             display: flex;
             align-items: center;
             margin-bottom: 20px;
         }
+
         .server-icon {
             width: 60px;
             height: 60px;
             background-color: #36393f;
             border-radius: 50%;
             margin-right: 15px;
-            
+
         }
+
         .server-name {
             font-size: 36px;
             font-weight: bold;
         }
+
         .search-bar {
             width: 100%;
             padding: 10px;
@@ -80,12 +91,14 @@
             color: #ffffff;
             margin-bottom: 20px;
         }
+
         .modules-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             gap: 40px;
             flex-wrap: wrap;
         }
+
         .module {
             background-color: #36393f;
             padding: 25px;
@@ -96,33 +109,41 @@
 
 
         }
+
         .module:hover {
             transform: scale(1.25);
         }
+
         .module-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 10px;
         }
+
         .module-title {
             font-weight: bold;
         }
+
         .status-indicator {
             width: 12px;
             height: 12px;
             border-radius: 50%;
         }
+
         .status-enabled {
             background-color: #43b581;
         }
+
         .status-disabled {
             background-color: #f04747;
         }
+
         .module-description {
             font-size: 14px;
             color: #b9bbbe;
         }
+
         .manage-button {
             background-color: #7289da;
             color: white;
@@ -131,25 +152,33 @@
             padding: 5px 10px;
             cursor: pointer;
         }
-        .start-page, .module-page {
+
+        .start-page,
+        .module-page {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             height: 100%;
         }
-        .start-page h1, .module-page h1 {
+
+        .start-page h1,
+        .module-page h1 {
             font-size: 36px;
             margin-bottom: 20px;
         }
-        .start-page p, .module-page p {
+
+        .start-page p,
+        .module-page p {
             font-size: 18px;
             color: #b9bbbe;
             margin-bottom: 20px;
         }
+
         .hidden {
             display: none;
         }
+
         .back-button {
             background-color: #7289da;
             color: white;
@@ -160,6 +189,7 @@
             font-size: 16px;
             margin-top: 20px;
         }
+
         .loader {
             border: 4px solid #f3f3f3;
             border-top: 4px solid #3498db;
@@ -169,10 +199,17 @@
             animation: spin 1s linear infinite;
             margin: 20px auto;
         }
+
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
+
         .error-message {
             color: #f04747;
             margin-top: 20px;
@@ -182,34 +219,40 @@
             .container {
                 max-width: 900px;
             }
+
             .modules-grid {
                 grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             }
         }
+
         @media (max-width: 900px) {
             .container {
                 max-width: 600px;
             }
+
             .modules-grid {
                 grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
             }
         }
+
         @media (max-width: 600px) {
             .container {
                 max-width: 400px;
             }
+
             .modules-grid {
                 grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
             }
         }
     </style>
 </head>
+
 <body>
     <div class="sidebar">
-       <img src="/static/imgs/baxilogoanimated.gif" alt="Baxi Image" onclick="showStartPage()">
-       <div id="line"></div>
-       <img src="/api/placeholder/40/40" alt="Discordserver1" onclick="showServer('Server 1')">
-       <img src="/api/placeholder/40/40" alt="Discordserver2" onclick="showServer('Server 2')">
+        <img src="/static/imgs/baxilogoanimated.gif" alt="Baxi Image" onclick="showStartPage()">
+        <div id="line"></div>
+        <img src="/api/placeholder/40/40" alt="Discordserver1" onclick="showServer('Server 1')">
+        <img src="/api/placeholder/40/40" alt="Discordserver2" onclick="showServer('Server 2')">
     </div>
 
     <div class="container">
@@ -224,9 +267,9 @@
                 <div class="server-icon"></div>
                 <h1 class="server-name" id="server-name"></h1>
             </div>
-            
+
             <input type="text" placeholder="Search" class="search-bar">
-            
+
             <div class="modules-grid" id="modules-container">
                 <!-- Modules will be dynamically inserted here -->
             </div>
@@ -243,9 +286,9 @@
             <button class="back-button" onclick="showServer(currentServer)">Back to Modules</button>
         </div>
     </div>
-    
+
     <script>
-        const guildId = 'YOUR_GUILD_ID'; 
+        const guildId = 'YOUR_GUILD_ID';
 
         const modules = [
             { title: "TIKTOK", description: "Automatically post videos to TikTok", enabled: true, apiEndpoint: `https://baxi-backend.pyropixle.com/api/dash/settings/load/mgg/${guildId}`, saveApiEndpoint: "/api/tiktok/save" },
@@ -261,7 +304,7 @@
             { title: "Voice Statistics", description: "Track voice channel statistics", enabled: true, apiEndpoint: `https://baxi-backend.pyropixle.com/api/dash/settings/load/mgg/${guildId}`, saveApiEndpoint: "/api/voice-statistics/save" },
             { title: "Moderation", description: "Moderation tools and settings", enabled: true, apiEndpoint: `https://baxi-backend.pyropixle.com/api/dash/settings/load/mgg/${guildId}`, saveApiEndpoint: "/api/moderation/save" },
         ];
-    
+
         const container = document.getElementById('modules-container');
         const startPage = document.getElementById('start-page');
         const serverContent = document.getElementById('server-content');
@@ -271,7 +314,7 @@
         const modulePageDescription = document.getElementById('module-page-description');
 
         let currentServer = '';
-    
+
         function showStartPage() {
             startPage.classList.remove('hidden');
             serverContent.classList.add('hidden');
@@ -284,9 +327,9 @@
             serverContent.classList.remove('hidden');
             modulePage.classList.add('hidden');
             serverNameElement.textContent = serverName;
-            
+
             container.innerHTML = '';
-            
+
             modules.forEach(module => {
                 const moduleElement = document.createElement('div');
                 moduleElement.className = 'module';
@@ -308,7 +351,7 @@
             modulePage.classList.remove('hidden');
             modulePageTitle.textContent = title;
             modulePageDescription.textContent = description;
-            
+
             const loader = document.getElementById('loader');
             const errorMessage = document.getElementById('error-message');
             const moduleData = document.getElementById('module-data');
@@ -328,7 +371,7 @@
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const data = await response.json();
-                
+
                 moduleData.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
             } catch (error) {
                 console.error('Error:', error);
@@ -342,4 +385,5 @@
         }
     </script>
 </body>
+
 </html>
