@@ -134,7 +134,7 @@ async def dash():
 
     except Exception as e:
         logger.error('Error in app.route("/"): ' + str(e))
-        return "An error occured!", 500
+        return jsonify({"notify-error": f"Error: {str(e)}"}), 500
 
 
 if __name__ == "__main__":
