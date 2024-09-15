@@ -68,6 +68,11 @@ async def callback():
     return redirect("/")
 
 
+@app.route("/dashboard")
+async def dash_send_to_new_dash():
+    return redirect("/")
+
+
 @app.route("/")
 async def dash():
     if "token" not in session:
