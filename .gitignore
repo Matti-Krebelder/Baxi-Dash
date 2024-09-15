@@ -1,3 +1,4 @@
 
 config/runtime.conf
 /assets/__pycache__
+/venv/

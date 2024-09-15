@@ -1,0 +1,6 @@
+requests
+cryptography
+quart
+quart_cors
+reds_simple_logger
+configparser
