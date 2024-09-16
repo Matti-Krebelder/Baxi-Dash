@@ -2,3 +2,6 @@
 config/runtime.conf
 /assets/__pycache__
 /venv/
+/env
+/.vs/Baxi-Dash/FileContentIndex
+/.vs
