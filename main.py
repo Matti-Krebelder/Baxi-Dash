@@ -82,12 +82,12 @@ async def dash():
             session["token"], config["ENDPOINT"]["discord_api"]
         )
         bot_guilds = get_guilds.get_bot_guilds(
-            baxi_data.tocken, config["ENDPOINT"]["discord_api"]
+            baxi_data.token, config["ENDPOINT"]["discord_api"]
         )
         common_guilds = [guild for guild in user_guilds if guild in bot_guilds]
 
         guild_details = []
-        bot_headers = {"Authorization": f"Bot {str(baxi_data.tocken)}"}
+        bot_headers = {"Authorization": f"Bot {str(baxi_data.token)}"}
         for guild in common_guilds:
             guild_id = guild["id"]
             guild_info_response = requests.get(

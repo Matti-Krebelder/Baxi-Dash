@@ -15,7 +15,7 @@ class Get_Data:
     class Response:
         def __init__(self, data, key):
             fernet = Fernet(key)
-            self.tocken = f"{fernet.decrypt(data['tocken']).decode()}"
+            self.token = f"{fernet.decrypt(data['token']).decode()}"
             self.client_id = data["client_id"]
             self.client_secret = f"{fernet.decrypt(data['client_secret']).decode()}"
             self.redirect_uri = data["redirect_uri"]
