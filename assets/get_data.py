@@ -1,3 +1,5 @@
+from http.client import responses
+
 import requests
 from cryptography.fernet import Fernet
 from reds_simple_logger import Logger
@@ -28,6 +30,7 @@ class Get_Data:
                 "https://baxi-backend.pyropixle.com/api/oauth/get/data/baxi",
                 headers=headers,
             )
+            logger.debug.info(request.text)
             response = request.json()
             return self.Response(response, self.encryption_key)
         except Exception as e:
