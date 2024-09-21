@@ -120,7 +120,11 @@ async def dash():
         )
         logger.debug.info(user_guilds)
         logger.debug.info(bot_guilds)
-        common_guilds = [guild for guild in user_guilds if guild in bot_guilds]
+        common_guilds = []
+        for guild_b in bot_guilds:
+            for guild_u in user_guilds:
+                if guild_b["id"] == guild_u["id"]:
+                    common_guilds.append(guild_b)
         logger.debug.info(common_guilds)
         guild_details = []
         bot_headers = {"Authorization": f"Bot {str(baxi_data.token)}"}
