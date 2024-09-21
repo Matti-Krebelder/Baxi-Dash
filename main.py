@@ -22,7 +22,7 @@ config = configparser.ConfigParser()
 config.read("config/runtime.conf")
 
 app = Quart(__name__, template_folder="web")
-app = cors(app, allow_origin="baxi.pyropixle.com")
+app = cors(app)
 app.secret_key = os.urandom(24)
 
 maintenance = config.getboolean("DASH", "maintenance")
