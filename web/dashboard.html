@@ -425,6 +425,7 @@
         }
 
         async function showModulePage(title, description, apiEndpoint, saveApiEndpoint) {
+            // Hide unnecessary sections and show the module page
             startPage.classList.add('hidden');
             serverContent.classList.add('hidden');
             modulePage.classList.remove('hidden');
@@ -435,11 +436,13 @@
             const errorMessage = document.getElementById('error-message');
             const moduleData = document.getElementById('module-data');
 
+            // Show the loader and clear previous data/errors
             loader.classList.remove('hidden');
             errorMessage.classList.add('hidden');
             moduleData.innerHTML = '';
 
             try {
+                // Fetch module data from the provided API endpoint
                 const response = await fetch(`/api/module-data?apiEndpoint=${encodeURIComponent(apiEndpoint)}&guildId=${encodeURIComponent(guildId)}`, {
                     method: 'GET',
                     headers: {
@@ -447,28 +450,38 @@
                     }
                 });
 
+                // Check if the response was unsuccessful
                 if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                    throw new Error(`Failed to load module data. HTTP status: ${response.status}`);
                 }
-                /* data-response */
+
+                // Parse the response data as JSON
                 const data = await response.json();
-                if(data.includes("-switch")){
-                    alert("Switchhhh")
+
+                // Example of a specific condition, alert if '-switch' is in the data
+                if (data.includes('-switch')) {
+                    alert('Switchhhh');
                 }
+
+                // Display the data in a preformatted way for readability
                 moduleData.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
 
+                // Check if any notification key exists and display it
                 const notifyKey = Object.keys(data).find(key => key.startsWith('notify-'));
                 if (notifyKey) {
                     showNotification(notifyKey, data[notifyKey]);
                 }
             } catch (error) {
-                console.error('Error:', error);
+                // Display an error message if the fetch fails or other errors occur
+                console.error('Error loading module data:', error);
                 errorMessage.textContent = `Failed to load module data: ${error.message}`;
                 errorMessage.classList.remove('hidden');
             } finally {
+                // Hide the loader regardless of success or failure
                 loader.classList.add('hidden');
             }
 
+            // Logging the save API endpoint
             console.log('Save API Endpoint:', saveApiEndpoint);
         }
 
