@@ -209,7 +209,7 @@
        <img src="/static/imgs/baxilogoanimated.gif" alt="Baxi Image" onclick="showStartPage()">
        <div id="line"></div>
        {% for guild in guild_details %}
-       <img src="{{ guild.icon_url }}" alt="{{ guild.name }}" onclick="showServer('{{ guild.name }}')">
+       <img src="{{ guild.icon_url }}" alt="{{ guild.name }}" onclick="showServer('{{ guild.name }}'); guildid('{{ guild.id }}'); owner('{{ guild.owner_username }}'); members('{{ guild.member_count }}')" />
        {% endfor %}
     </div>
 
@@ -223,6 +223,7 @@
             <div class="header">
                 <div class="server-icon"></div>
                 <h1 class="server-name" id="server-name"></h1>
+                <h2 id="serverownername"></h2>
             </div>
             
             <input type="text" placeholder="Search" class="search-bar">
@@ -245,7 +246,24 @@
     </div>
     
     <script>
+  
         const guildId = 'YOUR_GUILD_ID'; 
+        const Ownerusername = '';
+        const Servermembercount = '';
+
+        function owner(username){
+            Ownerusername = username
+            document.getElementById('serverownername').textContent = Ownerusername
+        }
+
+        function members(count){
+            Servermembercount = count
+        }
+
+        function guildid(id){
+            guildId = id
+        }
+
 
         const modules = [
             { title: "TIKTOK", description: "Automatically post videos to TikTok", enabled: true, apiEndpoint: `https://baxi-backend.pyropixle.com/api/dash/settings/load/mgg/${guildId}`, saveApiEndpoint: "/api/tiktok/save" },
