@@ -267,7 +267,8 @@
         <div id="server-content" class="hidden">
             <div class="header">
                 <div class="server-icon"></div>
-                <h1 class="server-name" id="server-name"></h1>
+                <h1 class="server-name" id="server-name"></h1> <br>
+
                 <h2 id="serverownername"></h2>
             </div>
 
@@ -305,7 +306,7 @@
 
         function owner(username) {
             Ownerusername = username
-            document.getElementById('serverownername').textContent = Ownerusername
+            document.getElementById('serverownername').textContent = "Owner: " + Ownerusername
         }
 
         function members(count) {
