@@ -118,6 +118,8 @@ async def dash():
         bot_guilds = get_guilds.get_bot_guilds(
             baxi_data.token, config["ENDPOINT"]["discord_api"]
         )
+        logger.debug.info(user_guilds)
+        logger.debug.info(bot_guilds)
         common_guilds = [guild for guild in user_guilds if guild in bot_guilds]
         logger.debug.info(common_guilds)
         guild_details = []
