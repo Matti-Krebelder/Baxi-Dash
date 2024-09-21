@@ -9,6 +9,7 @@ from quart import (
     redirect,
     session,
 )
+import aiohttp
 from quart_cors import cors
 from reds_simple_logger import Logger
 
