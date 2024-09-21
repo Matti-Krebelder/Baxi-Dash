@@ -53,7 +53,7 @@ async def get_module_data():
             }
             api_request = requests.get(full_api_endpoint, headers=headers)
             return api_request.json()
-        except aiohttp.ClientError as e:
+        except Exception:
             return jsonify({"error": f"Error fetching API: {str(e)}"}), 500
 
 
