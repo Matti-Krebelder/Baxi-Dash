@@ -47,7 +47,7 @@ async def get_module_data():
         try:
             headers = {
                 'Content-Type': 'application/json',
-                'Authorization': f'Bearer {api_key}'
+                'Authorization': f'{api_key}'
             }
             async with session.get(full_api_endpoint, headers=headers) as response:
                 if response.status == 200:
