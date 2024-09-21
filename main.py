@@ -107,6 +107,9 @@ async def dash_send_to_new_dash():
     return redirect("/")
 
 
+MANAGE_GUILD_PERMISSION = 0x20
+
+
 @app.route("/")
 async def dash():
     if "token" not in session:
@@ -118,51 +121,72 @@ async def dash():
         bot_guilds = get_guilds.get_bot_guilds(
             baxi_data.token, config["ENDPOINT"]["discord_api"]
         )
+        logger.debug.info(user_guilds)
+        logger.debug.info(bot_guilds)
+
         user_guild_ids = {guild["id"] for guild in user_guilds}
 
-        # Bot-Gilden in ein Dictionary umwandeln für schnelleren Zugriff
         bot_guild_dict = {guild["id"]: guild for guild in bot_guilds}
 
-        # Gemeinsame Gilden finden
-        common_guilds = [bot_guild_dict[guild_id] for guild_id in user_guild_ids if guild_id in bot_guild_dict]
+        common_guilds = [
+            bot_guild_dict[guild_id]
+            for guild_id in user_guild_ids
+            if guild_id in bot_guild_dict and
+               (int(bot_guild_dict[guild_id]["permissions"]) & MANAGE_GUILD_PERMISSION) == MANAGE_GUILD_PERMISSION
+        ]
         logger.debug.info(common_guilds)
+
         guild_details = []
         bot_headers = {"Authorization": f"Bot {str(baxi_data.token)}"}
-        for guild in common_guilds:
-            guild_id = guild["id"]
-            guild_info_response = requests.get(
-                f'{config["ENDPOINT"]["discord_api"]}/guilds/{guild_id}?with_counts=true',
-                headers=bot_headers,
-            )
-            guild_info = guild_info_response.json()
-            owner_info_response = requests.get(
-                f'{config["ENDPOINT"]["discord_api"]}/users/{guild_info.get("owner_id")}',
-                headers=bot_headers,
-            )
-            owner_info = owner_info_response.json()
 
-            guild_details.append(
-                {
-                    "name": guild_info["name"],
-                    "id": guild_info["id"],
-                    "icon_url": (
-                        f'https://cdn.discordapp.com/icons/{guild_info["id"]}/{guild_info["icon"]}.png'
-                        if guild_info["icon"]
-                        else config["DASH"]["default_icon"]
-                    ),
-                    "member_count": guild_info.get(
-                        "approximate_member_count", "Unknown"
-                    ),
-                    "owner_username": owner_info.get("username", "Unknown"),
-                    "region": guild_info.get("region", "Unknown"),
-                    "description": guild_info.get(
-                        "description", "No description available"
-                    ),
-                    "verification_level": guild_info.get(
-                        "verification_level", "Unknown"
-                    ),
-                }
-            )
+        owner_info_cache = {}
+
+        async with aiohttp.ClientSession(headers=bot_headers) as session:
+            tasks = []
+            for guild in common_guilds:
+                guild_id = guild["id"]
+                guild_info_url = f'{config["ENDPOINT"]["discord_api"]}/guilds/{guild_id}?with_counts=true'
+                tasks.append(session.get(guild_info_url))
+
+            responses = await asyncio.gather(*tasks)
+
+            for response in responses:
+                guild_info = await response.json()
+                owner_id = guild_info.get("owner_id")
+
+                # Überprüfen, ob die Eigentümerinformationen bereits im Cache sind
+                if owner_id in owner_info_cache:
+                    owner_info = owner_info_cache[owner_id]
+                else:
+                    owner_info_response = await session.get(
+                        f'{config["ENDPOINT"]["discord_api"]}/users/{owner_id}'
+                    )
+                    owner_info = await owner_info_response.json()
+                    owner_info_cache[owner_id] = owner_info
+
+                guild_details.append(
+                    {
+                        "name": guild_info["name"],
+                        "id": guild_info["id"],
+                        "icon_url": (
+                            f'https://cdn.discordapp.com/icons/{guild_info["id"]}/{guild_info["icon"]}.png'
+                            if guild_info["icon"]
+                            else config["DASH"]["default_icon"]
+                        ),
+                        "member_count": guild_info.get(
+                            "approximate_member_count", "Unknown"
+                        ),
+                        "owner_username": owner_info.get("username", "Unknown"),
+                        "region": guild_info.get("region", "Unknown"),
+                        "description": guild_info.get(
+                            "description", "No description available"
+                        ),
+                        "verification_level": guild_info.get(
+                            "verification_level", "Unknown"
+                        ),
+                    }
+                )
+
         logger.debug.info(guild_details)
         return await render_template(
             "dashboard.html",
@@ -173,7 +197,6 @@ async def dash():
     except Exception as e:
         logger.error('Error in app.route("/"): ' + str(e))
         return jsonify({"notify-error": f"Error: {str(e)}"}), 500
-
 
 if __name__ == "__main__":
     app.run(debug=False, host="0.0.0.0")
