@@ -119,15 +119,14 @@ async def dash():
         bot_guilds = get_guilds.get_bot_guilds(
             baxi_data.token, config["ENDPOINT"]["discord_api"]
         )
-        user_guild_ids = {guild["id"] for guild in user_guilds}
 
-        bot_guild_dict = {guild["id"]: guild for guild in bot_guilds}
+        bot_guild_ids = {guild["id"] for guild in bot_guilds}
 
+        # Gemeinsame Gilden finden, bei denen der Benutzer "Manage Guild" Rechte hat
         common_guilds = [
-            bot_guild_dict[guild_id]
-            for guild_id in user_guild_ids
-            if guild_id in bot_guild_dict and
-            (int(bot_guild_dict[guild_id]["permissions"]) & MANAGE_GUILD_PERMISSION) == MANAGE_GUILD_PERMISSION
+            guild for guild in user_guilds
+            if guild["id"] in bot_guild_ids and
+               (int(guild["permissions"]) & MANAGE_GUILD_PERMISSION) == MANAGE_GUILD_PERMISSION
         ]
         logger.debug.info(common_guilds)
         guild_details = []
