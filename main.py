@@ -35,10 +35,6 @@ baxi_data = Get_Data(
 
 @app.route('/api/module-data', methods=['GET'])
 async def get_module_data():
-    client_ip = request.remote_addr
-    if client_ip not in ['127.0.0.1', '::1']:
-        return jsonify({"error": "Access denied. Only local requests are allowed."}), 403
-
     api_endpoint = request.args.get('apiEndpoint')
     guild_id = request.args.get('guildId')
     api_key = "bdash-X_KzUaBBMlM8d5a5xbAav4Z6bYqS3rnBN94ugjtkhsI"

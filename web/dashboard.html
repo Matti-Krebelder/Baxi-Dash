@@ -429,14 +429,14 @@
                         'Content-Type': 'application/json',
                     }
                 });
+
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-                const data = await response.json();
 
+                const data = await response.json();
                 moduleData.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
 
-                // Check for notification in the response
                 const notifyKey = Object.keys(data).find(key => key.startsWith('notify-'));
                 if (notifyKey) {
                     showNotification(notifyKey, data[notifyKey]);
@@ -451,6 +451,7 @@
 
             console.log('Save API Endpoint:', saveApiEndpoint);
         }
+
 
         function showNotification(type, message) {
             const notificationElement = document.getElementById('notification');
