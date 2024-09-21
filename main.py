@@ -118,8 +118,6 @@ async def dash():
         bot_guilds = get_guilds.get_bot_guilds(
             baxi_data.token, config["ENDPOINT"]["discord_api"]
         )
-        logger.debug.info(user_guilds)
-        logger.debug.info(bot_guilds)
         user_guild_ids = {guild["id"] for guild in user_guilds}
 
         # Bot-Gilden in ein Dictionary umwandeln für schnelleren Zugriff
