@@ -32,6 +32,7 @@ baxi_data = Get_Data(
     api_key=config.get("BAXI", "baxi_info_key"),
 ).baxi_data_pull()
 
+logger.debug.info("Logged in as " + baxi_data.app_name)
 
 @app.route("/api/module-data", methods=["GET"])
 async def get_module_data():
@@ -118,7 +119,7 @@ async def dash():
             baxi_data.token, config["ENDPOINT"]["discord_api"]
         )
         common_guilds = [guild for guild in user_guilds if guild in bot_guilds]
-
+        logger.debug.info(common_guilds)
         guild_details = []
         bot_headers = {"Authorization": f"Bot {str(baxi_data.token)}"}
         for guild in common_guilds:
@@ -127,13 +128,11 @@ async def dash():
                 f'{config["ENDPOINT"]["discord_api"]}/guilds/{guild_id}?with_counts=true',
                 headers=bot_headers,
             )
-            guild_info_response.raise_for_status()
             guild_info = guild_info_response.json()
             owner_info_response = requests.get(
                 f'{config["ENDPOINT"]["discord_api"]}/users/{guild_info.get("owner_id")}',
                 headers=bot_headers,
             )
-            owner_info_response.raise_for_status()
             owner_info = owner_info_response.json()
 
             guild_details.append(

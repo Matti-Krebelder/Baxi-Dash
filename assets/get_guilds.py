@@ -10,7 +10,8 @@ def get_user_guilds(token, api_endpoint):
         user_guilds_response = requests.get(
             f"{api_endpoint}/users/@me/guilds", headers=headers
         )
-        user_guilds_response.raise_for_status()
+        if user_guilds_response.status_code != 200:
+            return {}, user_guilds_response.status_code
         user_guilds = user_guilds_response.json()
         return user_guilds
     except Exception as e:
@@ -23,7 +24,8 @@ def get_bot_guilds(token, api_endpoint):
         bot_guilds_response = requests.get(
             f"{api_endpoint}/users/@me/guilds", headers=bot_headers
         )
-        bot_guilds_response.raise_for_status()
+        if bot_guilds_response.status_code != 200:
+            return {}, bot_guilds_response.status_code
         bot_guilds = bot_guilds_response.json()
         return bot_guilds
     except Exception as e:
