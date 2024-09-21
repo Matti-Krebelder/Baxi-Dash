@@ -10,7 +10,6 @@ from quart import (
     session,
 )
 import aiohttp
-import ipaddress
 from quart_cors import cors
 from reds_simple_logger import Logger
 
@@ -23,7 +22,7 @@ config = configparser.ConfigParser()
 config.read("config/runtime.conf")
 
 app = Quart(__name__, template_folder="web")
-app = cors(app)
+app = cors(app, allow_origin="baxi.pyropixle.com")
 app.secret_key = os.urandom(24)
 
 maintenance = config.getboolean("DASH", "maintenance")
