@@ -450,10 +450,59 @@
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-                /* data-response */
+
                 const data = await response.json();
-                console.log(data)
-                moduleData.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+                console.log(data);
+
+                // Leeren Inhalt anzeigen, bevor neue Elemente hinzugefügt werden
+                moduleData.innerHTML = '';
+
+                // Über die Daten iterieren
+                Object.keys(data).forEach(key => {
+                    // Wenn der Key mit "switch-" beginnt, einen Toggle-Switch erstellen
+                    if (key.startsWith('switch-')) {
+                        const switchContainer = document.createElement('div');
+                        switchContainer.classList.add('switch-container');
+
+                        const switchLabel = document.createElement('label');
+                        switchLabel.textContent = key;
+
+                        const switchInput = document.createElement('input');
+                        switchInput.type = 'checkbox';
+                        switchInput.checked = data[key];  // Der Wert bestimmt, ob der Switch aktiviert ist
+
+                        // Event Listener für das Umschalten des Switches
+                        switchInput.addEventListener('change', async () => {
+                            try {
+                                const saveResponse = await fetch(saveApiEndpoint, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                    },
+                                    body: JSON.stringify({
+                                        [key]: switchInput.checked,
+                                        guildId: guildId
+                                    })
+                                });
+
+                                if (!saveResponse.ok) {
+                                    throw new Error(`Failed to save data: ${saveResponse.status}`);
+                                }
+
+                                console.log(`Switch ${key} updated to:`, switchInput.checked);
+                            } catch (error) {
+                                console.error('Error updating switch:', error);
+                            }
+                        });
+
+                        switchContainer.appendChild(switchLabel);
+                        switchContainer.appendChild(switchInput);
+                        moduleData.appendChild(switchContainer);
+                    } else {
+                        // Andere Daten einfach als JSON anzeigen
+                        moduleData.innerHTML += `<pre>${key}: ${JSON.stringify(data[key], null, 2)}</pre>`;
+                    }
+                });
 
                 const notifyKey = Object.keys(data).find(key => key.startsWith('notify-'));
                 if (notifyKey) {
@@ -469,6 +518,7 @@
 
             console.log('Save API Endpoint:', saveApiEndpoint);
         }
+
 
         function showNotification(type, message) {
             const notificationElement = document.getElementById('notification');
