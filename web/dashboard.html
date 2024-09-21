@@ -451,6 +451,7 @@
                 }
 
                 const data = await response.json();
+                console.log(data)
                 moduleData.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
 
                 const notifyKey = Object.keys(data).find(key => key.startsWith('notify-'));
