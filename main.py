@@ -109,7 +109,7 @@ async def dash_send_to_new_dash():
 
 @app.route("/")
 async def dash():
-    MANAGE_GUILD_PERMISSION = 0x20
+    MANAGE_GUILD_PERMISSION = 0x0000000000000020
     if "token" not in session:
         return await render_template("login.html", version=config["DASH"]["version"])
     try:
