@@ -31,6 +31,27 @@ baxi_data = Get_Data(
     api_key=config.get("BAXI", "baxi_info_key"),
 ).baxi_data_pull()
 
+@app.route('/api/module-data', methods=['GET'])
+async def get_module_data():
+    api_endpoint = "bdash-X_KzUaBBMlM8d5a5xbAav4Z6bYqS3rnBN94ugjtkhsI"
+    guild_id = request.args.get('guildId')
+    
+    if not api_endpoint or not guild_id:
+        return jsonify({"error": "Missing apiEndpoint or guildId"}), 400
+
+    full_api_endpoint = f"https://baxi-backend.pyropixle.com/api/dash/settings/load/{api_endpoint}/{guild_id}"
+
+    async with aiohttp.ClientSession() as session:
+        try:
+            async with session.get(full_api_endpoint, headers={'Content-Type': 'application/json'}) as response:
+                if response.status == 200:
+                    json_response = await response.json()
+                    return jsonify(json_response)
+                else:
+                    return jsonify({"error": f"API returned status code {response.status}"}), response.status
+        except aiohttp.ClientError as e:
+            return jsonify({"error": f"Error fetching API: {str(e)}"}), 500
+
 
 @app.route("/login")
 async def login():
