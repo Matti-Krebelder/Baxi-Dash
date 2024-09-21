@@ -11,7 +11,7 @@ from quart import (
 )
 import aiohttp
 from quart_cors import cors
-from reds_simple_logger import Logger
+from reds_simple_logger import Logger # type: ignore
 
 from assets.get_data import Get_Data
 import assets.get_guilds as get_guilds

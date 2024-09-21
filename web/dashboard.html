@@ -326,6 +326,21 @@
     </div>
     <div id="notification"></div>
     <script>
+        function filterModules() {
+            const searchBar = document.querySelector('.search-bar');
+            const query = searchBar.value.toLowerCase(); 
+            const modules = document.querySelectorAll('.module'); 
+
+            modules.forEach(module => {
+                const title = module.querySelector('.module-title').textContent.toLowerCase(); 
+                if (title.includes(query)) {
+                    module.style.display = '';
+                } else {
+                    module.style.display = 'none'; 
+                }
+            });
+        }
+        document.querySelector('.search-bar').addEventListener('input', filterModules);
         function handleGuildClick(name, id, ownerUsername, memberCount) {
             showServer(name);
             guildid(id);
