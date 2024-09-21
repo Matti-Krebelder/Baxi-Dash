@@ -319,7 +319,9 @@
             <div id="module-content">
                 <div id="loader" class="loader hidden"></div>
                 <div id="error-message" class="error-message hidden"></div>
-                <div id="module-data"></div>
+                <div id="module-data">
+                    <input type="checkbox" style="display: hidden;">
+                </div>
             </div>
             <button class="back-button" onclick="showServer(currentServer)">Back to Modules</button>
         </div>
@@ -449,7 +451,7 @@
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-
+                /* data-response */
                 const data = await response.json();
                 console.log(data)
                 moduleData.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
