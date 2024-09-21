@@ -328,15 +328,15 @@
     <script>
         function filterModules() {
             const searchBar = document.querySelector('.search-bar');
-            const query = searchBar.value.toLowerCase(); 
-            const modules = document.querySelectorAll('.module'); 
+            const query = searchBar.value.toLowerCase();
+            const modules = document.querySelectorAll('.module');
 
             modules.forEach(module => {
-                const title = module.querySelector('.module-title').textContent.toLowerCase(); 
+                const title = module.querySelector('.module-title').textContent.toLowerCase();
                 if (title.includes(query)) {
                     module.style.display = '';
                 } else {
-                    module.style.display = 'none'; 
+                    module.style.display = 'none';
                 }
             });
         }
@@ -468,7 +468,6 @@
             console.log('Save API Endpoint:', saveApiEndpoint);
         }
 
-
         function showNotification(type, message) {
             const notificationElement = document.getElementById('notification');
             notificationElement.className = type;
@@ -477,7 +476,7 @@
 
             setTimeout(() => {
                 notificationElement.classList.remove('show');
-            }, 5000); // Hide after 5 seconds
+            }, 5000);
         }
     </script>
 </body>

@@ -11,7 +11,7 @@ from quart import (
 )
 import aiohttp
 from quart_cors import cors
-from reds_simple_logger import Logger # type: ignore
+from reds_simple_logger import Logger  # type: ignore
 
 from assets.get_data import Get_Data
 import assets.get_guilds as get_guilds
@@ -32,12 +32,13 @@ baxi_data = Get_Data(
     api_key=config.get("BAXI", "baxi_info_key"),
 ).baxi_data_pull()
 
-@app.route('/api/module-data', methods=['GET'])
+
+@app.route("/api/module-data", methods=["GET"])
 async def get_module_data():
-    api_endpoint = request.args.get('apiEndpoint')
-    guild_id = request.args.get('guildId')
+    api_endpoint = request.args.get("apiEndpoint")
+    guild_id = request.args.get("guildId")
     api_key = "bdash-X_KzUaBBMlM8d5a5xbAav4Z6bYqS3rnBN94ugjtkhsI"
-    
+
     if not api_endpoint or not guild_id:
         return jsonify({"error": "Missing apiEndpoint or guildId"}), 400
 
@@ -46,15 +47,20 @@ async def get_module_data():
     async with aiohttp.ClientSession() as session:
         try:
             headers = {
-                'Content-Type': 'application/json',
-                'Authorization': f'{api_key}'
+                "Content-Type": "application/json",
+                "Authorization": f"{api_key}",
             }
             async with session.get(full_api_endpoint, headers=headers) as response:
                 if response.status == 200:
                     json_response = await response.json()
                     return jsonify(json_response)
                 else:
-                    return jsonify({"error": f"API returned status code {response.status}"}), response.status
+                    return (
+                        jsonify(
+                            {"error": f"API returned status code {response.status}"}
+                        ),
+                        response.status,
+                    )
         except aiohttp.ClientError as e:
             return jsonify({"error": f"Error fetching API: {str(e)}"}), 500
 
