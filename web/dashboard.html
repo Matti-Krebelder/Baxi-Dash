@@ -329,101 +329,94 @@
     </div>
 
     <script>
-        const guildId = 'YOUR_GUILD_ID';
+       let currentServer = {};
+let selectedServerId = ''; // Holds the currently selected server's guild ID
 
-        const modules = [
-            { title: "TIKTOK", description: "Automatically post videos to TikTok", enabled: true, apiEndpoint: `https://baxi-backend.pyropixle.com/api/dash/settings/load/mgg/${guildId}`, saveApiEndpoint: "/api/tiktok/save" },
-            { title: "YT", description: "Automatically post videos to YouTube", enabled: true, apiEndpoint: `https://baxi-backend.pyropixle.com/api/dash/settings/load/mgg/${guildId}`, saveApiEndpoint: "/api/youtube/save" },
-            { title: "RTA", description: "Automatically respond to actions", enabled: true, apiEndpoint: `https://baxi-backend.pyropixle.com/api/dash/settings/load/mgg/${guildId}`, saveApiEndpoint: "/api/rta/save" },
-            { title: "Auto Purge", description: "Automatically delete old messages", enabled: true, apiEndpoint: `https://baxi-backend.pyropixle.com/api/dash/settings/load/mgg/${guildId}`, saveApiEndpoint: "/api/auto-purge/save" },
-            { title: "Announcements", description: "Manage server announcements", enabled: true, apiEndpoint: `https://baxi-backend.pyropixle.com/api/dash/settings/load/mgg/${guildId}`, saveApiEndpoint: "/api/announcements/save" },
-            { title: "Action Log", description: "Log all actions in the server", enabled: true, apiEndpoint: `https://baxi-backend.pyropixle.com/api/dash/settings/load/mgg/${guildId}`, saveApiEndpoint: "/api/action-log/save" },
-            { title: "Autorole", description: "Automatically assign roles to new members", enabled: true, apiEndpoint: `https://baxi-backend.pyropixle.com/api/dash/settings/load/mgg/${guildId}`, saveApiEndpoint: "/api/autorole/save" },
-            { title: "Punishments", description: "Manage server punishments", enabled: true, apiEndpoint: `https://baxi-backend.pyropixle.com/api/dash/settings/load/mgg/${guildId}`, saveApiEndpoint: "/api/punishments/save" },
-            { title: "Reminders", description: "Set and manage reminders", enabled: true, apiEndpoint: `https://baxi-backend.pyropixle.com/api/dash/settings/load/mgg/${guildId}`, saveApiEndpoint: "/api/reminders/save" },
-            { title: "Activities", description: "Manage server activities and events", enabled: true, apiEndpoint: `https://baxi-backend.pyropixle.com/api/dash/settings/load/mgg/${guildId}`, saveApiEndpoint: "/api/activities/save" },
-            { title: "Voice Statistics", description: "Track voice channel statistics", enabled: true, apiEndpoint: `https://baxi-backend.pyropixle.com/api/dash/settings/load/mgg/${guildId}`, saveApiEndpoint: "/api/voice-statistics/save" },
-            { title: "Moderation", description: "Moderation tools and settings", enabled: true, apiEndpoint: `https://baxi-backend.pyropixle.com/api/dash/settings/load/mgg/${guildId}`, saveApiEndpoint: "/api/moderation/save" },
-        ];
+// When hovering over a server, show the guild name
+function showGuildName(guildName, element) {
+    const guildNameElement = element.querySelector('.guild-name');
+    guildNameElement.classList.remove('hidden');
+}
 
-        const container = document.getElementById('modules-container');
-        const startPage = document.getElementById('start-page');
-        const serverContent = document.getElementById('server-content');
-        const modulePage = document.getElementById('module-page');
-        const serverNameElement = document.getElementById('server-name');
-        const modulePageTitle = document.getElementById('module-page-title');
-        const modulePageDescription = document.getElementById('module-page-description');
+// When no longer hovering, hide the guild name
+function hideGuildName(element) {
+    const guildNameElement = element.querySelector('.guild-name');
+    guildNameElement.classList.add('hidden');
+}
 
-        let currentServer = '';
+// Set the current server when it's clicked, and display its modules and details
+function setCurrentServer(name, id, owner, region, members, verification, description) {
+    currentServer = {
+        name,
+        id,
+        owner,
+        region,
+        members,
+        verification,
+        description
+    };
 
-        function showStartPage() {
-            startPage.classList.remove('hidden');
-            serverContent.classList.add('hidden');
-            modulePage.classList.add('hidden');
-        }
+    // Store the selected server ID (guild ID)
+    selectedServerId = id;
 
-        function showServer(serverName) {
-            currentServer = serverName;
-            startPage.classList.add('hidden');
-            serverContent.classList.remove('hidden');
-            modulePage.classList.add('hidden');
-            serverNameElement.textContent = serverName;
+    // Update the server name and owner on the page
+    document.getElementById('server-name').textContent = name;
+    document.getElementById('server-owner').textContent = `Owner: ${owner}`;
 
-            container.innerHTML = '';
+    // Hide the welcome page and show the server content
+    document.getElementById('start-page').classList.add('hidden');
+    document.getElementById('server-content').classList.remove('hidden');
 
-            modules.forEach(module => {
-                const moduleElement = document.createElement('div');
-                moduleElement.className = 'module';
-                moduleElement.innerHTML = `
-                    <div class="module-header">
-                        <h3 class="module-title">${module.title}</h3>
-                        <div class="status-indicator ${module.enabled ? 'status-enabled' : 'status-disabled'}"></div>
-                    </div>
-                    <p class="module-description">${module.description}</p>
-                    <button class="manage-button" onclick="showModulePage('${module.title}', '${module.description}', '${module.apiEndpoint}', '${module.saveApiEndpoint}')">Verwalten</button>
-                `;
-                container.appendChild(moduleElement);
-            });
-        }
+    // Load the modules for the selected server
+    loadModules();
+}
 
-        async function showModulePage(title, description, apiEndpoint, saveApiEndpoint) {
-            startPage.classList.add('hidden');
-            serverContent.classList.add('hidden');
-            modulePage.classList.remove('hidden');
-            modulePageTitle.textContent = title;
-            modulePageDescription.textContent = description;
+// Load the modules for the selected server
+function loadModules() {
+    const container = document.getElementById('modules-container');
+    container.innerHTML = ''; // Clear previous modules if any
 
-            const loader = document.getElementById('loader');
-            const errorMessage = document.getElementById('error-message');
-            const moduleData = document.getElementById('module-data');
+    // Define the list of modules with dynamically set API endpoints using the selectedServerId
+    const modules = [
+        { title: "TIKTOK", description: "Automatically post videos to TikTok", enabled: true, apiEndpoint: `https://baxi-backend.pyropixle.com/api/dash/settings/load/mgg/${selectedServerId}`, saveApiEndpoint: "/api/tiktok/save" },
+        { title: "YT", description: "Automatically post videos to YouTube", enabled: true, apiEndpoint: `https://baxi-backend.pyropixle.com/api/dash/settings/load/mgg/${selectedServerId}`, saveApiEndpoint: "/api/youtube/save" },
+        { title: "RTA", description: "Automatically respond to actions", enabled: true, apiEndpoint: `https://baxi-backend.pyropixle.com/api/dash/settings/load/mgg/${selectedServerId}`, saveApiEndpoint: "/api/rta/save" },
+        { title: "Auto Purge", description: "Automatically delete old messages", enabled: true, apiEndpoint: `https://baxi-backend.pyropixle.com/api/dash/settings/load/mgg/${selectedServerId}`, saveApiEndpoint: "/api/auto-purge/save" },
+        { title: "Announcements", description: "Manage server announcements", enabled: true, apiEndpoint: `https://baxi-backend.pyropixle.com/api/dash/settings/load/mgg/${selectedServerId}`, saveApiEndpoint: "/api/announcements/save" },
+        { title: "Action Log", description: "Log all actions in the server", enabled: true, apiEndpoint: `https://baxi-backend.pyropixle.com/api/dash/settings/load/mgg/${selectedServerId}`, saveApiEndpoint: "/api/action-log/save" },
+        { title: "Autorole", description: "Automatically assign roles to new members", enabled: true, apiEndpoint: `https://baxi-backend.pyropixle.com/api/dash/settings/load/mgg/${selectedServerId}`, saveApiEndpoint: "/api/autorole/save" },
+        { title: "Punishments", description: "Manage server punishments", enabled: true, apiEndpoint: `https://baxi-backend.pyropixle.com/api/dash/settings/load/mgg/${selectedServerId}`, saveApiEndpoint: "/api/punishments/save" },
+        { title: "Reminders", description: "Set and manage reminders", enabled: true, apiEndpoint: `https://baxi-backend.pyropixle.com/api/dash/settings/load/mgg/${selectedServerId}`, saveApiEndpoint: "/api/reminders/save" },
+        { title: "Activities", description: "Manage server activities and events", enabled: true, apiEndpoint: `https://baxi-backend.pyropixle.com/api/dash/settings/load/mgg/${selectedServerId}`, saveApiEndpoint: "/api/activities/save" },
+        { title: "Voice Statistics", description: "Track voice channel statistics", enabled: true, apiEndpoint: `https://baxi-backend.pyropixle.com/api/dash/settings/load/mgg/${selectedServerId}`, saveApiEndpoint: "/api/voice-statistics/save" },
+        { title: "Moderation", description: "Moderation tools and settings", enabled: true, apiEndpoint: `https://baxi-backend.pyropixle.com/api/dash/settings/load/mgg/${selectedServerId}`, saveApiEndpoint: "/api/moderation/save" },
+    ];
 
-            loader.classList.remove('hidden');
-            errorMessage.classList.add('hidden');
-            moduleData.innerHTML = '';
+    // Loop through each module and add it to the page
+    modules.forEach(module => {
+        const moduleElement = document.createElement('div');
+        moduleElement.className = 'module';
+        moduleElement.innerHTML = `
+            <div class="module-header">
+                <h3 class="module-title">${module.title}</h3>
+                <div class="status-indicator ${module.enabled ? 'status-enabled' : 'status-disabled'}"></div>
+            </div>
+            <p class="module-description">${module.description}</p>
+            <button class="manage-button" onclick="showModulePage('${module.title}', '${module.description}', '${module.apiEndpoint}', '${module.saveApiEndpoint}')">Verwalten</button>
+        `;
+        container.appendChild(moduleElement);
+    });
+}
 
-            try {
-                const response = await fetch(apiEndpoint, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                });
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const data = await response.json();
+// Function to display the module management page (you can expand this to manage each module)
+function showModulePage(title, description, apiEndpoint, saveApiEndpoint) {
+    console.log(`Managing module: ${title}`);
+    console.log(`Description: ${description}`);
+    console.log(`API Endpoint: ${apiEndpoint}`);
+    console.log(`Save API Endpoint: ${saveApiEndpoint}`);
+    // Here you can implement logic to display and manage the specific module
+}
 
-                moduleData.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
-            } catch (error) {
-                console.error('Error:', error);
-                errorMessage.textContent = `Failed to load module data: ${error.message}`;
-                errorMessage.classList.remove('hidden');
-            } finally {
-                loader.classList.add('hidden');
-            }
-
-            console.log('Save API Endpoint:', saveApiEndpoint);
-        }
     </script>
 </body>
 
