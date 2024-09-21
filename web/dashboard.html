@@ -208,8 +208,9 @@
     <div class="sidebar">
        <img src="/static/imgs/baxilogoanimated.gif" alt="Baxi Image" onclick="showStartPage()">
        <div id="line"></div>
-       <img src="/api/placeholder/40/40" alt="Discordserver1" onclick="showServer('Server 1')">
-       <img src="/api/placeholder/40/40" alt="Discordserver2" onclick="showServer('Server 2')">
+       {% for guild in guild_details %}
+       <img src="{{ guild.icon_url }}" alt="{{ guild.name }}" onclick="showServer('{{ guild.name }}')">
+       {% endfor %}
     </div>
 
     <div class="container">
