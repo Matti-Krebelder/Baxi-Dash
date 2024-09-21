@@ -14,6 +14,39 @@
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
+        #notification {
+            position: fixed;
+            top: 20px;
+            right: -300px;
+            width: 300px;
+            padding: 15px;
+            border-radius: 5px;
+            color: white;
+            font-weight: bold;
+            transition: right 0.5s ease-in-out;
+            z-index: 1000;
+        }
+
+        #notification.show {
+            right: 20px;
+        }
+
+        .notify-warn {
+            background-color: #ffa500;
+        }
+
+        .notify-error {
+            background-color: #ff0000;
+        }
+
+        .notify-success {
+            background-color: #00ff00;
+        }
+
+        .notify-info {
+            background-color: #0000ff;
+        }
+
         * {
             font-family: "Quicksand", sans-serif;
             margin: 0;
@@ -290,7 +323,7 @@
             <button class="back-button" onclick="showServer(currentServer)">Back to Modules</button>
         </div>
     </div>
-
+    <div id="notification"></div>
     <script>
         function handleGuildClick(name, id, ownerUsername, memberCount) {
             showServer(name);
@@ -403,6 +436,12 @@
                 const data = await response.json();
 
                 moduleData.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+
+                // Check for notification in the response
+                const notifyKey = Object.keys(data).find(key => key.startsWith('notify-'));
+                if (notifyKey) {
+                    showNotification(notifyKey, data[notifyKey]);
+                }
             } catch (error) {
                 console.error('Error:', error);
                 errorMessage.textContent = `Failed to load module data: ${error.message}`;
@@ -412,6 +451,17 @@
             }
 
             console.log('Save API Endpoint:', saveApiEndpoint);
+        }
+
+        function showNotification(type, message) {
+            const notificationElement = document.getElementById('notification');
+            notificationElement.className = type;
+            notificationElement.textContent = message;
+            notificationElement.classList.add('show');
+
+            setTimeout(() => {
+                notificationElement.classList.remove('show');
+            }, 5000); // Hide after 5 seconds
         }
     </script>
 </body>
