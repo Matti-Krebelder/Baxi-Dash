@@ -38,7 +38,7 @@ logger.debug.info("Logged in as " + baxi_data.app_name)
 async def get_module_data():
     api_endpoint = request.args.get("apiEndpoint")
     guild_id = request.args.get("guildId")
-    api_key = "bdash-X_KzUaBBMlM8d5a5xbAav4Z6bYqS3rnBN94ugjtkhsI"
+    api_key = config["BAXI"]["api_key"]
 
     if not api_endpoint or not guild_id:
         return jsonify({"error": "Missing apiEndpoint or guildId"}), 400
@@ -51,17 +51,8 @@ async def get_module_data():
                 "Content-Type": "application/json",
                 "Authorization": f"{api_key}",
             }
-            async with session.get(full_api_endpoint, headers=headers) as response:
-                if response.status == 200:
-                    json_response = await response.json()
-                    return jsonify(json_response)
-                else:
-                    return (
-                        jsonify(
-                            {"error": f"API returned status code {response.status}"}
-                        ),
-                        response.status,
-                    )
+            api_request = requests.get(full_api_endpoint, headers=headers)
+            return api_request.json()
         except aiohttp.ClientError as e:
             return jsonify({"error": f"Error fetching API: {str(e)}"}), 500
 
