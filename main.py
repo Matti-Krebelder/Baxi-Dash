@@ -34,8 +34,9 @@ baxi_data = Get_Data(
 
 @app.route('/api/module-data', methods=['GET'])
 async def get_module_data():
-    api_endpoint = "bdash-X_KzUaBBMlM8d5a5xbAav4Z6bYqS3rnBN94ugjtkhsI"
+    api_endpoint = request.args.get('apiEndpoint')
     guild_id = request.args.get('guildId')
+    api_key = "bdash-X_KzUaBBMlM8d5a5xbAav4Z6bYqS3rnBN94ugjtkhsI"
     
     if not api_endpoint or not guild_id:
         return jsonify({"error": "Missing apiEndpoint or guildId"}), 400
@@ -44,7 +45,11 @@ async def get_module_data():
 
     async with aiohttp.ClientSession() as session:
         try:
-            async with session.get(full_api_endpoint, headers={'Content-Type': 'application/json'}) as response:
+            headers = {
+                'Content-Type': 'application/json',
+                'Authorization': f'Bearer {api_key}'
+            }
+            async with session.get(full_api_endpoint, headers=headers) as response:
                 if response.status == 200:
                     json_response = await response.json()
                     return jsonify(json_response)
