@@ -553,87 +553,87 @@
         }
 
         function renderField(key, value, data) {
-    let labelHtml = '';
-    
-    // Suche nach einem zugehörigen Label für dieses Feld
-    const baseKey = key.replace(/-(?:switch|drop|input|image-input|table)$/, '');
-    const associatedLabelKey = `${baseKey}-label`;
-    
-    if (data[associatedLabelKey]) {
-        labelHtml = `<h2>${data[associatedLabelKey]}</h2>`;
-    }
+            let labelHtml = '';
 
-    if (key.endsWith('-switch')) {
-        return `
-            ${labelHtml}
-            <label class="switch">
-                <input type="checkbox" id="${key}" ${value === 1 ? 'checked' : ''} onchange="handleSwitchChange('${key}', this.checked)">
-                <span class="slider"></span>
-            </label>`;
-    } else if (key.endsWith('-drop')) {
-        const activeDropKey = `${baseKey}-activedrop`;
-        const activeValue = data[activeDropKey] ? Object.keys(data[activeDropKey])[0] : null;
+            // Search for an associated label for this field
+            const baseKey = key.replace(/-(?:switch|drop|input|image-input|table)$/, '');
+            const associatedLabelKey = `${baseKey}-label`;
 
-        let options = Object.entries(value).map(([id, label]) => {
-            const isSelected = id === activeValue || (label.toLowerCase().includes('please select') && !activeValue);
-            return `<option value="${id}" ${isSelected ? 'selected' : ''}>${label}</option>`;
-        }).join('');
+            if (data[associatedLabelKey]) {
+                labelHtml = `<h2 style="margin-bottom: 10px;">${data[associatedLabelKey]}</h2>`;
+            }
 
-        return `
-            ${labelHtml}
-            <select id="${key}" onchange="handleDropChange('${key}', this.value)">
-                ${options}
-            </select>`;
-    } else if (key.endsWith('-input')) {
-        return `
-            ${labelHtml}
-            <input type="text" id="${key}" value="${value}" onchange="handleInputChange('${key}', this.value)">
-        `;
-    } else if (key.endsWith('-image-input')) {
-        return `
-            ${labelHtml}
-            <input type="text" id="${key}" value="${value}" onchange="handleImageInputChange('${key}', this.value)">
-            <img id="${key}-preview" src="${isValidImageUrl(value) ? value : 'https://placehold.co/400x200?text=Image Not valid'}" alt="Image preview" style="max-width: 400px; max-height: 200px;">
-        `;
-    } else if (key.endsWith('-table')) {
-        if (Array.isArray(value) && value.length > 0) {
-            const headers = Object.keys(value[0]);
-            let tableHtml = `
-                <table border="1">
-                    <thead>
-                        <tr>${headers.map(header => `<th>${header}</th>`).join('')}</tr>
-                    </thead>
-                    <tbody>
-                        ${value.map(row => `
-                            <tr>${headers.map(header => `<td>${row[header]}</td>`).join('')}</tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            `;
-            return `${labelHtml}${tableHtml}`;
-        } else if (typeof value === 'object' && Object.keys(value).length > 0) {
-            let tableHtml = `
-                <table border="1">
-                    <thead>
-                        <tr><th>Key</th><th>Value</th></tr>
-                    </thead>
-                    <tbody>
-                        ${Object.entries(value).map(([k, v]) => `
-                            <tr><td>${k}</td><td>${v}</td></tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            `;
-            return `${labelHtml}${tableHtml}`;
-        } else {
-            return '';
+            if (key.endsWith('-switch')) {
+                return `
+      ${labelHtml}
+      <label class="switch" style="display: flex; align-items: center;">
+        <input type="checkbox" id="${key}" ${value === 1 ? 'checked' : ''} onchange="handleSwitchChange('${key}', this.checked)">
+        <span class="slider" style="margin-left: 10px;"></span>
+      </label>`;
+            } else if (key.endsWith('-drop')) {
+                const activeDropKey = `${baseKey}-activedrop`;
+                const activeValue = data[activeDropKey] ? Object.keys(data[activeDropKey])[0] : null;
+
+                let options = Object.entries(value).map(([id, label]) => {
+                    const isSelected = id === activeValue || (label.toLowerCase().includes('please select') && !activeValue);
+                    return `<option value="${id}" ${isSelected ? 'selected' : ''}>${label}</option>`;
+                }).join('');
+
+                return `
+      ${labelHtml}
+      <select id="${key}" style="width: 100%; padding: 10px; border: 1px solid #ccc;" onchange="handleDropChange('${key}', this.value)">
+        ${options}
+      </select>`;
+            } else if (key.endsWith('-input')) {
+                return `
+      ${labelHtml}
+      <input type="text" id="${key}" value="${value}" style="width: 100%; padding: 10px; border: 1px solid #ccc;" onchange="handleInputChange('${key}', this.value)">
+    `;
+            } else if (key.endsWith('-image-input')) {
+                return `
+      ${labelHtml}
+      <input type="text" id="${key}" value="${value}" style="width: 100%; padding: 10px; border: 1px solid #ccc;" onchange="handleImageInputChange('${key}', this.value)">
+      <img id="${key}-preview" src="${isValidImageUrl(value) ? value : 'https://placehold.co/400x200?text=Image Not valid'}" alt="Image preview" style="max-width: 400px; max-height: 200px; margin-top: 10px;">
+    `;
+            } else if (key.endsWith('-table')) {
+                if (Array.isArray(value) && value.length > 0) {
+                    const headers = Object.keys(value[0]);
+                    let tableHtml = `
+        <table border="1" style="width: 100%; border-collapse: collapse;">
+          <thead>
+            <tr>${headers.map(header => `<th>${header}</th>`).join('')}</tr>
+          </thead>
+          <tbody>
+            ${value.map(row => `
+              <tr>${headers.map(header => `<td>${row[header]}</td>`).join('')}</tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+                    return `${labelHtml}${tableHtml}`;
+                } else if (typeof value === 'object' && Object.keys(value).length > 0) {
+                    let tableHtml = `
+        <table border="1" style="width: 100%; border-collapse: collapse;">
+          <thead>
+            <tr><th>Key</th><th>Value</th></tr>
+          </thead>
+          <tbody>
+            ${Object.entries(value).map(([k, v]) => `
+              <tr><td>${k}</td><td>${v}</td></tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+                    return `${labelHtml}${tableHtml}`;
+                } else {
+                    return '';
+                }
+            } else {
+                return `
+      ${labelHtml}
+      <p style="margin-bottom: 20px;">${JSON.stringify(value)}</p>`;
+            }
         }
-    } else {
-        return `
-            ${labelHtml}
-            <p>${JSON.stringify(value)}</p>`;
-    }
-}
 
         function handleSwitchChange(key, isChecked) {
             console.log(`Switch ${key} changed to ${isChecked}`);
