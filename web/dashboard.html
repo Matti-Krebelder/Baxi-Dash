@@ -139,8 +139,9 @@
             margin-left: 1vw;
             transition: transform 0.2s;
             transform: scale(1.2);
-
-
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .module:hover {
@@ -156,6 +157,7 @@
 
         .module-title {
             font-weight: bold;
+            margin-bottom: 10px;
         }
 
         .status-indicator {
@@ -168,6 +170,7 @@
             background-color: #43b581;
         }
 
+
         .status-disabled {
             background-color: #f04747;
         }
@@ -175,6 +178,7 @@
         .module-description {
             font-size: 14px;
             color: #b9bbbe;
+            margin-bottom: 20px;
         }
 
         .manage-button {
@@ -231,6 +235,52 @@
             height: 40px;
             animation: spin 1s linear infinite;
             margin: 20px auto;
+        }
+
+        .render-field-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .render-field-label {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .render-field-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .render-field-select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .render-field-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .render-field-table th,
+        .render-field-table td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .render-field-table th {
+            background-color: #f0f0f0;
         }
 
         @keyframes spin {
@@ -560,16 +610,18 @@
             const associatedLabelKey = `${baseKey}-label`;
 
             if (data[associatedLabelKey]) {
-                labelHtml = `<h2 style="margin-bottom: 10px;">${data[associatedLabelKey]}</h2>`;
+                labelHtml = `<h2 class="render-field-label">${data[associatedLabelKey]}</h2>`;
             }
 
             if (key.endsWith('-switch')) {
                 return `
-      ${labelHtml}
-      <label class="switch" style="display: flex; align-items: center;">
-        <input type="checkbox" id="${key}" ${value === 1 ? 'checked' : ''} onchange="handleSwitchChange('${key}', this.checked)">
-        <span class="slider" style="margin-left: 10px;"></span>
-      </label>`;
+      <div class="render-field-container">
+        ${labelHtml}
+        <label class="switch" style="display: flex; align-items: center;">
+          <input type="checkbox" id="${key}" ${value === 1 ? 'checked' : ''} onchange="handleSwitchChange('${key}', this.checked)">
+          <span class="slider" style="margin-left: 10px;"></span>
+        </label>
+      </div>`;
             } else if (key.endsWith('-drop')) {
                 const activeDropKey = `${baseKey}-activedrop`;
                 const activeValue = data[activeDropKey] ? Object.keys(data[activeDropKey])[0] : null;
@@ -580,26 +632,30 @@
                 }).join('');
 
                 return `
-      ${labelHtml}
-      <select id="${key}" style="width: 100%; padding: 10px; border: 1px solid #ccc;" onchange="handleDropChange('${key}', this.value)">
-        ${options}
-      </select>`;
+      <div class="render-field-container">
+        ${labelHtml}
+        <select id="${key}" class="render-field-select" style="width: 100%; padding: 10px; border: 1px solid #ccc;" onchange="handleDropChange('${key}', this.value)">
+          ${options}
+        </select>
+      </div>`;
             } else if (key.endsWith('-input')) {
                 return `
-      ${labelHtml}
-      <input type="text" id="${key}" value="${value}" style="width: 100%; padding: 10px; border: 1px solid #ccc;" onchange="handleInputChange('${key}', this.value)">
-    `;
+      <div class="render-field-container">
+        ${labelHtml}
+        <input type="text" id="${key}" class="render-field-input" value="${value}" style="width: 100%; padding: 10px; border: 1px solid #ccc;" onchange="handleInputChange('${key}', this.value)">
+      </div>`;
             } else if (key.endsWith('-image-input')) {
                 return `
-      ${labelHtml}
-      <input type="text" id="${key}" value="${value}" style="width: 100%; padding: 10px; border: 1px solid #ccc;" onchange="handleImageInputChange('${key}', this.value)">
-      <img id="${key}-preview" src="${isValidImageUrl(value) ? value : 'https://placehold.co/400x200?text=Image Not valid'}" alt="Image preview" style="max-width: 400px; max-height: 200px; margin-top: 10px;">
-    `;
+      <div class="render-field-container">
+        ${labelHtml}
+        <input type="text" id="${key}" class="render-field-input" value="${value}" style="width: 100%; padding: 10px; border: 1px solid #ccc;" onchange="handleImageInputChange('${key}', this.value)">
+        <img id="${key}-preview" src="${isValidImageUrl(value) ? value : 'https://placehold.co/400x200?text=Image Not valid'}" alt="Image preview" style="max-width: 400px; max-height: 200px; margin-top: 10px;">
+      </div>`;
             } else if (key.endsWith('-table')) {
                 if (Array.isArray(value) && value.length > 0) {
                     const headers = Object.keys(value[0]);
                     let tableHtml = `
-        <table border="1" style="width: 100%; border-collapse: collapse;">
+        <table class="render-field-table" border="1" style="width: 100%; border-collapse: collapse;">
           <thead>
             <tr>${headers.map(header => `<th>${header}</th>`).join('')}</tr>
           </thead>
@@ -610,10 +666,14 @@
           </tbody>
         </table>
       `;
-                    return `${labelHtml}${tableHtml}`;
+                    return `
+      <div class="render-field-container">
+        ${labelHtml}
+        ${tableHtml}
+      </div>`;
                 } else if (typeof value === 'object' && Object.keys(value).length > 0) {
                     let tableHtml = `
-        <table border="1" style="width: 100%; border-collapse: collapse;">
+        <table class="render-field-table" border="1" style="width: 100%; border-collapse: collapse;">
           <thead>
             <tr><th>Key</th><th>Value</th></tr>
           </thead>
@@ -624,14 +684,20 @@
           </tbody>
         </table>
       `;
-                    return `${labelHtml}${tableHtml}`;
+                    return `
+      <div class="render-field-container">
+        ${labelHtml}
+        ${tableHtml}
+      </div>`;
                 } else {
                     return '';
                 }
             } else {
                 return `
-      ${labelHtml}
-      <p style="margin-bottom: 20px;">${JSON.stringify(value)}</p>`;
+      <div class="render-field-container">
+        ${labelHtml}
+        <p style="margin-bottom: 20px;">${JSON.stringify(value)}</p>
+      </div>`;
             }
         }
 
