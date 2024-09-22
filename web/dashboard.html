@@ -127,41 +127,45 @@
 
         .modules-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 40px;
-            flex-wrap: wrap;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px;
         }
 
         .module {
-            background-color: #36393f;
-            padding: 25px;
-            border-radius: 8px;
-            margin-left: 1vw;
-            transition: transform 0.2s;
-            transform: scale(1.2);
-
-
+            background-color: #2f3136;
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
         .module:hover {
-            transform: scale(1.25);
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
         }
 
         .module-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
 
         .module-title {
-            font-weight: bold;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #ffffff;
         }
 
         .status-indicator {
-            width: 12px;
-            height: 12px;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
+            transition: all 0.3s ease;
         }
 
         .status-enabled {
@@ -173,8 +177,10 @@
         }
 
         .module-description {
-            font-size: 14px;
+            font-size: 0.9rem;
             color: #b9bbbe;
+            margin-bottom: 20px;
+            flex-grow: 1;
         }
 
         .manage-button {
@@ -182,8 +188,27 @@
             color: white;
             border: none;
             border-radius: 5px;
-            padding: 5px 10px;
+            padding: 8px 12px;
             cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.3s ease;
+            align-self: flex-start;
+        }
+
+        .manage-button:hover {
+            background-color: #5b6eae;
+        }
+
+        @media (max-width: 768px) {
+            .modules-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+        }
+
+        @media (max-width: 480px) {
+            .modules-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         .start-page,
@@ -231,6 +256,68 @@
             height: 40px;
             animation: spin 1s linear infinite;
             margin: 20px auto;
+        }
+
+        .render-field-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .render-field-label {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .render-field-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .render-field-select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .render-field-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .render-field-table th,
+        .render-field-table td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .render-field-table th {
+            background-color: #f0f0f0;
+        }
+
+        .module-data {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px;
+            width: 100%;
+        }
+
+        .module-data>div {
+            margin-bottom: 20px;
+        }
+
+        .module-data>div:last-child {
+            margin-bottom: 0;
         }
 
         @keyframes spin {
@@ -334,19 +421,25 @@
             // Sammle alle aktuellen Werte
             moduleData.querySelectorAll('input, select').forEach(element => {
                 const key = element.id;
-                if (key.endsWith('-send')) {
-                    const newKey = key.replace('-send', '');
-                    if (element.type === 'checkbox') {
-                        updatedData[newKey] = element.checked ? 1 : 0;
-                    } else if (element.tagName.toLowerCase() === 'select') {
-                        // Für Dropdown-Menüs
-                        updatedData[newKey] = element.value;
-                    } else {
-                        // Für Text-Inputs und andere Eingabetypen
-                        updatedData[newKey] = element.value;
-                    }
+                if (element.type === 'checkbox') {
+                    updatedData[key] = element.checked ? 1 : 0;
+                } else if (element.tagName.toLowerCase() === 'select') {
+                    // Für Dropdown-Menüs
+                    const activeDropKey = `${key.replace('-drop', '')}-activedrop`;
+                    updatedData[activeDropKey] = { [element.value]: element.options[element.selectedIndex].text };
+                } else {
+                    // Für Text-Inputs und andere Eingabetypen
+                    updatedData[key] = element.value;
                 }
             });
+
+            // Füge alle anderen nicht-editierbaren Daten hinzu
+            const allModuleData = JSON.parse(moduleData.getAttribute('data-full-json') || '{}');
+            for (const [key, value] of Object.entries(allModuleData)) {
+                if (!updatedData.hasOwnProperty(key)) {
+                    updatedData[key] = value;
+                }
+            }
 
             try {
                 const response = await fetch('/api/module-save', {
@@ -367,7 +460,7 @@
 
                 const result = await response.json();
                 showNotification('notify-success', 'Changes saved successfully');
-                console.log(updatedData);
+                console.log(updatedData)
             } catch (error) {
                 console.error('Error:', error);
                 showNotification('notify-error', `Failed to save changes: ${error.message}`);
@@ -420,12 +513,12 @@
         const modules = [
             { title: "Anti Raid", description: "Protect your server by automatically blocking users and bots if it resembles a raid.", enabled: true, apiEndpoint: "anti_raid", saveApiEndpoint: "anti_raid" },
             { title: "Minigame guessing", description: "The mini-game where you have to guess a number alone or as a team.", enabled: true, apiEndpoint: "mgg", saveApiEndpoint: "mgg" },
-            { title: "Counting game", description: "The mini-game in which you have to count as far as possible as a team without making a mistake.", enabled: true, apiEndpoint: "mgc", saveApiEndpoint: "/api/rta/save" },
+            { title: "Counting game", description: "The mini-game in which you have to count as far as possible as a team without making a mistake.", enabled: true, apiEndpoint: "mgc", saveApiEndpoint: "mgc" },
             { title: "Global chat", description: "Chat with users from many different communities.", enabled: true, apiEndpoint: "gc", saveApiEndpoint: "gc" },
             { title: "Welcome system", description: "Automatically welcome new users to your server.", enabled: true, apiEndpoint: "welc", saveApiEndpoint: "welc" },
             { title: "Verify system", description: "Secure your server with the Verify System to keep bot / automated accounts away.", enabled: true, apiEndpoint: "verify", saveApiEndpoint: "verify" },
             { title: "Suggestion system", description: "Let the community vote on user suggestions quickly and easily.", enabled: true, apiEndpoint: "sugg", saveApiEndpoint: "sugg" },
-            { title: "Ticket system", description: "Manage your community's support requests easier than ever before.", enabled: true, apiEndpoint: "ticket", saveApiEndpoint: "ticket" },
+            { title: "Ticket system", description: "Manage your communitys support requests easier than ever before.", enabled: true, apiEndpoint: "ticket", saveApiEndpoint: "ticket" },
             { title: "Log system", description: "Document all the things on your server that cannot be found in the audit log.", enabled: true, apiEndpoint: "log", saveApiEndpoint: "log" },
             { title: "Security system", description: "Protect your channels with our smart chat filter and automatically remove inappropriate content.", enabled: true, apiEndpoint: "sec", saveApiEndpoint: "sec" },
             { title: "Auto Role", description: "Let users automatically add roles as soon as they join your server.", enabled: true, apiEndpoint: "auto_roles", saveApiEndpoint: "auto_roles" },
@@ -549,21 +642,23 @@
         function renderField(key, value, data) {
             let labelHtml = '';
 
-            // Suche nach einem zugehörigen Label für dieses Feld
+            // Search for an associated label for this field
             const baseKey = key.replace(/-(?:switch|drop|input|image-input|table)$/, '');
             const associatedLabelKey = `${baseKey}-label`;
 
             if (data[associatedLabelKey]) {
-                labelHtml = `<h2>${data[associatedLabelKey]}</h2>`;
+                labelHtml = `<h2 class="render-field-label">${data[associatedLabelKey]}</h2>`;
             }
 
             if (key.endsWith('-switch')) {
                 return `
-            ${labelHtml}
-            <label class="switch">
-                <input type="checkbox" id="${key}" ${value === 1 ? 'checked' : ''} onchange="handleSwitchChange('${key}', this.checked)">
-                <span class="slider"></span>
-            </label>`;
+      <div class="render-field-container">
+        ${labelHtml}
+        <label class="switch" style="display: flex; align-items: center;">
+          <input type="checkbox" id="${key}" ${value === 1 ? 'checked' : ''} onchange="handleSwitchChange('${key}', this.checked)">
+          <span class="slider" style="margin-left: 10px;"></span>
+        </label>
+      </div>`;
             } else if (key.endsWith('-drop')) {
                 const activeDropKey = `${baseKey}-activedrop`;
                 const activeValue = data[activeDropKey] ? Object.keys(data[activeDropKey])[0] : null;
@@ -574,59 +669,77 @@
                 }).join('');
 
                 return `
-            ${labelHtml}
-            <select id="${key}" onchange="handleDropChange('${key}', this.value)">
-                ${options}
-            </select>`;
+      <div class="render-field-container">
+        ${labelHtml}
+        <select id="${key}" class="render-field-select" style="width: 100%; padding: 10px; border: 1px solid #ccc;" onchange="handleDropChange('${key}', this.value)">
+          ${options}
+        </select>
+      </div>`;
             } else if (key.endsWith('-input')) {
                 return `
-            ${labelHtml}
-            <input type="text" id="${key}" value="${value}" onchange="handleInputChange('${key}', this.value)">
-        `;
+      <div class="render-field-container">
+        ${labelHtml}
+        <input type="text" id="${key}" class="render-field-input" value="${value}" style="width: 100%; padding: 10px; border: 1px solid #ccc;" onchange="handleInputChange('${key}', this.value)">
+      </div>`;
             } else if (key.endsWith('-image-input')) {
                 return `
-            ${labelHtml}
-            <input type="text" id="${key}" value="${value}" onchange="handleImageInputChange('${key}', this.value)">
-            <img id="${key}-preview" src="${isValidImageUrl(value) ? value : 'https://placehold.co/400x200?text=Image Not valid'}" alt="Image preview" style="max-width: 400px; max-height: 200px;">
-        `;
+      <div class="render-field-container">
+        ${labelHtml}
+        <input type="text" id="${key}" class="render-field-input" value="${value}" style="width: 100%; padding: 10px; border: 1px solid #ccc;" onchange="handleImageInputChange('${key}', this.value)">
+        <img id="${key}-preview" src="${isValidImageUrl(value) ? value : 'https://placehold.co/400x200?text=Image Not valid'}" alt="Image preview" style="max-width: 400px; max-height: 200px; margin-top: 10px;">
+      </div>`;
             } else if (key.endsWith('-table')) {
                 if (Array.isArray(value) && value.length > 0) {
                     const headers = Object.keys(value[0]);
                     let tableHtml = `
-                <table border="1">
-                    <thead>
-                        <tr>${headers.map(header => `<th>${header}</th>`).join('')}</tr>
-                    </thead>
-                    <tbody>
-                        ${value.map(row => `
-                            <tr>${headers.map(header => `<td>${row[header]}</td>`).join('')}</tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            `;
-                    return `${labelHtml}${tableHtml}`;
+        <table class="render-field-table" border="1" style="width: 100%; border-collapse: collapse;">
+          <thead>
+            <tr>${headers.map(header => `<th>${header}</th>`).join('')}</tr>
+          </thead>
+          <tbody>
+            ${value.map(row => `
+              <tr>${headers.map(header => `<td>${row[header]}</td>`).join('')}</tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+                    return `
+      <div class="render-field-container">
+        ${labelHtml}
+        ${tableHtml}
+      </div>`;
                 } else if (typeof value === 'object' && Object.keys(value).length > 0) {
                     let tableHtml = `
-                <table border="1">
-                    <thead>
-                        <tr><th>Key</th><th>Value</th></tr>
-                    </thead>
-                    <tbody>
-                        ${Object.entries(value).map(([k, v]) => `
-                            <tr><td>${k}</td><td>${v}</td></tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            `;
-                    return `${labelHtml}${tableHtml}`;
+        <table class="render-field-table" border="1" style="width: 100%; border-collapse: collapse;">
+          <thead>
+            <tr><th>Key</th><th>Value</th></tr>
+          </thead>
+          <tbody>
+            ${Object.entries(value).map(([k, v]) => `
+              <tr><td>${k}</td><td>${v}</td></tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+                    return `
+      <div class="render-field-container">
+        ${labelHtml}
+        ${tableHtml}
+      </div>`;
                 } else {
                     return '';
                 }
             } else {
                 return `
-            ${labelHtml}
-            <p>${JSON.stringify(value)}</p>`;
+      <div class="render-field-container">
+        ${labelHtml}
+        <p style="margin-bottom: 20px;">${JSON.stringify(value)}</p>
+      </div>`;
             }
+        }
+
+        function isValidImageUrl(url) {
+            return url.match(/\.(jpeg|jpg|gif|png)$/) != null;
         }
 
         function handleSwitchChange(key, isChecked) {
