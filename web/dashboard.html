@@ -14,6 +14,48 @@
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
+        .baxi-card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin: 20px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .baxi-card:hover {
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+            transform: translateY(-5px);
+        }
+
+        .baxi-card-header {
+            background-color: #3498db;
+            color: #ffffff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+        }
+
+        .baxi-card-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .baxi-icon {
+            font-size: 1.8rem;
+        }
+
+        .baxi-card-body {
+            padding: 20px;
+        }
+
+        .baxi-card-body h3 {
+            color: #333333;
+            font-size: 1.2rem;
+            margin: 0;
+        }
+
         #notification {
             position: fixed;
             top: 20px;
@@ -339,7 +381,10 @@
         <div id="start-page" class="start-page">
             <h1>Welcome to the Baxi Dashboard!</h1>
             <p>Select a server from the sidebar to get started.</p>
-            <p>Dash Version: {{ version }}</p>
+            <div id="notifyalerts">
+                <h2>Baxi Notes:</h2>
+                <h3>{{ dashboardmessage }}</h3>
+            </div>
         </div>
 
         <div id="server-content" class="hidden">
