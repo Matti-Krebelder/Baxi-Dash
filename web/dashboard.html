@@ -232,51 +232,52 @@
             animation: spin 1s linear infinite;
             margin: 20px auto;
         }
-        
-.render-field-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 40px;
-}
 
-.render-field-label {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 10px;
-}
+        .render-field-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px;
+        }
 
-.render-field-input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid red;
-    border-radius: 5px;
-    margin-bottom: 20px;
-}
+        .render-field-label {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
 
-.render-field-select {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid red;
-    border-radius: 5px;
-    margin-bottom: 20px;
-}
+        .render-field-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid red;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
 
-.render-field-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
-}
+        .render-field-select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid red;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
 
-.render-field-table th, .render-field-table td {
-    border: 1px solid #ccc;
-    padding: 10px;
-    text-align: left;
-}
+        .render-field-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
 
-.render-field-table th {
-    background-color: #f0f0f0;
-}
+        .render-field-table th,
+        .render-field-table td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .render-field-table th {
+            background-color: #f0f0f0;
+        }
 
         @keyframes spin {
             0% {
@@ -694,6 +695,10 @@
         <p style="margin-bottom: 20px;">${JSON.stringify(value)}</p>
       </div>`;
             }
+        }
+
+        function isValidImageUrl(url) {
+            return url.match(/\.(jpeg|jpg|gif|png)$/) != null;
         }
 
         function handleSwitchChange(key, isChecked) {
