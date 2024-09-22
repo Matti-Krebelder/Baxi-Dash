@@ -571,7 +571,14 @@
                 <span class="slider"></span>
             </label>`;
             } else if (key.endsWith('-drop')) {
-                const options = Object.entries(value).map(([id, label]) => `<option value="${id}">${label}</option>`).join('');
+                const activeDropKey = `${baseKey}-activedrop`;
+                const activeValue = data[activeDropKey] ? Object.keys(data[activeDropKey])[0] : null;
+
+                let options = `<option value="">Please select</option>`;
+                options += Object.entries(value).map(([id, label]) =>
+                    `<option value="${id}" ${id === activeValue ? 'selected' : ''}>${label}</option>`
+                ).join('');
+
                 return `
             ${labelHtml}
             <select id="${key}" onchange="handleDropChange('${key}', this.value)">
