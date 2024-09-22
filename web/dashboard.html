@@ -508,6 +508,21 @@
             } else if (key.endsWith('-activedrop')) {
                 // Don't render anything for -activedrop fields
                 return '';
+            } else if (key.endsWith('-input')) {
+                const labelKey = key.replace('-input', '-label');
+                const label = data[labelKey] || '';
+                return `
+            <label for="${key}">${label}</label>
+            <input type="text" id="${key}" value="${value}" onchange="handleInputChange('${key}', this.value)">
+        `;
+            } else if (key.endsWith('-image-input')) {
+                const labelKey = key.replace('-image-input', '-label');
+                const label = data[labelKey] || '';
+                return `
+            <label for="${key}">${label}</label>
+            <input type="text" id="${key}" value="${value}" onchange="handleImageInputChange('${key}', this.value)">
+            <img id="${key}-preview" src="${isValidImageUrl(value) ? value : 'https://placehold.co/400x200?text=Image Not valid'}" alt="Image preview" style="max-width: 400px; max-height: 200px;">
+        `;
             } else {
                 return `<p>${JSON.stringify(value)}</p>`;
             }
@@ -521,6 +536,22 @@
         function handleDropChange(key, selectedValue) {
             console.log(`Dropdown ${key} changed to ${selectedValue}`);
             // Here you would typically send an API request to update the server
+        }
+
+        function handleInputChange(key, value) {
+            console.log(`Input ${key} changed to ${value}`);
+            // Here you would typically send an API request to update the server
+        }
+
+        function handleImageInputChange(key, value) {
+            console.log(`Image input ${key} changed to ${value}`);
+            const previewElement = document.getElementById(`${key}-preview`);
+            previewElement.src = isValidImageUrl(value) ? value : 'https://placehold.co/400x200?text=Image Not valid';
+            // Here you would typically send an API request to update the server
+        }
+
+        function isValidImageUrl(url) {
+            return url.match(/\.(jpeg|jpg|gif|png)$/) != null;
         }
 
         function showNotification(type, message) {
