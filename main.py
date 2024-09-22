@@ -1,20 +1,20 @@
-import json, os, requests, configparser
-from cryptography.fernet import Fernet
+import configparser
+import os
+
+import requests
 from quart import (
     Quart,
     render_template,
     request,
-    send_from_directory,
     jsonify,
     redirect,
     session,
 )
-import aiohttp
 from quart_cors import cors
 from reds_simple_logger import Logger  # type: ignore
 
-from assets.get_data import Get_Data, get_active_systems
 import assets.get_guilds as get_guilds
+from assets.get_data import Get_Data, get_active_systems
 
 logger = Logger()
 
@@ -46,20 +46,17 @@ async def get_module_data():
 
     full_api_endpoint = f"https://baxi-backend.pyropixle.com/api/dash/settings/load/{api_endpoint}/{guild_id}"
 
-    async with aiohttp.ClientSession() as session:
-        try:
-            headers = {
-                "Content-Type": "application/json",
-                "Authorization": f"{api_key}",
-            }
-            api_request = requests.get(full_api_endpoint, headers=headers)
-            return api_request.json()
-        except Exception:
-            return jsonify({"error": f"Error fetching API: {str(e)}"}), 500
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"{api_key}",
+    }
+
+    request_user = requests.get(full_api_endpoint, headers=headers)
+    return request_user.json()
         
 @app.route("/api/module-save", methods=["POST"])
 async def save_module_data():
-    data = await request.json
+    data = await request.get_json()
     api_endpoint = data.get("apiEndpoint")
     guild_id = data.get("guildId")
     module_data = data.get("data")
@@ -70,19 +67,12 @@ async def save_module_data():
 
     full_api_endpoint = f"https://baxi-backend.pyropixle.com/api/dash/settings/save/{api_endpoint}/{guild_id}"
 
-    async with aiohttp.ClientSession() as session:
-        try:
-            headers = {
-                "Content-Type": "application/json",
-                "Authorization": f"{api_key}",
-            }
-            async with session.post(full_api_endpoint, json=module_data, headers=headers) as response:
-                if response.status == 200:
-                    return await response.json()
-                else:
-                    return jsonify({"error": f"API returned status code {response.status}"}), response.status
-        except Exception as e:
-            return jsonify({"error": f"Error saving to API: {str(e)}"}), 500
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"{api_key}",
+    }
+    response = requests.post(full_api_endpoint, json=module_data, headers=headers)
+    return response.json()
 
 
 @app.route("/login")
