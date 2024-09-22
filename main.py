@@ -88,7 +88,7 @@ async def login():
 async def logout():
     if "token" in session:
         session.clear()
-        return await render_template("logout.html", version=config["DASH"]["version"], dashboardmessage=config["DASH"]["dashboardmessage"])
+        return await render_template("logout.html", version=config["DASH"]["version"], dashboardmessage=config["DASH"]["version"])
     else:
         return redirect("/")
 
