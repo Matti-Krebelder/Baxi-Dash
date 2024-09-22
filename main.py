@@ -88,7 +88,7 @@ async def login():
 async def logout():
     if "token" in session:
         session.clear()
-        return await render_template("logout.html", version=config["DASH"]["version"], dashboardmessage=config["DASH"]["version"])
+        return await render_template("logout.html", version=config["DASH"]["version"], dashboardmessage=config["DASH"]["dashboardmessage"])
     else:
         return redirect("/")
 
@@ -120,7 +120,7 @@ async def dash_send_to_new_dash():
 async def dash():
     MANAGE_GUILD_PERMISSION = 0x0000000000000020
     if "token" not in session:
-        return await render_template("login.html", version=config["DASH"]["version"])
+        return await render_template("login.html", version=config["DASH"]["version"], dashboardmessage=config["DASH"]["dashboardmessage"])
     try:
         user_guilds = get_guilds.get_user_guilds(
             session["token"], config["ENDPOINT"]["discord_api"]
@@ -180,6 +180,7 @@ async def dash():
             "dashboard.html",
             guild_details=guild_details,
             version=config["DASH"]["version"],
+            dashboardmessage=config["DASH"]["dashboardmessage"]
         )
 
     except Exception as e:
