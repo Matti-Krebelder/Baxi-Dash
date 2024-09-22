@@ -1,6 +1,7 @@
-requests
-cryptography
-quart
+requests~=2.32.3
+cryptography~=43.0.1
+quart~=0.19.6
 quart_cors
-reds_simple_logger
-configparser
+reds_simple_logger~=2.4
+configparser~=7.1.0
+aiohttp~=3.10.5
