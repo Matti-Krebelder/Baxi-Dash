@@ -170,53 +170,58 @@
         .modules-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 40px;
-            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 20px;
         }
 
         .module {
             background-color: #36393f;
-            padding: 25px;
-            border-radius: 8px;
-            margin-left: 1vw;
-            transition: transform 0.2s;
-            transform: scale(1.2);
-
-
+            padding: 20px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         .module:hover {
-            transform: scale(1.25);
+            transform: translateY(-5px);
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
         }
 
         .module-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
 
         .module-title {
             font-weight: bold;
+            font-size: 18px;
+            color: #ffffff;
         }
 
         .status-indicator {
             width: 12px;
             height: 12px;
             border-radius: 50%;
+            transition: all 0.3s ease;
         }
 
         .status-enabled {
             background-color: #43b581;
+            box-shadow: 0 0 8px rgba(67, 181, 129, 0.6);
         }
 
         .status-disabled {
             background-color: #f04747;
+            box-shadow: 0 0 8px rgba(240, 71, 71, 0.6);
         }
 
         .module-description {
             font-size: 14px;
             color: #b9bbbe;
+            margin-bottom: 15px;
+            line-height: 1.4;
         }
 
         .manage-button {
@@ -224,8 +229,51 @@
             color: white;
             border: none;
             border-radius: 5px;
-            padding: 5px 10px;
+            padding: 8px 12px;
             cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            width: 100%;
+            text-align: center;
+        }
+
+        .manage-button:hover {
+            background-color: #b3102f;
+        }
+
+        @media (max-width: 1200px) {
+            .modules-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+        }
+
+        @media (max-width: 900px) {
+            .modules-grid {
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            }
+        }
+
+        @media (max-width: 600px) {
+            .modules-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+
+            .module {
+                padding: 15px;
+            }
+
+            .module-title {
+                font-size: 16px;
+            }
+
+            .module-description {
+                font-size: 12px;
+            }
+
+            .manage-button {
+                font-size: 12px;
+                padding: 6px 10px;
+            }
         }
 
         .start-page,
@@ -383,13 +431,13 @@
             <p>Select a server from the sidebar to get started.</p>
             <div class="baxi-card">
                 <div class="baxi-card-header">
-                  <h2>Baxi Notes</h2>
-                  <div class="baxi-icon">📝</div>
+                    <h2>Baxi Notes</h2>
+                    <div class="baxi-icon">📝</div>
                 </div>
                 <div class="baxi-card-body">
-                  <h3>{{ dashboardmessage }}</h3>
+                    <h3>{{ dashboardmessage }}</h3>
                 </div>
-              </div>
+            </div>
         </div>
 
         <div id="server-content" class="hidden">
