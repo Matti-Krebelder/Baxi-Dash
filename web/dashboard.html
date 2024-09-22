@@ -419,7 +419,7 @@
 <body>
     <div class="sidebar"> <img src="/static/imgs/baxilogoanimated.gif" alt="Baxi Image" onclick="showStartPage()">
         <div id="line"></div> {% for guild in guild_details %} <img src="{{ guild.icon_url }}" alt="{{ guild.name }}"
-            onclick="handleGuildClick('{{ guild.name }}', '{{ guild.id }}', '{{ guild.owner_username }}', '{{ guild.member_count }}', '{{ guild.icon_url }}')">
+            onclick="handleGuildClick('{{ guild.name }}', '{{ guild.id }}', '{{ guild.owner_username }}', '{{ guild.member_count }}')">
         {% endfor %}
 
 
@@ -539,12 +539,11 @@
 
         document.querySelector('.search-bar').addEventListener('input', filterModules);
 
-        function handleGuildClick(name, id, ownerUsername, memberCount, imgurl) {
+        function handleGuildClick(name, id, ownerUsername, memberCount) {
             showServer(name);
             guildid(id);
             owner(ownerUsername);
             members(memberCount);
-            document.getElementsByClassName('server-icon').style.backgroundImage = "url('" + imgurl + "')";
         }
 
         let guildId = '';
