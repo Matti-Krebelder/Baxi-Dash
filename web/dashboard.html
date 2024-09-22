@@ -381,10 +381,15 @@
         <div id="start-page" class="start-page">
             <h1>Welcome to the Baxi Dashboard!</h1>
             <p>Select a server from the sidebar to get started.</p>
-            <div id="notifyalerts">
-                <h2>Baxi Notes:</h2>
-                <h3>{{ dashboardmessage }}</h3>
-            </div>
+            <div class="baxi-card">
+                <div class="baxi-card-header">
+                  <h2>Baxi Notes</h2>
+                  <div class="baxi-icon">📝</div>
+                </div>
+                <div class="baxi-card-body">
+                  <h3>{{ dashboardmessage }}</h3>
+                </div>
+              </div>
         </div>
 
         <div id="server-content" class="hidden">
