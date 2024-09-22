@@ -456,12 +456,28 @@
 
                 let htmlContent = '';
                 for (const [key, value] of Object.entries(data)) {
-                    htmlContent += `<div class="module">
-                <h3>${key}</h3>
-                ${renderField(key, value, data)}
-            </div>`;
+                    if (!key.endsWith('-activedrop')) {
+                        htmlContent += `<div class="module">
+                    <h3>${key}</h3>
+                    ${renderField(key, value, data)}
+                </div>`;
+                    }
                 }
                 moduleData.innerHTML = htmlContent;
+
+                // Set the selected values for dropdowns after rendering
+                for (const [key, value] of Object.entries(data)) {
+                    if (key.endsWith('-drop')) {
+                        const activeDropKey = `${key.replace('-drop', '')}-activedrop`;
+                        if (data[activeDropKey]) {
+                            const activeValue = Object.keys(data[activeDropKey])[0];
+                            const select = document.querySelector(`select[onchange*="${key}"]`);
+                            if (select) {
+                                select.value = activeValue;
+                            }
+                        }
+                    }
+                }
 
                 const notifyKey = Object.keys(data).find(key => key.startsWith('notify-'));
                 if (notifyKey) {
@@ -486,11 +502,12 @@
         </label>`;
             } else if (key.endsWith('-drop')) {
                 const options = Object.entries(value).map(([id, label]) => `<option value="${id}">${label}</option>`).join('');
-                const activeDropKey = `${key.replace('-drop', '')}-activedrop`;
-                const activeValue = data[activeDropKey] ? Object.keys(data[activeDropKey])[0] : '';
                 return `<select onchange="handleDropChange('${key}', this.value)">
             ${options}
         </select>`;
+            } else if (key.endsWith('-activedrop')) {
+                // Don't render anything for -activedrop fields
+                return '';
             } else {
                 return `<p>${JSON.stringify(value)}</p>`;
             }
