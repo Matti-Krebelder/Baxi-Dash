@@ -496,7 +496,7 @@
         function renderField(key, value, data) {
             const labelKey = `${key}-label`;
             const label = data[labelKey] || '';
-            let labelHtml = label ? `<label for="${key}">${label}</label>` : '';
+            let labelHtml = label ? `<h2>${label}</h2>` : '';
 
             if (key.endsWith('-switch')) {
                 return `
@@ -566,6 +566,7 @@
                 notificationElement.classList.remove('show');
             }, 5000);
         }
+
 
     </script>
 </body>
