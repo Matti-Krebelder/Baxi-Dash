@@ -183,8 +183,7 @@ async def dash():
             "dashboard.html",
             guild_details=guild_details,
             version=config["DASH"]["version"],
-            dashboardmessage=config["DASH"]["dashboardmessage"],
-            csrf_token=csrf_token
+            dashboardmessage=config["DASH"]["dashboardmessage"]
         )
 
     except Exception as e:
