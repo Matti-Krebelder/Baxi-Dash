@@ -139,9 +139,8 @@
             margin-left: 1vw;
             transition: transform 0.2s;
             transform: scale(1.2);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+
+
         }
 
         .module:hover {
@@ -157,7 +156,6 @@
 
         .module-title {
             font-weight: bold;
-            margin-bottom: 10px;
         }
 
         .status-indicator {
@@ -170,7 +168,6 @@
             background-color: #43b581;
         }
 
-
         .status-disabled {
             background-color: #f04747;
         }
@@ -178,7 +175,6 @@
         .module-description {
             font-size: 14px;
             color: #b9bbbe;
-            margin-bottom: 20px;
         }
 
         .manage-button {
@@ -236,52 +232,51 @@
             animation: spin 1s linear infinite;
             margin: 20px auto;
         }
+        
+.render-field-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px;
+}
 
-        .render-field-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-        }
+.render-field-label {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
 
-        .render-field-label {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
+.render-field-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid red;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
 
-        .render-field-input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }
+.render-field-select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid red;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
 
-        .render-field-select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }
+.render-field-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
 
-        .render-field-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
+.render-field-table th, .render-field-table td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: left;
+}
 
-        .render-field-table th,
-        .render-field-table td {
-            border: 1px solid #ccc;
-            padding: 10px;
-            text-align: left;
-        }
-
-        .render-field-table th {
-            background-color: #f0f0f0;
-        }
+.render-field-table th {
+    background-color: #f0f0f0;
+}
 
         @keyframes spin {
             0% {
