@@ -56,6 +56,33 @@ async def get_module_data():
             return api_request.json()
         except Exception:
             return jsonify({"error": f"Error fetching API: {str(e)}"}), 500
+        
+@app.route("/api/module-save", methods=["POST"])
+async def save_module_data():
+    data = request.json
+    api_endpoint = data.get("apiEndpoint")
+    guild_id = data.get("guildId")
+    module_data = data.get("data")
+    api_key = config["BAXI"]["api_key"]
+
+    if not api_endpoint or not guild_id or not module_data:
+        return jsonify({"error": "Missing apiEndpoint, guildId or data"}), 400
+
+    full_api_endpoint = f"https://baxi-backend.pyropixle.com/api/dash/settings/save/{api_endpoint}/{guild_id}"
+
+    async with aiohttp.ClientSession() as session:
+        try:
+            headers = {
+                "Content-Type": "application/json",
+                "Authorization": f"{api_key}",
+            }
+            async with session.post(full_api_endpoint, json=module_data, headers=headers) as response:
+                if response.status == 200:
+                    return await response.json()
+                else:
+                    return jsonify({"error": f"API returned status code {response.status}"}), response.status
+        except Exception as e:
+            return jsonify({"error": f"Error saving to API: {str(e)}"}), 500
 
 
 @app.route("/login")

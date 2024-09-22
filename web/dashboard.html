@@ -327,6 +327,58 @@
     </div>
     <div id="notification"></div>
     <script>
+        async function saveModuleData(saveApiEndpoint) {
+            const moduleData = document.getElementById('module-data');
+            const updatedData = {};
+
+            // Sammle alle aktuellen Werte
+            moduleData.querySelectorAll('input, select').forEach(element => {
+                const key = element.id;
+                if (element.type === 'checkbox') {
+                    updatedData[key] = element.checked ? 1 : 0;
+                } else if (element.tagName.toLowerCase() === 'select') {
+                    // Für Dropdown-Menüs
+                    const activeDropKey = `${key.replace('-drop', '')}-activedrop`;
+                    updatedData[activeDropKey] = { [element.value]: element.options[element.selectedIndex].text };
+                } else {
+                    // Für Text-Inputs und andere Eingabetypen
+                    updatedData[key] = element.value;
+                }
+            });
+
+            // Füge alle anderen nicht-editierbaren Daten hinzu
+            const allModuleData = JSON.parse(moduleData.getAttribute('data-full-json') || '{}');
+            for (const [key, value] of Object.entries(allModuleData)) {
+                if (!updatedData.hasOwnProperty(key)) {
+                    updatedData[key] = value;
+                }
+            }
+
+            try {
+                const response = await fetch('/api/module-save', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        apiEndpoint: saveApiEndpoint,
+                        guildId: guildId,
+                        data: updatedData
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                showNotification('notify-success', 'Changes saved successfully');
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('notify-error', `Failed to save changes: ${error.message}`);
+            }
+        }
+
         function filterModules() {
             const searchBar = document.querySelector('.search-bar');
             const query = searchBar.value.toLowerCase();
@@ -371,17 +423,17 @@
         }
 
         const modules = [
-            { title: "Anti Raid", description: "Protect your server by automatically blocking users and bots if it resembles a raid.", enabled: true, apiEndpoint: "anti_raid", saveApiEndpoint: "/api/tiktok/save" },
-            { title: "Minigame guessing", description: "The mini-game where you have to guess a number alone or as a team.", enabled: true, apiEndpoint: "mgg", saveApiEndpoint: "/api/youtube/save" },
+            { title: "Anti Raid", description: "Protect your server by automatically blocking users and bots if it resembles a raid.", enabled: true, apiEndpoint: "anti_raid", saveApiEndpoint: "anti_raid" },
+            { title: "Minigame guessing", description: "The mini-game where you have to guess a number alone or as a team.", enabled: true, apiEndpoint: "mgg", saveApiEndpoint: "mgg" },
             { title: "Counting game", description: "The mini-game in which you have to count as far as possible as a team without making a mistake.", enabled: true, apiEndpoint: "mgc", saveApiEndpoint: "/api/rta/save" },
-            { title: "Global chat", description: "Chat with users from many different communities.", enabled: true, apiEndpoint: "gc", saveApiEndpoint: "/api/auto-purge/save" },
-            { title: "Welcome system", description: "Automatically welcome new users to your server.", enabled: true, apiEndpoint: "welc", saveApiEndpoint: "/api/announcements/save" },
-            { title: "Verify system", description: "Secure your server with the Verify System to keep bot / automated accounts away.", enabled: true, apiEndpoint: "verify", saveApiEndpoint: "/api/action-log/save" },
-            { title: "Suggestion system", description: "Let the community vote on user suggestions quickly and easily.", enabled: true, apiEndpoint: "sugg", saveApiEndpoint: "/api/autorole/save" },
-            { title: "Ticket system", description: "Manage your community's support requests easier than ever before.", enabled: true, apiEndpoint: "ticket", saveApiEndpoint: "/api/punishments/save" },
-            { title: "Log system", description: "Document all the things on your server that cannot be found in the audit log.", enabled: true, apiEndpoint: "log", saveApiEndpoint: "/api/reminders/save" },
-            { title: "Security system", description: "Protect your channels with our smart chat filter and automatically remove inappropriate content.", enabled: true, apiEndpoint: "sec", saveApiEndpoint: "/api/activities/save" },
-            { title: "Auto Role", description: "Let users automatically add roles as soon as they join your server.", enabled: true, apiEndpoint: "auto_roles", saveApiEndpoint: "/api/voice-statistics/save" },
+            { title: "Global chat", description: "Chat with users from many different communities.", enabled: true, apiEndpoint: "gc", saveApiEndpoint: "gc" },
+            { title: "Welcome system", description: "Automatically welcome new users to your server.", enabled: true, apiEndpoint: "welc", saveApiEndpoint: "welc" },
+            { title: "Verify system", description: "Secure your server with the Verify System to keep bot / automated accounts away.", enabled: true, apiEndpoint: "verify", saveApiEndpoint: "verify" },
+            { title: "Suggestion system", description: "Let the community vote on user suggestions quickly and easily.", enabled: true, apiEndpoint: "sugg", saveApiEndpoint: "sugg" },
+            { title: "Ticket system", description: "Manage your community's support requests easier than ever before.", enabled: true, apiEndpoint: "ticket", saveApiEndpoint: "ticket" },
+            { title: "Log system", description: "Document all the things on your server that cannot be found in the audit log.", enabled: true, apiEndpoint: "log", saveApiEndpoint: "log" },
+            { title: "Security system", description: "Protect your channels with our smart chat filter and automatically remove inappropriate content.", enabled: true, apiEndpoint: "sec", saveApiEndpoint: "sec" },
+            { title: "Auto Role", description: "Let users automatically add roles as soon as they join your server.", enabled: true, apiEndpoint: "auto_roles", saveApiEndpoint: "auto_roles" },
         ];
 
         const container = document.getElementById('modules-container');
@@ -464,6 +516,9 @@
                 }
                 moduleData.innerHTML = htmlContent;
 
+                // Speichere die vollständigen JSON-Daten als Attribut
+                moduleData.setAttribute('data-full-json', JSON.stringify(data));
+
                 // Set the selected values for dropdowns after rendering
                 for (const [key, value] of Object.entries(data)) {
                     if (key.endsWith('-drop')) {
@@ -477,6 +532,9 @@
                         }
                     }
                 }
+
+                // Füge einen Save-Button hinzu
+                moduleData.innerHTML += `<button onclick="saveModuleData('${saveApiEndpoint}')">Save</button>`;
 
                 const notifyKey = Object.keys(data).find(key => key.startsWith('notify-'));
                 if (notifyKey) {
