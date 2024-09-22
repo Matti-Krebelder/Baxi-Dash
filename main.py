@@ -13,7 +13,7 @@ import aiohttp
 from quart_cors import cors
 from reds_simple_logger import Logger  # type: ignore
 
-from assets.get_data import Get_Data
+from assets.get_data import Get_Data, get_active_systems
 import assets.get_guilds as get_guilds
 
 logger = Logger()
@@ -124,6 +124,7 @@ async def dash():
         guild_details = []
         bot_headers = {"Authorization": f"Bot {str(baxi_data.token)}"}
         for guild in common_guilds:
+            active_systems = get_active_systems(key=config["BAXI"]["api_key"], guild_id=int(guild["id"]))
             guild_id = guild["id"]
             guild_info_response = requests.get(
                 f'{config["ENDPOINT"]["discord_api"]}/guilds/{guild_id}?with_counts=true',
@@ -135,30 +136,29 @@ async def dash():
                 headers=bot_headers,
             )
             owner_info = owner_info_response.json()
-
-            guild_details.append(
-                {
-                    "name": guild_info["name"],
-                    "id": guild_info["id"],
-                    "icon_url": (
-                        f'https://cdn.discordapp.com/icons/{guild_info["id"]}/{guild_info["icon"]}.png'
-                        if guild_info["icon"]
-                        else config["DASH"]["default_icon"]
-                    ),
-                    "member_count": guild_info.get(
-                        "approximate_member_count", "Unknown"
-                    ),
-                    "owner_username": owner_info.get("username", "Unknown"),
-                    "region": guild_info.get("region", "Unknown"),
-                    "description": guild_info.get(
-                        "description", "No description available"
-                    ),
-                    "verification_level": guild_info.get(
-                        "verification_level", "Unknown"
-                    ),
-                }
-            )
-        logger.debug.info(guild_details)
+            data = {
+                "name": guild_info["name"],
+                "id": guild_info["id"],
+                "icon_url": (
+                    f'https://cdn.discordapp.com/icons/{guild_info["id"]}/{guild_info["icon"]}.png'
+                    if guild_info["icon"]
+                    else config["DASH"]["default_icon"]
+                ),
+                "member_count": guild_info.get(
+                    "approximate_member_count", "Unknown"
+                ),
+                "owner_username": owner_info.get("username", "Unknown"),
+                "region": guild_info.get("region", "Unknown"),
+                "description": guild_info.get(
+                    "description", "No description available"
+                ),
+                "verification_level": guild_info.get(
+                    "verification_level", "Unknown"
+                ),
+                "active_systems": active_systems
+            }
+            guild_details.append(data)
+            logger.debug.info(data)
         return await render_template(
             "dashboard.html",
             guild_details=guild_details,

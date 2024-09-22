@@ -35,3 +35,12 @@ class Get_Data:
             return self.Response(response, self.encryption_key)
         except Exception as e:
             logger.error("ERROR: " + str(e))
+
+
+def get_active_systems(key: str, guild_id: int):
+    headers = {"Authorization": f"{key}"}
+    request = requests.get(
+        f"https://baxi-backend.pyropixle.com/api/dash/get/active_systems/{guild_id}",
+        headers=headers,
+    )
+    return request.json()
