@@ -456,9 +456,8 @@
 
                 let htmlContent = '';
                 for (const [key, value] of Object.entries(data)) {
-                    if (!key.endsWith('-activedrop')) {
+                    if (!key.endsWith('-activedrop') && !key.endsWith('-label')) {
                         htmlContent += `<div class="module">
-                    <h3>${key}</h3>
                     ${renderField(key, value, data)}
                 </div>`;
                     }
@@ -495,36 +494,39 @@
         }
 
         function renderField(key, value, data) {
+            const labelKey = `${key}-label`;
+            const label = data[labelKey] || '';
+            let labelHtml = label ? `<label for="${key}">${label}</label>` : '';
+
             if (key.endsWith('-switch')) {
-                return `<label class="switch">
-            <input type="checkbox" ${value === 1 ? 'checked' : ''} onchange="handleSwitchChange('${key}', this.checked)">
-            <span class="slider"></span>
-        </label>`;
+                return `
+            ${labelHtml}
+            <label class="switch">
+                <input type="checkbox" id="${key}" ${value === 1 ? 'checked' : ''} onchange="handleSwitchChange('${key}', this.checked)">
+                <span class="slider"></span>
+            </label>`;
             } else if (key.endsWith('-drop')) {
                 const options = Object.entries(value).map(([id, label]) => `<option value="${id}">${label}</option>`).join('');
-                return `<select onchange="handleDropChange('${key}', this.value)">
-            ${options}
-        </select>`;
-            } else if (key.endsWith('-activedrop')) {
-                // Don't render anything for -activedrop fields
-                return '';
-            } else if (key.endsWith('-input')) {
-                const labelKey = key.replace('-input', '-label');
-                const label = data[labelKey] || '';
                 return `
-            <label for="${key}">${label}</label>
+            ${labelHtml}
+            <select id="${key}" onchange="handleDropChange('${key}', this.value)">
+                ${options}
+            </select>`;
+            } else if (key.endsWith('-input')) {
+                return `
+            ${labelHtml}
             <input type="text" id="${key}" value="${value}" onchange="handleInputChange('${key}', this.value)">
         `;
             } else if (key.endsWith('-image-input')) {
-                const labelKey = key.replace('-image-input', '-label');
-                const label = data[labelKey] || '';
                 return `
-            <label for="${key}">${label}</label>
+            ${labelHtml}
             <input type="text" id="${key}" value="${value}" onchange="handleImageInputChange('${key}', this.value)">
             <img id="${key}-preview" src="${isValidImageUrl(value) ? value : 'https://placehold.co/400x200?text=Image Not valid'}" alt="Image preview" style="max-width: 400px; max-height: 200px;">
         `;
             } else {
-                return `<p>${JSON.stringify(value)}</p>`;
+                return `
+            ${labelHtml}
+            <p>${JSON.stringify(value)}</p>`;
             }
         }
 
