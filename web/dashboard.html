@@ -555,7 +555,17 @@
         function renderField(key, value, data) {
             const labelKey = `${key}-label`;
             const label = data[labelKey] || '';
-            let labelHtml = label ? `<h2>${label}</h2>` : '';
+            let labelHtml = '';
+
+            if (key.endsWith('-drop')) {
+                // Suche nach einem zugehörigen Label für dieses Dropdown
+                const associatedLabelKey = Object.keys(data).find(k => k.endsWith('-label') && k.replace('-label', '-drop') === key);
+                if (associatedLabelKey) {
+                    labelHtml = `<h2>${data[associatedLabelKey]}</h2>`;
+                }
+            } else {
+                labelHtml = label ? `<h2>${label}</h2>` : '';
+            }
 
             if (key.endsWith('-switch')) {
                 return `
