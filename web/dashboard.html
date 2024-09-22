@@ -497,6 +497,7 @@
             }
 
             try {
+                const csrfToken = {{ csrf_token | tojson }};
                 const response = await fetch('/api/module-save', {
                     method: 'POST',
                     headers: {
@@ -505,7 +506,8 @@
                     body: JSON.stringify({
                         apiEndpoint: saveApiEndpoint,
                         guildId: guildId,
-                        data: updatedData
+                        data: updatedData,
+                        csrf_token: csrfToken
                     })
                 });
 
@@ -637,6 +639,7 @@
             moduleData.innerHTML = '';
 
             try {
+                
                 const response = await fetch(`/api/module-data?apiEndpoint=${encodeURIComponent(apiEndpoint)}&guildId=${encodeURIComponent(guildId)}`, {
                     method: 'GET',
                     headers: {
