@@ -14,48 +14,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
-        .baxi-card {
-            background-color: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin: 20px;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .baxi-card:hover {
-            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
-            transform: translateY(-5px);
-        }
-
-        .baxi-card-header {
-            background-color: #DC143C;
-            color: #262626;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 20px;
-        }
-        .baxi-card-header h2 {
-            margin: 0;
-            font-size: 1.5rem;
-        }
-
-        .baxi-icon {
-            font-size: 1.8rem;
-        }
-
-        .baxi-card-body {
-            padding: 20px;
-        }
-
-        .baxi-card-body h3 {
-            color: #333333;
-            font-size: 1.2rem;
-            margin: 0;
-        }
-
-        #notification {
+ #notification {
             position: fixed;
             top: 20px;
             right: -300px;
@@ -168,45 +127,41 @@
 
         .modules-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            padding: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 40px;
+            flex-wrap: wrap;
         }
 
         .module {
-            background-color: #2f3136;
-            border-radius: 10px;
-            padding: 20px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
+            background-color: #36393f;
+            padding: 25px;
+            border-radius: 8px;
+            margin-left: 1vw;
+            transition: transform 0.2s;
+            transform: scale(1.2);
+
+
         }
 
         .module:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            transform: scale(1.25);
         }
 
         .module-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
 
         .module-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #ffffff;
+            font-weight: bold;
         }
 
         .status-indicator {
-            width: 10px;
-            height: 10px;
+            width: 12px;
+            height: 12px;
             border-radius: 50%;
-            transition: all 0.3s ease;
         }
 
         .status-enabled {
@@ -214,42 +169,21 @@
         }
 
         .status-disabled {
-            background-color: #f03d3d;
+            background-color: #f04747;
         }
 
         .module-description {
-            font-size: 0.9rem;
+            font-size: 14px;
             color: #b9bbbe;
-            margin-bottom: 20px;
-            flex-grow: 1;
         }
 
         .manage-button {
-            background-color: #DC143C;
+            background-color: #7289da;
             color: white;
             border: none;
             border-radius: 5px;
-            padding: 8px 12px;
+            padding: 5px 10px;
             cursor: pointer;
-            font-size: 0.9rem;
-            transition: background-color 0.3s ease;
-            align-self: flex-start;
-        }
-
-        .manage-button:hover {
-            background-color: #f13232;
-        }
-
-        @media (max-width: 768px) {
-            .modules-grid {
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            }
-        }
-
-        @media (max-width: 480px) {
-            .modules-grid {
-                grid-template-columns: 1fr;
-            }
         }
 
         .start-page,
@@ -279,7 +213,7 @@
         }
 
         .back-button {
-            background-color: #DC143C;
+            background-color: #7289da;
             color: white;
             border: none;
             border-radius: 5px;
@@ -297,68 +231,6 @@
             height: 40px;
             animation: spin 1s linear infinite;
             margin: 20px auto;
-        }
-
-        .render-field-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-        }
-
-        .render-field-label {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        .render-field-input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }
-
-        .render-field-select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }
-
-        .render-field-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-
-        .render-field-table th,
-        .render-field-table td {
-            border: 1px solid #ccc;
-            padding: 10px;
-            text-align: left;
-        }
-
-        .render-field-table th {
-            background-color: #f0f0f0;
-        }
-
-        .module-data {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 40px;
-            width: 100%;
-        }
-
-        .module-data>div {
-            margin-bottom: 20px;
-        }
-
-        .module-data>div:last-child {
-            margin-bottom: 0;
         }
 
         @keyframes spin {
