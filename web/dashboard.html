@@ -556,7 +556,7 @@
             let labelHtml = '';
 
             // Suche nach einem zugehörigen Label für dieses Feld
-            const baseKey = key.replace(/-(?:switch|drop|input|image-input)$/, '');
+            const baseKey = key.replace(/-(?:switch|drop|input|image-input|table)$/, '');
             const associatedLabelKey = `${baseKey}-label`;
 
             if (data[associatedLabelKey]) {
@@ -595,6 +595,39 @@
             <input type="text" id="${key}" value="${value}" onchange="handleImageInputChange('${key}', this.value)">
             <img id="${key}-preview" src="${isValidImageUrl(value) ? value : 'https://placehold.co/400x200?text=Image Not valid'}" alt="Image preview" style="max-width: 400px; max-height: 200px;">
         `;
+            } else if (key.endsWith('-table')) {
+                if (Array.isArray(value) && value.length > 0) {
+                    const headers = Object.keys(value[0]);
+                    let tableHtml = `
+                <table border="1">
+                    <thead>
+                        <tr>${headers.map(header => `<th>${header}</th>`).join('')}</tr>
+                    </thead>
+                    <tbody>
+                        ${value.map(row => `
+                            <tr>${headers.map(header => `<td>${row[header]}</td>`).join('')}</tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+                    return `${labelHtml}${tableHtml}`;
+                } else if (typeof value === 'object' && Object.keys(value).length > 0) {
+                    let tableHtml = `
+                <table border="1">
+                    <thead>
+                        <tr><th>Key</th><th>Value</th></tr>
+                    </thead>
+                    <tbody>
+                        ${Object.entries(value).map(([k, v]) => `
+                            <tr><td>${k}</td><td>${v}</td></tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+                    return `${labelHtml}${tableHtml}`;
+                } else {
+                    return '';
+                }
             } else {
                 return `
             ${labelHtml}
