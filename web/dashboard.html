@@ -14,6 +14,48 @@
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
+        .baxi-card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin: 20px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .baxi-card:hover {
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+            transform: translateY(-5px);
+        }
+
+        .baxi-card-header {
+            background-color: #3498db;
+            color: #ffffff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+        }
+
+        .baxi-card-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .baxi-icon {
+            font-size: 1.8rem;
+        }
+
+        .baxi-card-body {
+            padding: 20px;
+        }
+
+        .baxi-card-body h3 {
+            color: #333333;
+            font-size: 1.2rem;
+            margin: 0;
+        }
+
         #notification {
             position: fixed;
             top: 20px;
@@ -383,177 +425,184 @@
             <h1>Welcome to the Baxi Dashboard!</h1>
             <p>Select a server from the sidebar to get started.</p>
             <p>Dash Version: {{ version }}</p>
-            <h3>{{ dashboardmessage }}</h3>
-        </div>
-
-        <div id="server-content" class="hidden">
-            <div class="header">
-                <div class="server-icon"></div>
-                <h1 class="server-name" id="server-name"></h1> <br>
-
-                <h2 id="serverownername"></h2>
-            </div>
-
-            <input type="text" placeholder="Search" class="search-bar">
-
-            <div class="modules-grid" id="modules-container">
-                <!-- Modules will be dynamically inserted here -->
-            </div>
-        </div>
-
-        <div id="module-page" class="module-page hidden">
-            <h1 id="module-page-title"></h1>
-            <p id="module-page-description"></p>
-            <div id="module-content">
-                <div id="loader" class="loader hidden"></div>
-                <div id="error-message" class="error-message hidden"></div>
-                <div id="module-data">
+            <div class="baxi-card">
+                <div class="baxi-card-header">
+                    <h2>Baxi Notes</h2>
+                    <div class="baxi-icon">📝</div>
+                </div>
+                <div class="baxi-card-body">
+                    <h3>{{ dashboardmessage }}</h3>
                 </div>
             </div>
-            <button class="back-button" onclick="showServer(currentServer)">Back to Modules</button>
+
+            <div id="server-content" class="hidden">
+                <div class="header">
+                    <div class="server-icon"></div>
+                    <h1 class="server-name" id="server-name"></h1> <br>
+
+                    <h2 id="serverownername"></h2>
+                </div>
+
+                <input type="text" placeholder="Search" class="search-bar">
+
+                <div class="modules-grid" id="modules-container">
+                    <!-- Modules will be dynamically inserted here -->
+                </div>
+            </div>
+
+            <div id="module-page" class="module-page hidden">
+                <h1 id="module-page-title"></h1>
+                <p id="module-page-description"></p>
+                <div id="module-content">
+                    <div id="loader" class="loader hidden"></div>
+                    <div id="error-message" class="error-message hidden"></div>
+                    <div id="module-data">
+                    </div>
+                </div>
+                <button class="back-button" onclick="showServer(currentServer)">Back to Modules</button>
+            </div>
         </div>
-    </div>
-    <div id="notification"></div>
-    <script>
-        async function saveModuleData(saveApiEndpoint) {
-            const moduleData = document.getElementById('module-data');
-            const updatedData = {};
+        <div id="notification"></div>
+        <script>
+            async function saveModuleData(saveApiEndpoint) {
+                const moduleData = document.getElementById('module-data');
+                const updatedData = {};
 
-            // Sammle alle aktuellen Werte
-            moduleData.querySelectorAll('input, select').forEach(element => {
-                const key = element.id;
-                if (element.type === 'checkbox') {
-                    updatedData[key] = element.checked ? 1 : 0;
-                } else if (element.tagName.toLowerCase() === 'select') {
-                    // Für Dropdown-Menüs
-                    const activeDropKey = `${key.replace('-drop', '')}-activedrop`;
-                    updatedData[activeDropKey] = { [element.value]: element.options[element.selectedIndex].text };
-                } else {
-                    // Für Text-Inputs und andere Eingabetypen
-                    updatedData[key] = element.value;
-                }
-            });
-
-            // Füge alle anderen nicht-editierbaren Daten hinzu
-            const allModuleData = JSON.parse(moduleData.getAttribute('data-full-json') || '{}');
-            for (const [key, value] of Object.entries(allModuleData)) {
-                if (!updatedData.hasOwnProperty(key)) {
-                    updatedData[key] = value;
-                }
-            }
-
-            try {
-                const response = await fetch('/api/module-save', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        apiEndpoint: saveApiEndpoint,
-                        guildId: guildId,
-                        data: updatedData
-                    })
+                // Sammle alle aktuellen Werte
+                moduleData.querySelectorAll('input, select').forEach(element => {
+                    const key = element.id;
+                    if (element.type === 'checkbox') {
+                        updatedData[key] = element.checked ? 1 : 0;
+                    } else if (element.tagName.toLowerCase() === 'select') {
+                        // Für Dropdown-Menüs
+                        const activeDropKey = `${key.replace('-drop', '')}-activedrop`;
+                        updatedData[activeDropKey] = { [element.value]: element.options[element.selectedIndex].text };
+                    } else {
+                        // Für Text-Inputs und andere Eingabetypen
+                        updatedData[key] = element.value;
+                    }
                 });
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                // Füge alle anderen nicht-editierbaren Daten hinzu
+                const allModuleData = JSON.parse(moduleData.getAttribute('data-full-json') || '{}');
+                for (const [key, value] of Object.entries(allModuleData)) {
+                    if (!updatedData.hasOwnProperty(key)) {
+                        updatedData[key] = value;
+                    }
                 }
 
-                const result = await response.json();
-                showNotification('notify-success', 'Changes saved successfully');
-                console.log(updatedData)
-            } catch (error) {
-                console.error('Error:', error);
-                showNotification('notify-error', `Failed to save changes: ${error.message}`);
+                try {
+                    const response = await fetch('/api/module-save', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            apiEndpoint: saveApiEndpoint,
+                            guildId: guildId,
+                            data: updatedData
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    showNotification('notify-success', 'Changes saved successfully');
+                    console.log(updatedData)
+                } catch (error) {
+                    console.error('Error:', error);
+                    showNotification('notify-error', `Failed to save changes: ${error.message}`);
+                }
             }
-        }
 
-        function filterModules() {
-            const searchBar = document.querySelector('.search-bar');
-            const query = searchBar.value.toLowerCase();
-            const modules = document.querySelectorAll('.module');
+            function filterModules() {
+                const searchBar = document.querySelector('.search-bar');
+                const query = searchBar.value.toLowerCase();
+                const modules = document.querySelectorAll('.module');
 
-            modules.forEach(module => {
-                const title = module.querySelector('.module-title').textContent.toLowerCase();
-                if (title.includes(query)) {
-                    module.style.display = '';
-                } else {
-                    module.style.display = 'none';
-                }
-            });
-        }
+                modules.forEach(module => {
+                    const title = module.querySelector('.module-title').textContent.toLowerCase();
+                    if (title.includes(query)) {
+                        module.style.display = '';
+                    } else {
+                        module.style.display = 'none';
+                    }
+                });
+            }
 
-        document.querySelector('.search-bar').addEventListener('input', filterModules);
+            document.querySelector('.search-bar').addEventListener('input', filterModules);
 
-        function handleGuildClick(name, id, ownerUsername, memberCount) {
-            showServer(name);
-            guildid(id);
-            owner(ownerUsername);
-            members(memberCount);
-        }
+            function handleGuildClick(name, id, ownerUsername, memberCount) {
+                showServer(name);
+                guildid(id);
+                owner(ownerUsername);
+                members(memberCount);
+            }
 
-        let guildId = '';
-        let Ownerusername = '';
-        let Servermembercount = '';
-        var test = 'teststartvar';
+            let guildId = '';
+            let Ownerusername = '';
+            let Servermembercount = '';
+            var test = 'teststartvar';
 
-        function owner(username) {
-            Ownerusername = username
-            document.getElementById('serverownername').textContent = "Owner: " + Ownerusername
-        }
+            function owner(username) {
+                Ownerusername = username
+                document.getElementById('serverownername').textContent = "Owner: " + Ownerusername
+            }
 
-        function members(count) {
-            Servermembercount = count
-        }
+            function members(count) {
+                Servermembercount = count
+            }
 
-        function guildid(id) {
-            guildId = id
-            test = id
-        }
+            function guildid(id) {
+                guildId = id
+                test = id
+            }
 
-        const modules = [
-            { title: "Anti Raid", description: "Protect your server by automatically blocking users and bots if it resembles a raid.", enabled: true, apiEndpoint: "anti_raid", saveApiEndpoint: "anti_raid" },
-            { title: "Minigame guessing", description: "The mini-game where you have to guess a number alone or as a team.", enabled: true, apiEndpoint: "mgg", saveApiEndpoint: "mgg" },
-            { title: "Counting game", description: "The mini-game in which you have to count as far as possible as a team without making a mistake.", enabled: true, apiEndpoint: "mgc", saveApiEndpoint: "mgc" },
-            { title: "Global chat", description: "Chat with users from many different communities.", enabled: false, apiEndpoint: "gc", saveApiEndpoint: "gc" },
-            { title: "Welcome system", description: "Automatically welcome new users to your server.", enabled: true, apiEndpoint: "welc", saveApiEndpoint: "welc" },
-            { title: "Verify system", description: "Secure your server with the Verify System to keep bot / automated accounts away.", enabled: true, apiEndpoint: "verify", saveApiEndpoint: "verify" },
-            { title: "Suggestion system", description: "Let the community vote on user suggestions quickly and easily.", enabled: true, apiEndpoint: "sugg", saveApiEndpoint: "sugg" },
-            { title: "Ticket system", description: "Manage your communitys support requests easier than ever before.", enabled: true, apiEndpoint: "ticket", saveApiEndpoint: "ticket" },
-            { title: "Log system", description: "Document all the things on your server that cannot be found in the audit log.", enabled: true, apiEndpoint: "log", saveApiEndpoint: "log" },
-            { title: "Security system", description: "Protect your channels with our smart chat filter and automatically remove inappropriate content.", enabled: true, apiEndpoint: "sec", saveApiEndpoint: "sec" },
-            { title: "Auto Role", description: "Let users automatically add roles as soon as they join your server.", enabled: true, apiEndpoint: "auto_roles", saveApiEndpoint: "auto_roles" },
-        ];
+            const modules = [
+                { title: "Anti Raid", description: "Protect your server by automatically blocking users and bots if it resembles a raid.", enabled: true, apiEndpoint: "anti_raid", saveApiEndpoint: "anti_raid" },
+                { title: "Minigame guessing", description: "The mini-game where you have to guess a number alone or as a team.", enabled: true, apiEndpoint: "mgg", saveApiEndpoint: "mgg" },
+                { title: "Counting game", description: "The mini-game in which you have to count as far as possible as a team without making a mistake.", enabled: true, apiEndpoint: "mgc", saveApiEndpoint: "mgc" },
+                { title: "Global chat", description: "Chat with users from many different communities.", enabled: false, apiEndpoint: "gc", saveApiEndpoint: "gc" },
+                { title: "Welcome system", description: "Automatically welcome new users to your server.", enabled: true, apiEndpoint: "welc", saveApiEndpoint: "welc" },
+                { title: "Verify system", description: "Secure your server with the Verify System to keep bot / automated accounts away.", enabled: true, apiEndpoint: "verify", saveApiEndpoint: "verify" },
+                { title: "Suggestion system", description: "Let the community vote on user suggestions quickly and easily.", enabled: true, apiEndpoint: "sugg", saveApiEndpoint: "sugg" },
+                { title: "Ticket system", description: "Manage your communitys support requests easier than ever before.", enabled: true, apiEndpoint: "ticket", saveApiEndpoint: "ticket" },
+                { title: "Log system", description: "Document all the things on your server that cannot be found in the audit log.", enabled: true, apiEndpoint: "log", saveApiEndpoint: "log" },
+                { title: "Security system", description: "Protect your channels with our smart chat filter and automatically remove inappropriate content.", enabled: true, apiEndpoint: "sec", saveApiEndpoint: "sec" },
+                { title: "Auto Role", description: "Let users automatically add roles as soon as they join your server.", enabled: true, apiEndpoint: "auto_roles", saveApiEndpoint: "auto_roles" },
+            ];
 
-        const container = document.getElementById('modules-container');
-        const startPage = document.getElementById('start-page');
-        const serverContent = document.getElementById('server-content');
-        const modulePage = document.getElementById('module-page');
-        const serverNameElement = document.getElementById('server-name');
-        const modulePageTitle = document.getElementById('module-page-title');
-        const modulePageDescription = document.getElementById('module-page-description');
+            const container = document.getElementById('modules-container');
+            const startPage = document.getElementById('start-page');
+            const serverContent = document.getElementById('server-content');
+            const modulePage = document.getElementById('module-page');
+            const serverNameElement = document.getElementById('server-name');
+            const modulePageTitle = document.getElementById('module-page-title');
+            const modulePageDescription = document.getElementById('module-page-description');
 
-        let currentServer = '';
+            let currentServer = '';
 
-        function showStartPage() {
-            startPage.classList.remove('hidden');
-            serverContent.classList.add('hidden');
-            modulePage.classList.add('hidden');
-        }
+            function showStartPage() {
+                startPage.classList.remove('hidden');
+                serverContent.classList.add('hidden');
+                modulePage.classList.add('hidden');
+            }
 
-        function showServer(serverName) {
-            currentServer = serverName;
-            startPage.classList.add('hidden');
-            serverContent.classList.remove('hidden');
-            modulePage.classList.add('hidden');
-            serverNameElement.textContent = serverName;
+            function showServer(serverName) {
+                currentServer = serverName;
+                startPage.classList.add('hidden');
+                serverContent.classList.remove('hidden');
+                modulePage.classList.add('hidden');
+                serverNameElement.textContent = serverName;
 
-            container.innerHTML = '';
+                container.innerHTML = '';
 
-            modules.forEach(module => {
-                const moduleElement = document.createElement('div');
-                moduleElement.className = 'module';
-                moduleElement.innerHTML = `
+                modules.forEach(module => {
+                    const moduleElement = document.createElement('div');
+                    moduleElement.className = 'module';
+                    moduleElement.innerHTML = `
             <div class="module-header">
                 <h3 class="module-title">${module.title}</h3>
                 <div class="status-indicator ${module.enabled ? 'status-enabled' : 'status-disabled'}"></div>
@@ -561,98 +610,98 @@
             <p class="module-description">${module.description}</p>
             <button class="manage-button" onclick="showModulePage('${module.title}', '${module.description}', '${module.apiEndpoint}', '${module.saveApiEndpoint}')">Verwalten</button>
         `;
-                container.appendChild(moduleElement);
-            });
-        }
-
-        async function showModulePage(title, description, apiEndpoint, saveApiEndpoint) {
-            startPage.classList.add('hidden');
-            serverContent.classList.add('hidden');
-            modulePage.classList.remove('hidden');
-            modulePageTitle.textContent = title;
-            modulePageDescription.textContent = description;
-
-            const loader = document.getElementById('loader');
-            const errorMessage = document.getElementById('error-message');
-            const moduleData = document.getElementById('module-data');
-
-            loader.classList.remove('hidden');
-            errorMessage.classList.add('hidden');
-            moduleData.innerHTML = '';
-
-            try {
-                const response = await fetch(`/api/module-data?apiEndpoint=${encodeURIComponent(apiEndpoint)}&guildId=${encodeURIComponent(guildId)}`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
+                    container.appendChild(moduleElement);
                 });
+            }
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
+            async function showModulePage(title, description, apiEndpoint, saveApiEndpoint) {
+                startPage.classList.add('hidden');
+                serverContent.classList.add('hidden');
+                modulePage.classList.remove('hidden');
+                modulePageTitle.textContent = title;
+                modulePageDescription.textContent = description;
 
-                const data = await response.json();
-                console.log(data);
+                const loader = document.getElementById('loader');
+                const errorMessage = document.getElementById('error-message');
+                const moduleData = document.getElementById('module-data');
 
-                let htmlContent = '';
-                for (const [key, value] of Object.entries(data)) {
-                    if (!key.endsWith('-activedrop') && !key.endsWith('-label')) {
-                        htmlContent += `<div class="module">
+                loader.classList.remove('hidden');
+                errorMessage.classList.add('hidden');
+                moduleData.innerHTML = '';
+
+                try {
+                    const response = await fetch(`/api/module-data?apiEndpoint=${encodeURIComponent(apiEndpoint)}&guildId=${encodeURIComponent(guildId)}`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    console.log(data);
+
+                    let htmlContent = '';
+                    for (const [key, value] of Object.entries(data)) {
+                        if (!key.endsWith('-activedrop') && !key.endsWith('-label')) {
+                            htmlContent += `<div class="module">
                     ${renderField(key, value, data)}
                 </div>`;
+                        }
                     }
-                }
-                moduleData.innerHTML = htmlContent;
+                    moduleData.innerHTML = htmlContent;
 
-                // Speichere die vollständigen JSON-Daten als Attribut
-                moduleData.setAttribute('data-full-json', JSON.stringify(data));
+                    // Speichere die vollständigen JSON-Daten als Attribut
+                    moduleData.setAttribute('data-full-json', JSON.stringify(data));
 
-                // Set the selected values for dropdowns after rendering
-                for (const [key, value] of Object.entries(data)) {
-                    if (key.endsWith('-drop')) {
-                        const activeDropKey = `${key.replace('-drop', '')}-activedrop`;
-                        if (data[activeDropKey]) {
-                            const activeValue = Object.keys(data[activeDropKey])[0];
-                            const select = document.querySelector(`select[onchange*="${key}"]`);
-                            if (select) {
-                                select.value = activeValue;
+                    // Set the selected values for dropdowns after rendering
+                    for (const [key, value] of Object.entries(data)) {
+                        if (key.endsWith('-drop')) {
+                            const activeDropKey = `${key.replace('-drop', '')}-activedrop`;
+                            if (data[activeDropKey]) {
+                                const activeValue = Object.keys(data[activeDropKey])[0];
+                                const select = document.querySelector(`select[onchange*="${key}"]`);
+                                if (select) {
+                                    select.value = activeValue;
+                                }
                             }
                         }
                     }
+
+                    // Füge einen Save-Button hinzu
+                    moduleData.innerHTML += `<button onclick="saveModuleData('${saveApiEndpoint}')">Save</button>`;
+
+                    const notifyKey = Object.keys(data).find(key => key.startsWith('notify-'));
+                    if (notifyKey) {
+                        showNotification(notifyKey, data[notifyKey]);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    errorMessage.textContent = `Failed to load module data: ${error.message}`;
+                    errorMessage.classList.remove('hidden');
+                } finally {
+                    loader.classList.add('hidden');
                 }
 
-                // Füge einen Save-Button hinzu
-                moduleData.innerHTML += `<button onclick="saveModuleData('${saveApiEndpoint}')">Save</button>`;
+                console.log('Save API Endpoint:', saveApiEndpoint);
+            }
 
-                const notifyKey = Object.keys(data).find(key => key.startsWith('notify-'));
-                if (notifyKey) {
-                    showNotification(notifyKey, data[notifyKey]);
+            function renderField(key, value, data) {
+                let labelHtml = '';
+
+                // Search for an associated label for this field
+                const baseKey = key.replace(/-(?:switch|drop|input|image-input|table)$/, '');
+                const associatedLabelKey = `${baseKey}-label`;
+
+                if (data[associatedLabelKey]) {
+                    labelHtml = `<h2 class="render-field-label">${data[associatedLabelKey]}</h2>`;
                 }
-            } catch (error) {
-                console.error('Error:', error);
-                errorMessage.textContent = `Failed to load module data: ${error.message}`;
-                errorMessage.classList.remove('hidden');
-            } finally {
-                loader.classList.add('hidden');
-            }
 
-            console.log('Save API Endpoint:', saveApiEndpoint);
-        }
-
-        function renderField(key, value, data) {
-            let labelHtml = '';
-
-            // Search for an associated label for this field
-            const baseKey = key.replace(/-(?:switch|drop|input|image-input|table)$/, '');
-            const associatedLabelKey = `${baseKey}-label`;
-
-            if (data[associatedLabelKey]) {
-                labelHtml = `<h2 class="render-field-label">${data[associatedLabelKey]}</h2>`;
-            }
-
-            if (key.endsWith('-switch')) {
-                return `
+                if (key.endsWith('-switch')) {
+                    return `
       <div class="render-field-container">
         ${labelHtml}
         <label class="switch" style="display: flex; align-items: center;">
@@ -660,39 +709,39 @@
           <span class="slider" style="margin-left: 10px;"></span>
         </label>
       </div>`;
-            } else if (key.endsWith('-drop')) {
-                const activeDropKey = `${baseKey}-activedrop`;
-                const activeValue = data[activeDropKey] ? Object.keys(data[activeDropKey])[0] : null;
+                } else if (key.endsWith('-drop')) {
+                    const activeDropKey = `${baseKey}-activedrop`;
+                    const activeValue = data[activeDropKey] ? Object.keys(data[activeDropKey])[0] : null;
 
-                let options = Object.entries(value).map(([id, label]) => {
-                    const isSelected = id === activeValue || (label.toLowerCase().includes('please select') && !activeValue);
-                    return `<option value="${id}" ${isSelected ? 'selected' : ''}>${label}</option>`;
-                }).join('');
+                    let options = Object.entries(value).map(([id, label]) => {
+                        const isSelected = id === activeValue || (label.toLowerCase().includes('please select') && !activeValue);
+                        return `<option value="${id}" ${isSelected ? 'selected' : ''}>${label}</option>`;
+                    }).join('');
 
-                return `
+                    return `
       <div class="render-field-container">
         ${labelHtml}
         <select id="${key}" class="render-field-select" style="width: 100%; padding: 10px; border: 1px solid #ccc;" onchange="handleDropChange('${key}', this.value)">
           ${options}
         </select>
       </div>`;
-            } else if (key.endsWith('-input')) {
-                return `
+                } else if (key.endsWith('-input')) {
+                    return `
       <div class="render-field-container">
         ${labelHtml}
         <input type="text" id="${key}" class="render-field-input" value="${value}" style="width: 100%; padding: 10px; border: 1px solid #ccc;" onchange="handleInputChange('${key}', this.value)">
       </div>`;
-            } else if (key.endsWith('-image-input')) {
-                return `
+                } else if (key.endsWith('-image-input')) {
+                    return `
       <div class="render-field-container">
         ${labelHtml}
         <input type="text" id="${key}" class="render-field-input" value="${value}" style="width: 100%; padding: 10px; border: 1px solid #ccc;" onchange="handleImageInputChange('${key}', this.value)">
         <img id="${key}-preview" src="${isValidImageUrl(value) ? value : 'https://placehold.co/400x200?text=Image Not valid'}" alt="Image preview" style="max-width: 400px; max-height: 200px; margin-top: 10px;">
       </div>`;
-            } else if (key.endsWith('-table')) {
-                if (Array.isArray(value) && value.length > 0) {
-                    const headers = Object.keys(value[0]);
-                    let tableHtml = `
+                } else if (key.endsWith('-table')) {
+                    if (Array.isArray(value) && value.length > 0) {
+                        const headers = Object.keys(value[0]);
+                        let tableHtml = `
         <table class="render-field-table" border="1" style="width: 100%; border-collapse: collapse;">
           <thead>
             <tr>${headers.map(header => `<th>${header}</th>`).join('')}</tr>
@@ -704,13 +753,13 @@
           </tbody>
         </table>
       `;
-                    return `
+                        return `
       <div class="render-field-container">
         ${labelHtml}
         ${tableHtml}
       </div>`;
-                } else if (typeof value === 'object' && Object.keys(value).length > 0) {
-                    let tableHtml = `
+                    } else if (typeof value === 'object' && Object.keys(value).length > 0) {
+                        let tableHtml = `
         <table class="render-field-table" border="1" style="width: 100%; border-collapse: collapse;">
           <thead>
             <tr><th>Key</th><th>Value</th></tr>
@@ -722,64 +771,64 @@
           </tbody>
         </table>
       `;
-                    return `
+                        return `
       <div class="render-field-container">
         ${labelHtml}
         ${tableHtml}
       </div>`;
+                    } else {
+                        return '';
+                    }
                 } else {
-                    return '';
-                }
-            } else {
-                return `
+                    return `
       <div class="render-field-container">
         ${labelHtml}
         <p style="margin-bottom: 20px;">${JSON.stringify(value)}</p>
       </div>`;
+                }
             }
-        }
 
-        function isValidImageUrl(url) {
-            return url.match(/\.(jpeg|jpg|gif|png)$/) != null;
-        }
+            function isValidImageUrl(url) {
+                return url.match(/\.(jpeg|jpg|gif|png)$/) != null;
+            }
 
-        function handleSwitchChange(key, isChecked) {
-            console.log(`Switch ${key} changed to ${isChecked}`);
-            // Here you would typically send an API request to update the server
-        }
+            function handleSwitchChange(key, isChecked) {
+                console.log(`Switch ${key} changed to ${isChecked}`);
+                // Here you would typically send an API request to update the server
+            }
 
-        function handleDropChange(key, selectedValue) {
-            console.log(`Dropdown ${key} changed to ${selectedValue}`);
-            // Here you would typically send an API request to update the server
-        }
+            function handleDropChange(key, selectedValue) {
+                console.log(`Dropdown ${key} changed to ${selectedValue}`);
+                // Here you would typically send an API request to update the server
+            }
 
-        function handleInputChange(key, value) {
-            console.log(`Input ${key} changed to ${value}`);
-            // Here you would typically send an API request to update the server
-        }
+            function handleInputChange(key, value) {
+                console.log(`Input ${key} changed to ${value}`);
+                // Here you would typically send an API request to update the server
+            }
 
-        function handleImageInputChange(key, value) {
-            console.log(`Image input ${key} changed to ${value}`);
-            const previewElement = document.getElementById(`${key}-preview`);
-            previewElement.src = isValidImageUrl(value) ? value : 'https://placehold.co/400x200?text=Image Not valid';
-            // Here you would typically send an API request to update the server
-        }
+            function handleImageInputChange(key, value) {
+                console.log(`Image input ${key} changed to ${value}`);
+                const previewElement = document.getElementById(`${key}-preview`);
+                previewElement.src = isValidImageUrl(value) ? value : 'https://placehold.co/400x200?text=Image Not valid';
+                // Here you would typically send an API request to update the server
+            }
 
-        function isValidImageUrl(url) {
-            return url.match(/\.(jpeg|jpg|gif|png)$/) != null;
-        }
+            function isValidImageUrl(url) {
+                return url.match(/\.(jpeg|jpg|gif|png)$/) != null;
+            }
 
-        function showNotification(type, message) {
-            const notificationElement = document.getElementById('notification');
-            notificationElement.className = type;
-            notificationElement.textContent = message;
-            notificationElement.classList.add('show');
+            function showNotification(type, message) {
+                const notificationElement = document.getElementById('notification');
+                notificationElement.className = type;
+                notificationElement.textContent = message;
+                notificationElement.classList.add('show');
 
-            setTimeout(() => {
-                notificationElement.classList.remove('show');
-            }, 5000);
-        }
-    </script>
+                setTimeout(() => {
+                    notificationElement.classList.remove('show');
+                }, 5000);
+            }
+        </script>
 </body>
 
 </html>
