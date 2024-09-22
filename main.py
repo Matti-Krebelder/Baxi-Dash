@@ -59,7 +59,7 @@ async def get_module_data():
         
 @app.route("/api/module-save", methods=["POST"])
 async def save_module_data():
-    data = request.json
+    data = await request.json
     api_endpoint = data.get("apiEndpoint")
     guild_id = data.get("guildId")
     module_data = data.get("data")
