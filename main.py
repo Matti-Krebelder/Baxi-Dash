@@ -40,7 +40,8 @@ logger.debug.info("Logged in as " + baxi_data.app_name)
 
 @app.route("/api/module-data", methods=["GET"])
 async def get_module_data():
-    csrf_token = request.form.get('csrf_token')
+    form_data = await request.form
+    csrf_token = form_data.get('csrf_token')
     if csrf_token != session.get('csrf_token'):
         return jsonify({"error": "Invalid CSRF token"}), 401
     api_endpoint = request.args.get("apiEndpoint")
@@ -62,7 +63,8 @@ async def get_module_data():
         
 @app.route("/api/module-save", methods=["POST"])
 async def save_module_data():
-    csrf_token = request.form.get('csrf_token')
+    form_data = await request.form
+    csrf_token = form_data.get('csrf_token')
     if csrf_token != session.get('csrf_token'):
         return jsonify({"error": "Invalid CSRF token"}), 401
     data = await request.get_json()
