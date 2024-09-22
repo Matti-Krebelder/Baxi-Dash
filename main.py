@@ -1,5 +1,6 @@
 import configparser
 import os
+import secrets
 
 import requests
 from quart import (
@@ -25,6 +26,8 @@ app = Quart(__name__, template_folder="web")
 app = cors(app)
 app.secret_key = os.urandom(24)
 
+
+
 maintenance = config.getboolean("DASH", "maintenance")
 
 baxi_data = Get_Data(
@@ -37,6 +40,9 @@ logger.debug.info("Logged in as " + baxi_data.app_name)
 
 @app.route("/api/module-data", methods=["GET"])
 async def get_module_data():
+    csrf_token = request.form.get('csrf_token')
+    if csrf_token != session.get('csrf_token'):
+        return jsonify({"error": "Invalid CSRF token"}), 401
     api_endpoint = request.args.get("apiEndpoint")
     guild_id = request.args.get("guildId")
     api_key = config["BAXI"]["api_key"]
@@ -56,6 +62,9 @@ async def get_module_data():
         
 @app.route("/api/module-save", methods=["POST"])
 async def save_module_data():
+    csrf_token = request.form.get('csrf_token')
+    if csrf_token != session.get('csrf_token'):
+        return jsonify({"error": "Invalid CSRF token"}), 401
     data = await request.get_json()
     api_endpoint = data.get("apiEndpoint")
     guild_id = data.get("guildId")
@@ -122,6 +131,8 @@ async def dash():
     if "token" not in session:
         return await render_template("login.html", version=config["DASH"]["version"], dashboardmessage=config["DASH"]["dashboardmessage"])
     try:
+        csrf_token = secrets.token_hex(16)
+        session["csrf_token"] = csrf_token
         user_guilds = get_guilds.get_user_guilds(
             session["token"], config["ENDPOINT"]["discord_api"]
         )
@@ -180,7 +191,8 @@ async def dash():
             "dashboard.html",
             guild_details=guild_details,
             version=config["DASH"]["version"],
-            dashboardmessage=config["DASH"]["dashboardmessage"]
+            dashboardmessage=config["DASH"]["dashboardmessage"],
+            csrf_token=csrf_token
         )
 
     except Exception as e:
