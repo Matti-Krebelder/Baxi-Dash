@@ -373,6 +373,7 @@
 
                 const result = await response.json();
                 showNotification('notify-success', 'Changes saved successfully');
+                console.log(updatedData)
             } catch (error) {
                 console.error('Error:', error);
                 showNotification('notify-error', `Failed to save changes: ${error.message}`);
