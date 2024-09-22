@@ -7,7 +7,7 @@
     <title>Baxi Dash</title>
     <meta property="og:title" content="Baxi Dashboard">
     <meta property="og:description"
-        content="Manage all your server's systems quickly and easily via the Baxi Dashboard. ">
+          content="Manage all your server's systems quickly and easily via the Baxi Dashboard. ">
     <meta property="og:url" content="https://baxi.pyropixle.com/">
     <meta property="og:image" content="https://pyropixle.com/img/pb-baxi.gif">
     <meta property="og:type" content="website">
@@ -281,206 +281,206 @@
 </head>
 
 <body>
-    <div class="sidebar">
-        <img src="/static/imgs/baxilogoanimated.gif" alt="Baxi Image" onclick="showStartPage()">
-        <div id="line"></div>
-        {% for guild in guild_details %}
-        <img src="{{ guild.icon_url }}" alt="{{ guild.name }}"
-            onclick="handleGuildClick('{{ guild.name }}', '{{ guild.id }}', '{{ guild.owner_username }}', '{{ guild.member_count }}')">
-        {% endfor %}
+<div class="sidebar">
+    <img src="/static/imgs/baxilogoanimated.gif" alt="Baxi Image" onclick="showStartPage()">
+    <div id="line"></div>
+    {% for guild in guild_details %}
+    <img src="{{ guild.icon_url }}" alt="{{ guild.name }}"
+         onclick="handleGuildClick('{{ guild.name }}', '{{ guild.id }}', '{{ guild.owner_username }}', '{{ guild.member_count }}')">
+    {% endfor %}
 
+</div>
+
+<div class="container">
+    <div id="start-page" class="start-page">
+        <h1>Welcome to the Baxi Dashboard!</h1>
+        <p>Select a server from the sidebar to get started.</p>
+        <p>Dash Version: {{ version }}</p>
     </div>
 
-    <div class="container">
-        <div id="start-page" class="start-page">
-            <h1>Welcome to the Baxi Dashboard!</h1>
-            <p>Select a server from the sidebar to get started.</p>
-            <p>Dash Version: {{ version }}</p>
+    <div id="server-content" class="hidden">
+        <div class="header">
+            <div class="server-icon"></div>
+            <h1 class="server-name" id="server-name"></h1> <br>
+
+            <h2 id="serverownername"></h2>
         </div>
 
-        <div id="server-content" class="hidden">
-            <div class="header">
-                <div class="server-icon"></div>
-                <h1 class="server-name" id="server-name"></h1> <br>
+        <input type="text" placeholder="Search" class="search-bar">
 
-                <h2 id="serverownername"></h2>
-            </div>
-
-            <input type="text" placeholder="Search" class="search-bar">
-
-            <div class="modules-grid" id="modules-container">
-                <!-- Modules will be dynamically inserted here -->
-            </div>
-        </div>
-
-        <div id="module-page" class="module-page hidden">
-            <h1 id="module-page-title"></h1>
-            <p id="module-page-description"></p>
-            <div id="module-content">
-                <div id="loader" class="loader hidden"></div>
-                <div id="error-message" class="error-message hidden"></div>
-                <div id="module-data">
-                </div>
-            </div>
-            <button class="back-button" onclick="showServer(currentServer)">Back to Modules</button>
+        <div class="modules-grid" id="modules-container">
+            <!-- Modules will be dynamically inserted here -->
         </div>
     </div>
-    <div id="notification"></div>
-    <script>
-        function filterModules() {
-            const searchBar = document.querySelector('.search-bar');
-            const query = searchBar.value.toLowerCase();
-            const modules = document.querySelectorAll('.module');
 
-            modules.forEach(module => {
-                const title = module.querySelector('.module-title').textContent.toLowerCase();
-                if (title.includes(query)) {
-                    module.style.display = '';
-                } else {
-                    module.style.display = 'none';
-                }
-            });
-        }
-        document.querySelector('.search-bar').addEventListener('input', filterModules);
-        function handleGuildClick(name, id, ownerUsername, memberCount) {
-            showServer(name);
-            guildid(id);
-            owner(ownerUsername);
-            members(memberCount);
-        }
+    <div id="module-page" class="module-page hidden">
+        <h1 id="module-page-title"></h1>
+        <p id="module-page-description"></p>
+        <div id="module-content">
+            <div id="loader" class="loader hidden"></div>
+            <div id="error-message" class="error-message hidden"></div>
+            <div id="module-data">
+            </div>
+        </div>
+        <button class="back-button" onclick="showServer(currentServer)">Back to Modules</button>
+    </div>
+</div>
+<div id="notification"></div>
+<script>
+    function filterModules() {
+        const searchBar = document.querySelector('.search-bar');
+        const query = searchBar.value.toLowerCase();
+        const modules = document.querySelectorAll('.module');
 
-
-        let guildId = '';
-        let Ownerusername = '';
-        let Servermembercount = '';
-        var test = 'teststartvar';
-
-        function owner(username) {
-            Ownerusername = username
-            document.getElementById('serverownername').textContent = "Owner: " + Ownerusername
-        }
-
-        function members(count) {
-            Servermembercount = count
-        }
-
-        function guildid(id) {
-            guildId = id
-            test = id
-        }
-
-
-        const modules = [
-            { title: "Anti Raid", description: "Protect your server by automatically blocking users and bots if it resembles a raid.", enabled: true, apiEndpoint: "anti_raid", saveApiEndpoint: "/api/tiktok/save" },
-            { title: "Minigame guessing", description: "The mini-game where you have to guess a number alone or as a team.", enabled: true, apiEndpoint: "mgg", saveApiEndpoint: "/api/youtube/save" },
-            { title: "Counting game", description: "The mini-game in which you have to count as far as possible as a team without making a mistake.", enabled: true, apiEndpoint: "mgc", saveApiEndpoint: "/api/rta/save" },
-            { title: "Global chat", description: "Chat with users from many different communities.", enabled: true, apiEndpoint: "gc", saveApiEndpoint: "/api/auto-purge/save" },
-            { title: "Welcome system", description: "Automatically welcome new users to your server.", enabled: true, apiEndpoint: "welc", saveApiEndpoint: "/api/announcements/save" },
-            { title: "Verify system", description: "Secure your server with the Verify System to keep bot / automated accounts away.", enabled: true, apiEndpoint: "verify", saveApiEndpoint: "/api/action-log/save" },
-            { title: "Suggestion system", description: "Let the community vote on user suggestions quickly and easily.", enabled: true, apiEndpoint: "sugg", saveApiEndpoint: "/api/autorole/save" },
-            { title: "Ticket system", description: "Manage your community's support requests easier than ever before.", enabled: true, apiEndpoint: "ticket", saveApiEndpoint: "/api/punishments/save" },
-            { title: "Log system", description: "Document all the things on your server that cannot be found in the audit log.", enabled: true, apiEndpoint: "log", saveApiEndpoint: "/api/reminders/save" },
-            { title: "Security system", description: "Protect your channels with our smart chat filter and automatically remove inappropriate content.", enabled: true, apiEndpoint: "sec", saveApiEndpoint: "/api/activities/save" },
-            { title: "Auto Role", description: "Let users automatically add roles as soon as they join your server.", enabled: true, apiEndpoint: "auto_roles", saveApiEndpoint: "/api/voice-statistics/save" },
-        ];
-
-        const container = document.getElementById('modules-container');
-        const startPage = document.getElementById('start-page');
-        const serverContent = document.getElementById('server-content');
-        const modulePage = document.getElementById('module-page');
-        const serverNameElement = document.getElementById('server-name');
-        const modulePageTitle = document.getElementById('module-page-title');
-        const modulePageDescription = document.getElementById('module-page-description');
-
-        let currentServer = '';
-
-        function showStartPage() {
-            startPage.classList.remove('hidden');
-            serverContent.classList.add('hidden');
-            modulePage.classList.add('hidden');
-        }
-
-        function showServer(serverName) {
-            currentServer = serverName;
-            startPage.classList.add('hidden');
-            serverContent.classList.remove('hidden');
-            modulePage.classList.add('hidden');
-            serverNameElement.textContent = serverName;
-
-            container.innerHTML = '';
-
-            modules.forEach(module => {
-                const moduleElement = document.createElement('div');
-                moduleElement.className = 'module';
-                moduleElement.innerHTML = `
-                    <div class="module-header">
-                        <h3 class="module-title">${module.title}</h3>
-                        <div class="status-indicator ${module.enabled ? 'status-enabled' : 'status-disabled'}"></div>
-                    </div>
-                    <p class="module-description">${module.description}</p>
-                    <button class="manage-button" onclick="showModulePage('${module.title}', '${module.description}', '${module.apiEndpoint}', '${module.saveApiEndpoint}')">Verwalten</button>
-                `;
-                container.appendChild(moduleElement);
-            });
-        }
-
-        async function showModulePage(title, description, apiEndpoint, saveApiEndpoint) {
-            startPage.classList.add('hidden');
-            serverContent.classList.add('hidden');
-            modulePage.classList.remove('hidden');
-            modulePageTitle.textContent = title;
-            modulePageDescription.textContent = description;
-
-            const loader = document.getElementById('loader');
-            const errorMessage = document.getElementById('error-message');
-            const moduleData = document.getElementById('module-data');
-
-            loader.classList.remove('hidden');
-            errorMessage.classList.add('hidden');
-            moduleData.innerHTML = '';
-
-            try {
-                const response = await fetch(`/api/module-data?apiEndpoint=${encodeURIComponent(apiEndpoint)}&guildId=${encodeURIComponent(guildId)}`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                /* data-response */
-                const data = await response.json();
-                console.log(data)
-                moduleData.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
-
-                const notifyKey = Object.keys(data).find(key => key.startsWith('notify-'));
-                if (notifyKey) {
-                    showNotification(notifyKey, data[notifyKey]);
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                errorMessage.textContent = `Failed to load module data: ${error.message}`;
-                errorMessage.classList.remove('hidden');
-            } finally {
-                loader.classList.add('hidden');
+        modules.forEach(module => {
+            const title = module.querySelector('.module-title').textContent.toLowerCase();
+            if (title.includes(query)) {
+                module.style.display = '';
+            } else {
+                module.style.display = 'none';
             }
+        });
+    }
+    document.querySelector('.search-bar').addEventListener('input', filterModules);
+    function handleGuildClick(name, id, ownerUsername, memberCount) {
+        showServer(name);
+        guildid(id);
+        owner(ownerUsername);
+        members(memberCount);
+    }
 
-            console.log('Save API Endpoint:', saveApiEndpoint);
+
+    let guildId = '';
+    let Ownerusername = '';
+    let Servermembercount = '';
+    var test = 'teststartvar';
+
+    function owner(username) {
+        Ownerusername = username
+        document.getElementById('serverownername').textContent = "Owner: " + Ownerusername
+    }
+
+    function members(count) {
+        Servermembercount = count
+    }
+
+    function guildid(id) {
+        guildId = id
+        test = id
+    }
+
+
+    const modules = [
+        { title: "Anti Raid", description: "Protect your server by automatically blocking users and bots if it resembles a raid.", enabled: true, apiEndpoint: "anti_raid", saveApiEndpoint: "/api/tiktok/save" },
+        { title: "Minigame guessing", description: "The mini-game where you have to guess a number alone or as a team.", enabled: true, apiEndpoint: "mgg", saveApiEndpoint: "/api/youtube/save" },
+        { title: "Counting game", description: "The mini-game in which you have to count as far as possible as a team without making a mistake.", enabled: true, apiEndpoint: "mgc", saveApiEndpoint: "/api/rta/save" },
+        { title: "Global chat", description: "Chat with users from many different communities.", enabled: true, apiEndpoint: "gc", saveApiEndpoint: "/api/auto-purge/save" },
+        { title: "Welcome system", description: "Automatically welcome new users to your server.", enabled: true, apiEndpoint: "welc", saveApiEndpoint: "/api/announcements/save" },
+        { title: "Verify system", description: "Secure your server with the Verify System to keep bot / automated accounts away.", enabled: true, apiEndpoint: "verify", saveApiEndpoint: "/api/action-log/save" },
+        { title: "Suggestion system", description: "Let the community vote on user suggestions quickly and easily.", enabled: true, apiEndpoint: "sugg", saveApiEndpoint: "/api/autorole/save" },
+        { title: "Ticket system", description: "Manage your community's support requests easier than ever before.", enabled: true, apiEndpoint: "ticket", saveApiEndpoint: "/api/punishments/save" },
+        { title: "Log system", description: "Document all the things on your server that cannot be found in the audit log.", enabled: true, apiEndpoint: "log", saveApiEndpoint: "/api/reminders/save" },
+        { title: "Security system", description: "Protect your channels with our smart chat filter and automatically remove inappropriate content.", enabled: true, apiEndpoint: "sec", saveApiEndpoint: "/api/activities/save" },
+        { title: "Auto Role", description: "Let users automatically add roles as soon as they join your server.", enabled: true, apiEndpoint: "auto_roles", saveApiEndpoint: "/api/voice-statistics/save" },
+    ];
+
+    const container = document.getElementById('modules-container');
+    const startPage = document.getElementById('start-page');
+    const serverContent = document.getElementById('server-content');
+    const modulePage = document.getElementById('module-page');
+    const serverNameElement = document.getElementById('server-name');
+    const modulePageTitle = document.getElementById('module-page-title');
+    const modulePageDescription = document.getElementById('module-page-description');
+
+    let currentServer = '';
+
+    function showStartPage() {
+        startPage.classList.remove('hidden');
+        serverContent.classList.add('hidden');
+        modulePage.classList.add('hidden');
+    }
+
+    function showServer(serverName) {
+        currentServer = serverName;
+        startPage.classList.add('hidden');
+        serverContent.classList.remove('hidden');
+        modulePage.classList.add('hidden');
+        serverNameElement.textContent = serverName;
+
+        container.innerHTML = '';
+
+        modules.forEach(module => {
+            const moduleElement = document.createElement('div');
+            moduleElement.className = 'module';
+            moduleElement.innerHTML = `
+                <div class="module-header">
+                    <h3 class="module-title">${module.title}</h3>
+                    <div class="status-indicator ${module.enabled ? 'status-enabled' : 'status-disabled'}"></div>
+                </div>
+                <p class="module-description">${module.description}</p>
+                <button class="manage-button" onclick="showModulePage('${module.title}', '${module.description}', '${module.apiEndpoint}', '${module.saveApiEndpoint}')">Verwalten</button>
+            `;
+            container.appendChild(moduleElement);
+        });
+    }
+
+    async function showModulePage(title, description, apiEndpoint, saveApiEndpoint) {
+        startPage.classList.add('hidden');
+        serverContent.classList.add('hidden');
+        modulePage.classList.remove('hidden');
+        modulePageTitle.textContent = title;
+        modulePageDescription.textContent = description;
+
+        const loader = document.getElementById('loader');
+        const errorMessage = document.getElementById('error-message');
+        const moduleData = document.getElementById('module-data');
+
+        loader.classList.remove('hidden');
+        errorMessage.classList.add('hidden');
+        moduleData.innerHTML = '';
+
+        try {
+            const response = await fetch(`/api/module-data?apiEndpoint=${encodeURIComponent(apiEndpoint)}&guildId=${encodeURIComponent(guildId)}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            /* data-response */
+            const data = await response.json();
+            console.log(data)
+            moduleData.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+
+            const notifyKey = Object.keys(data).find(key => key.startsWith('notify-'));
+            if (notifyKey) {
+                showNotification(notifyKey, data[notifyKey]);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            errorMessage.textContent = `Failed to load module data: ${error.message}`;
+            errorMessage.classList.remove('hidden');
+        } finally {
+            loader.classList.add('hidden');
         }
 
-        function showNotification(type, message) {
-            const notificationElement = document.getElementById('notification');
-            notificationElement.className = type;
-            notificationElement.textContent = message;
-            notificationElement.classList.add('show');
+        console.log('Save API Endpoint:', saveApiEndpoint);
+    }
 
-            setTimeout(() => {
-                notificationElement.classList.remove('show');
-            }, 5000);
-        }
-    </script>
+    function showNotification(type, message) {
+        const notificationElement = document.getElementById('notification');
+        notificationElement.className = type;
+        notificationElement.textContent = message;
+        notificationElement.classList.add('show');
+
+        setTimeout(() => {
+            notificationElement.classList.remove('show');
+        }, 5000);
+    }
+</script>
 </body>
 
 </html>

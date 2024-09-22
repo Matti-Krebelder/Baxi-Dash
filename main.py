@@ -34,6 +34,7 @@ baxi_data = Get_Data(
 
 logger.debug.info("Logged in as " + baxi_data.app_name)
 
+
 @app.route("/api/module-data", methods=["GET"])
 async def get_module_data():
     api_endpoint = request.args.get("apiEndpoint")
