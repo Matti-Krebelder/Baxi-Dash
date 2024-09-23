@@ -45,6 +45,10 @@ async def get_module_data():
     if not api_endpoint or not guild_id:
         return jsonify({"error": "Missing apiEndpoint or guildId"}), 400
 
+    csrf_token = session.get('csrf_token')
+
+    data = {"csrf_token": csrf_token}
+
     full_api_endpoint = f"https://baxi-backend.pyropixle.com/api/dash/settings/load/{api_endpoint}/{guild_id}"
 
     headers = {
@@ -52,7 +56,7 @@ async def get_module_data():
         "Authorization": f"{api_key}",
     }
 
-    request_user = requests.get(full_api_endpoint, headers=headers)
+    request_user = requests.get(full_api_endpoint, headers=headers, json=data)
     return request_user.json()
 
 

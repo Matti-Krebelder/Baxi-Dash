@@ -2,6 +2,7 @@ from http.client import responses
 
 import requests
 from cryptography.fernet import Fernet
+from quart import session
 from reds_simple_logger import Logger
 
 logger = Logger()
@@ -39,8 +40,13 @@ class Get_Data:
 
 def get_active_systems(key: str, guild_id: int):
     headers = {"Authorization": f"{key}"}
+    csrf_token = session.get('csrf_token')
+
+    data = {"csrf_token": csrf_token}
+
     request = requests.get(
         f"https://baxi-backend.pyropixle.com/api/dash/get/active_systems/{guild_id}",
         headers=headers,
+        json=data
     )
     return request.json()
