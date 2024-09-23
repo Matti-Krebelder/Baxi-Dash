@@ -1,3 +1,4 @@
+import configparser
 from http.client import responses
 
 import pyotp
@@ -5,6 +6,8 @@ import requests
 from cryptography.fernet import Fernet
 from quart import session
 from reds_simple_logger import Logger
+
+from main import baxi_data
 
 logger = Logger()
 
@@ -39,9 +42,14 @@ class Get_Data:
         except Exception as e:
             logger.error("ERROR: " + str(e))
 
-
+config = configparser.ConfigParser()
+config.read("config/runtime.conf")
 def get_active_systems(key: str, guild_id: int):
     headers = {"Authorization": f"{key}"}
+    baxi_data = Get_Data(
+        encryption_key=config.get("BAXI", "encryption_key"),
+        api_key=config.get("BAXI", "baxi_info_key"),
+    ).baxi_data_pull()
     one_time_code = generate_one_time_code(baxi_data.secret)
     data = {"otc": one_time_code}
 
