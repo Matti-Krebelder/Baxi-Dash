@@ -348,7 +348,6 @@
             margin: 20px auto;
         }
 
-        /* New styles for the switch */
         .switch {
             position: relative;
             height: 1.5rem;
@@ -361,11 +360,11 @@
             transition: all .3s ease;
         }
 
-        .switchinput:checked {
+        .switch:checked {
             background-color: rgba(32, 151, 243, 1);
         }
 
-        .switchinput::before {
+        .switch::before {
             position: absolute;
             content: "";
             left: calc(1.5rem - 1.6rem);
@@ -381,27 +380,17 @@
             transition: all .3s ease;
         }
 
-        .switchinput:hover::before {
-            box-shadow: 0 0 0px 8px rgba(0, 0, 0, .15)
+        .switch:hover::before {
+            box-shadow: 0 0 0px 8px rgba(0, 0, 0, .15);
         }
 
-        .switchinput:checked:hover::before {
-            box-shadow: 0 0 0px 8px rgba(32, 151, 243, .15)
+        .switch:checked:hover::before {
+            box-shadow: 0 0 0px 8px rgba(32, 151, 243, .15);
         }
 
-        .switchinput:checked:before {
+        .switch:checked:before {
             transform: translateX(100%);
             border-color: rgba(32, 151, 243, 1);
-        }
-
-        input:checked+.slider {
-            background-color: #2196F3;
-            display: none;
-        }
-
-        input:checked+.slider:before {
-            transform: translateX(26px);
-            display: none;
         }
 
         @keyframes spin {
@@ -743,10 +732,10 @@
                 return `
       <div class="render-field-container">
         ${labelHtml}
-        <label class="switch" style="display: flex; align-items: center;">
-          <input type="checkbox" id="${key}" class="switchinput" ${value === 1 ? 'checked' : ''} onchange="handleSwitchChange('${key}', this.checked)">
-          <span class="slider" style="margin-left: 10px;"></span>
-        </label>
+       <label class="switch" style="display: flex; align-items: center;">
+  <input type="checkbox" id="${key}" class="switchinput switch" ${value === 1 ? 'checked' : ''} onchange="handleSwitchChange('${key}', this.checked)">
+</label>
+
       </div>`;
             } else if (key.endsWith('-drop')) {
                 const activeDropKey = `${baseKey}-activedrop`;
