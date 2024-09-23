@@ -7,7 +7,6 @@ from cryptography.fernet import Fernet
 from quart import session
 from reds_simple_logger import Logger
 
-from main import baxi_data
 
 logger = Logger()
 
