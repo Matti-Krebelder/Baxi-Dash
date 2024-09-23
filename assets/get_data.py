@@ -29,12 +29,9 @@ class Get_Data:
     def baxi_data_pull(self):
         try:
             headers = {"Authorization": f"{self.api_key}"}
-            one_time_code = generate_one_time_code(baxi_data.secret)
-            data = {"otc": one_time_code}
             request = requests.get(
                 "https://baxi-backend.pyropixle.com/api/oauth/get/data/baxi",
-                headers=headers,
-                json=data
+                headers=headers
             )
             logger.debug.info(request.text)
             response = request.json()
