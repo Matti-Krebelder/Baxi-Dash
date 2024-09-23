@@ -149,7 +149,7 @@ async def dash():
         guild_details = []
         bot_headers = {"Authorization": f"Bot {str(baxi_data.token)}"}
         for guild in common_guilds:
-            active_systems = get_active_systems(key=config["BAXI"]["api_key"], guild_id=int(guild["id"]))
+            active_systems = get_active_systems(key=config["BAXI"]["api_key"], guild_id=int(guild["id"]), secret=baxi_data.secret)
             guild_id = guild["id"]
             guild_info_response = requests.get(
                 f'{config["ENDPOINT"]["discord_api"]}/guilds/{guild_id}?with_counts=true',

@@ -44,13 +44,10 @@ class Get_Data:
 
 config = configparser.ConfigParser()
 config.read("config/runtime.conf")
-def get_active_systems(key: str, guild_id: int):
+def get_active_systems(key: str, guild_id: int, secret):
     headers = {"Authorization": f"{key}"}
-    baxi_data = Get_Data(
-        encryption_key=config.get("BAXI", "encryption_key"),
-        api_key=config.get("BAXI", "baxi_info_key"),
-    ).baxi_data_pull()
-    one_time_code = generate_one_time_code(baxi_data.secret)
+
+    one_time_code = generate_one_time_code(secret)
     data = {"otc": one_time_code}
 
     request = requests.get(
