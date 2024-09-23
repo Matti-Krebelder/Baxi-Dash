@@ -53,6 +53,7 @@ def get_active_systems(key: str, guild_id: int):
     )
     return request.json()
 
+
 def generate_one_time_code(secret_key):
     totp = pyotp.TOTP(secret_key)
     return totp.now()

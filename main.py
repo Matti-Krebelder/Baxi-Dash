@@ -73,7 +73,6 @@ async def save_module_data():
         return jsonify({"error": "Missing apiEndpoint, guildId or data"}), 400
 
     full_api_endpoint = f"https://baxi-backend.pyropixle.com/api/dash/settings/save/{api_endpoint}/{guild_id}"
-
     headers = {
         "Content-Type": "application/json",
         "Authorization": f"{api_key}",
