@@ -14,6 +14,31 @@
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
+        .json-card {
+            background-color: #36393f;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .json-field {
+            margin-bottom: 15px;
+        }
+
+        .json-field-label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #ffffff;
+        }
+
+        .json-field-value {
+            background-color: #2f3136;
+            padding: 10px;
+            border-radius: 5px;
+            color: #b9bbbe;
+        }
+
         .baxi-card {
             background-color: #ffffff;
             border-radius: 12px;
@@ -323,49 +348,6 @@
             margin: 20px auto;
         }
 
-        .render-field-container {
-            margin-bottom: 20px;
-            padding: 15px;
-            background-color: #36393f;
-            border-radius: 5px;
-        }
-
-        .render-field-label {
-            font-size: 16px;
-            font-weight: bold;
-            margin-bottom: 10px;
-            color: #ffffff;
-        }
-
-        .render-field-input,
-        .render-field-select {
-            width: 100%;
-            padding: 8px;
-            background-color: #2f3136;
-            border: 1px solid #202225;
-            border-radius: 3px;
-            color: #ffffff;
-            margin-bottom: 10px;
-        }
-
-        .render-field-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 10px;
-        }
-
-        .render-field-table th,
-        .render-field-table td {
-            border: 1px solid #202225;
-            padding: 8px;
-            text-align: left;
-            color: #ffffff;
-        }
-
-        .render-field-table th {
-            background-color: #2f3136;
-        }
-
         /* New styles for the switch */
         .switch {
             position: relative;
@@ -665,80 +647,76 @@
         }
 
         async function showModulePage(title, description, apiEndpoint, saveApiEndpoint) {
-            startPage.classList.add('hidden');
-            serverContent.classList.add('hidden');
-            modulePage.classList.remove('hidden');
-            modulePageTitle.textContent = title;
-            modulePageDescription.textContent = description;
+    startPage.classList.add('hidden');
+    serverContent.classList.add('hidden');
+    modulePage.classList.remove('hidden');
+    modulePageTitle.textContent = title;
+    modulePageDescription.textContent = description;
 
-            const loader = document.getElementById('loader');
-            const errorMessage = document.getElementById('error-message');
-            const moduleData = document.getElementById('module-data');
+    const loader = document.getElementById('loader');
+    const errorMessage = document.getElementById('error-message');
+    const moduleData = document.getElementById('module-data');
 
-            loader.classList.remove('hidden');
-            errorMessage.classList.add('hidden');
-            moduleData.innerHTML = '';
+    loader.classList.remove('hidden');
+    errorMessage.classList.add('hidden');
+    moduleData.innerHTML = '';
 
-            try {
-
-                const response = await fetch(`/api/module-data?apiEndpoint=${encodeURIComponent(apiEndpoint)}&guildId=${encodeURIComponent(guildId)}`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const data = await response.json();
-                console.log(data);
-
-                let htmlContent = '';
-                for (const [key, value] of Object.entries(data)) {
-                    if (!key.endsWith('-activedrop') && !key.endsWith('-label')) {
-                        htmlContent += `<div class="module">
-                    ${renderField(key, value, data)}
-                </div>`;
-                    }
-                }
-                moduleData.innerHTML = htmlContent;
-
-                // Speichere die vollständigen JSON-Daten als Attribut
-                moduleData.setAttribute('data-full-json', JSON.stringify(data));
-
-                // Set the selected values for dropdowns after rendering
-                for (const [key, value] of Object.entries(data)) {
-                    if (key.endsWith('-drop')) {
-                        const activeDropKey = `${key.replace('-drop', '')}-activedrop`;
-                        if (data[activeDropKey]) {
-                            const activeValue = Object.keys(data[activeDropKey])[0];
-                            const select = document.querySelector(`select[onchange*="${key}"]`);
-                            if (select) {
-                                select.value = activeValue;
-                            }
-                        }
-                    }
-                }
-
-                // Füge einen Save-Button hinzu
-                moduleData.innerHTML += `<button onclick="saveModuleData('${saveApiEndpoint}')">Save</button>`;
-
-                const notifyKey = Object.keys(data).find(key => key.startsWith('notify-'));
-                if (notifyKey) {
-                    showNotification(notifyKey, data[notifyKey]);
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                errorMessage.textContent = `Failed to load module data: ${error.message}`;
-                errorMessage.classList.remove('hidden');
-            } finally {
-                loader.classList.add('hidden');
+    try {
+        const response = await fetch(`/api/module-data?apiEndpoint=${encodeURIComponent(apiEndpoint)}&guildId=${encodeURIComponent(guildId)}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
             }
+        });
 
-            console.log('Save API Endpoint:', saveApiEndpoint);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
+
+        const data = await response.json();
+        console.log(data);
+
+        let htmlContent = '<div class="json-card">';
+        for (const [key, value] of Object.entries(data)) {
+            if (!key.endsWith('-activedrop') && !key.endsWith('-label')) {
+                htmlContent += renderField(key, value, data);
+            }
+        }
+        htmlContent += '</div>';
+        moduleData.innerHTML = htmlContent;
+
+        // Speichere die vollständigen JSON-Daten als Attribut
+        moduleData.setAttribute('data-full-json', JSON.stringify(data));
+
+        // Set the selected values for dropdowns after rendering
+        for (const [key, value] of Object.entries(data)) {
+            if (key.endsWith('-drop')) {
+                const activeDropKey = `${key.replace('-drop', '')}-activedrop`;
+                if (data[activeDropKey]) {
+                    const activeValue = Object.keys(data[activeDropKey])[0];
+                    const select = document.querySelector(`select[onchange*="${key}"]`);
+                    if (select) {
+                        select.value = activeValue;
+                    }
+                }
+            }
+        }
+
+        // Füge einen Save-Button hinzu
+        moduleData.innerHTML += `<button onclick="saveModuleData('${saveApiEndpoint}')" style="margin-top: 20px;">Save</button>`;
+
+        const notifyKey = Object.keys(data).find(key => key.startsWith('notify-'));
+        if (notifyKey) {
+            showNotification(notifyKey, data[notifyKey]);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        errorMessage.textContent = `Failed to load module data: ${error.message}`;
+        errorMessage.classList.remove('hidden');
+    } finally {
+        loader.classList.add('hidden');
+     }
+}
 
         function renderField(key, value, data) {
             let labelHtml = '';
