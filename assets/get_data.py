@@ -29,9 +29,12 @@ class Get_Data:
     def baxi_data_pull(self):
         try:
             headers = {"Authorization": f"{self.api_key}"}
+            one_time_code = generate_one_time_code(baxi_data.secret)
+            data = {"otc": one_time_code}
             request = requests.get(
                 "https://baxi-backend.pyropixle.com/api/oauth/get/data/baxi",
                 headers=headers,
+                json=data
             )
             logger.debug.info(request.text)
             response = request.json()
@@ -42,9 +45,8 @@ class Get_Data:
 
 def get_active_systems(key: str, guild_id: int):
     headers = {"Authorization": f"{key}"}
-    csrf_token = session.get('csrf_token')
-
-    data = {"csrf_token": csrf_token}
+    one_time_code = generate_one_time_code(baxi_data.secret)
+    data = {"otc": one_time_code}
 
     request = requests.get(
         f"https://baxi-backend.pyropixle.com/api/dash/get/active_systems/{guild_id}",
