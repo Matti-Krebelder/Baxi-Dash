@@ -26,8 +26,6 @@ app = Quart(__name__, template_folder="web")
 app = cors(app)
 app.secret_key = os.urandom(24)
 
-
-
 maintenance = config.getboolean("DASH", "maintenance")
 
 baxi_data = Get_Data(
@@ -56,7 +54,8 @@ async def get_module_data():
 
     request_user = requests.get(full_api_endpoint, headers=headers)
     return request_user.json()
-        
+
+
 @app.route("/api/module-save", methods=["POST"])
 async def save_module_data():
     data = await request.get_json()
@@ -65,6 +64,8 @@ async def save_module_data():
     module_data = data.get("data")
     api_key = config["BAXI"]["api_key"]
 
+    csrf_token = session.get('csrf_token')
+    module_data["csrf_token"] = csrf_token
     if not api_endpoint or not guild_id or not module_data:
         return jsonify({"error": "Missing apiEndpoint, guildId or data"}), 400
 
@@ -91,7 +92,8 @@ async def login():
 async def logout():
     if "token" in session:
         session.clear()
-        return await render_template("logout.html", version=config["DASH"]["version"], dashboardmessage=config["DASH"]["dashboardmessage"])
+        return await render_template("logout.html", version=config["DASH"]["version"],
+                                     dashboardmessage=config["DASH"]["dashboardmessage"])
     else:
         return redirect("/")
 
@@ -123,7 +125,8 @@ async def dash_send_to_new_dash():
 async def dash():
     MANAGE_GUILD_PERMISSION = 0x0000000000000020
     if "token" not in session:
-        return await render_template("login.html", version=config["DASH"]["version"], dashboardmessage=config["DASH"]["dashboardmessage"])
+        return await render_template("login.html", version=config["DASH"]["version"],
+                                     dashboardmessage=config["DASH"]["dashboardmessage"])
     try:
         user_guilds = get_guilds.get_user_guilds(
             session["token"], config["ENDPOINT"]["discord_api"]
