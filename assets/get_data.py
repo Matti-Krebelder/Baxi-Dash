@@ -24,7 +24,7 @@ class Get_Data:
             self.app_name = data["app_name"]
             self.app_id = data["app_id"]
             self.app_verified = data["app_verified"]
-            self.secret = data["secret"]
+            self.secret = fernet.decrypt(data["secret"]).decode()
 
     def baxi_data_pull(self):
         try:
