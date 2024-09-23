@@ -351,39 +351,47 @@
         /* New styles for the switch */
         .switch {
             position: relative;
-            display: inline-block;
-            width: 60px;
-            height: 34px;
-        }
-
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .slider {
-            position: absolute;
+            height: 1.5rem;
+            width: 3rem;
             cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-            border-radius: 34px;
+            appearance: none;
+            -webkit-appearance: none;
+            border-radius: 9999px;
+            background-color: rgba(100, 116, 139, 0.377);
+            transition: all .3s ease;
         }
 
-        .slider:before {
+        .switchinput:checked {
+            background-color: rgba(32, 151, 243, 1);
+        }
+
+        .switchinput::before {
             position: absolute;
             content: "";
-            height: 26px;
-            width: 26px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
+            left: calc(1.5rem - 1.6rem);
+            top: calc(1.5rem - 1.6rem);
+            display: block;
+            height: 1.6rem;
+            width: 1.6rem;
+            cursor: pointer;
+            border: 1px solid rgba(100, 116, 139, 0.527);
+            border-radius: 9999px;
+            background-color: rgba(255, 255, 255, 1);
+            box-shadow: 0 3px 10px rgba(100, 116, 139, 0.327);
+            transition: all .3s ease;
+        }
+
+        .switchinput:hover::before {
+            box-shadow: 0 0 0px 8px rgba(0, 0, 0, .15)
+        }
+
+        .switchinput:checked:hover::before {
+            box-shadow: 0 0 0px 8px rgba(32, 151, 243, .15)
+        }
+
+        .switchinput:checked:before {
+            transform: translateX(100%);
+            border-color: rgba(32, 151, 243, 1);
         }
 
         input:checked+.slider {
@@ -647,76 +655,76 @@
         }
 
         async function showModulePage(title, description, apiEndpoint, saveApiEndpoint) {
-    startPage.classList.add('hidden');
-    serverContent.classList.add('hidden');
-    modulePage.classList.remove('hidden');
-    modulePageTitle.textContent = title;
-    modulePageDescription.textContent = description;
+            startPage.classList.add('hidden');
+            serverContent.classList.add('hidden');
+            modulePage.classList.remove('hidden');
+            modulePageTitle.textContent = title;
+            modulePageDescription.textContent = description;
 
-    const loader = document.getElementById('loader');
-    const errorMessage = document.getElementById('error-message');
-    const moduleData = document.getElementById('module-data');
+            const loader = document.getElementById('loader');
+            const errorMessage = document.getElementById('error-message');
+            const moduleData = document.getElementById('module-data');
 
-    loader.classList.remove('hidden');
-    errorMessage.classList.add('hidden');
-    moduleData.innerHTML = '';
+            loader.classList.remove('hidden');
+            errorMessage.classList.add('hidden');
+            moduleData.innerHTML = '';
 
-    try {
-        const response = await fetch(`/api/module-data?apiEndpoint=${encodeURIComponent(apiEndpoint)}&guildId=${encodeURIComponent(guildId)}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        });
+            try {
+                const response = await fetch(`/api/module-data?apiEndpoint=${encodeURIComponent(apiEndpoint)}&guildId=${encodeURIComponent(guildId)}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
 
-        const data = await response.json();
-        console.log(data);
+                const data = await response.json();
+                console.log(data);
 
-        let htmlContent = '<div class="json-card">';
-        for (const [key, value] of Object.entries(data)) {
-            if (!key.endsWith('-activedrop') && !key.endsWith('-label')) {
-                htmlContent += renderField(key, value, data);
-            }
-        }
-        htmlContent += '</div>';
-        moduleData.innerHTML = htmlContent;
-
-        // Speichere die vollständigen JSON-Daten als Attribut
-        moduleData.setAttribute('data-full-json', JSON.stringify(data));
-
-        // Set the selected values for dropdowns after rendering
-        for (const [key, value] of Object.entries(data)) {
-            if (key.endsWith('-drop')) {
-                const activeDropKey = `${key.replace('-drop', '')}-activedrop`;
-                if (data[activeDropKey]) {
-                    const activeValue = Object.keys(data[activeDropKey])[0];
-                    const select = document.querySelector(`select[onchange*="${key}"]`);
-                    if (select) {
-                        select.value = activeValue;
+                let htmlContent = '<div class="json-card">';
+                for (const [key, value] of Object.entries(data)) {
+                    if (!key.endsWith('-activedrop') && !key.endsWith('-label')) {
+                        htmlContent += renderField(key, value, data);
                     }
                 }
+                htmlContent += '</div>';
+                moduleData.innerHTML = htmlContent;
+
+                // Speichere die vollständigen JSON-Daten als Attribut
+                moduleData.setAttribute('data-full-json', JSON.stringify(data));
+
+                // Set the selected values for dropdowns after rendering
+                for (const [key, value] of Object.entries(data)) {
+                    if (key.endsWith('-drop')) {
+                        const activeDropKey = `${key.replace('-drop', '')}-activedrop`;
+                        if (data[activeDropKey]) {
+                            const activeValue = Object.keys(data[activeDropKey])[0];
+                            const select = document.querySelector(`select[onchange*="${key}"]`);
+                            if (select) {
+                                select.value = activeValue;
+                            }
+                        }
+                    }
+                }
+
+                // Füge einen Save-Button hinzu
+                moduleData.innerHTML += `<button onclick="saveModuleData('${saveApiEndpoint}')" style="margin-top: 20px;">Save</button>`;
+
+                const notifyKey = Object.keys(data).find(key => key.startsWith('notify-'));
+                if (notifyKey) {
+                    showNotification(notifyKey, data[notifyKey]);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                errorMessage.textContent = `Failed to load module data: ${error.message}`;
+                errorMessage.classList.remove('hidden');
+            } finally {
+                loader.classList.add('hidden');
             }
         }
-
-        // Füge einen Save-Button hinzu
-        moduleData.innerHTML += `<button onclick="saveModuleData('${saveApiEndpoint}')" style="margin-top: 20px;">Save</button>`;
-
-        const notifyKey = Object.keys(data).find(key => key.startsWith('notify-'));
-        if (notifyKey) {
-            showNotification(notifyKey, data[notifyKey]);
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        errorMessage.textContent = `Failed to load module data: ${error.message}`;
-        errorMessage.classList.remove('hidden');
-    } finally {
-        loader.classList.add('hidden');
-     }
-}
 
         function renderField(key, value, data) {
             let labelHtml = '';
@@ -734,7 +742,7 @@
       <div class="render-field-container">
         ${labelHtml}
         <label class="switch" style="display: flex; align-items: center;">
-          <input type="checkbox" id="${key}" ${value === 1 ? 'checked' : ''} onchange="handleSwitchChange('${key}', this.checked)">
+          <input type="checkbox" id="${key}" class="switchinput" ${value === 1 ? 'checked' : ''} onchange="handleSwitchChange('${key}', this.checked)">
           <span class="slider" style="margin-left: 10px;"></span>
         </label>
       </div>`;
