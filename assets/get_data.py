@@ -2,6 +2,7 @@ from http.client import responses
 
 import requests
 from cryptography.fernet import Fernet
+from quart import session
 from reds_simple_logger import Logger
 
 logger = Logger()
