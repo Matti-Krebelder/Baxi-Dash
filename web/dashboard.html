@@ -349,57 +349,60 @@
         }
 
         .custom-switch {
-            position: relative;
-            height: 1.5rem;
-            width: 3rem;
-            cursor: pointer;
-            appearance: none;
-            -webkit-appearance: none;
-            border-radius: 9999px;
-            background-color: rgba(100, 116, 139, 0.377);
-            transition: all .3s ease;
-        }
+    position: relative;
+    display: inline-block;
+    width: 3rem;
+    height: 1.5rem;
+    cursor: pointer;
+  }
 
-        .custom-switch-input {
-            position: absolute;
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
+  .custom-switch-input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
 
-        .custom-switch-input:checked+.custom-switch {
-            background-color: rgba(32, 151, 243, 1);
-        }
+  .slider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(100, 116, 139, 0.377);
+    border-radius: 9999px;
+    transition: all .3s ease;
+  }
 
-        .custom-switch::before {
-            position: absolute;
-            content: "";
-            left: calc(1.5rem - 1.6rem);
-            top: calc(1.5rem - 1.6rem);
-            display: block;
-            height: 1.6rem;
-            width: 1.6rem;
-            cursor: pointer;
-            border: 1px solid rgba(100, 116, 139, 0.527);
-            border-radius: 9999px;
-            background-color: rgba(255, 255, 255, 1);
-            box-shadow: 0 3px 10px rgba(100, 116, 139, 0.327);
-            transition: all .3s ease;
-        }
+  .slider::before {
+    position: absolute;
+    content: "";
+    height: 1.6rem;
+    width: 1.6rem;
+    left: 0.1rem;
+    bottom: 0.1rem;
+    background-color: white;
+    border: 1px solid rgba(100, 116, 139, 0.527);
+    border-radius: 50%;
+    box-shadow: 0 3px 10px rgba(100, 116, 139, 0.327);
+    transition: all .3s ease;
+  }
 
-        .custom-switch:hover::before {
-            box-shadow: 0 0 0px 8px rgba(0, 0, 0, .15);
-        }
+  .custom-switch-input:checked + .slider {
+    background-color: rgba(32, 151, 243, 1);
+  }
 
-        .custom-switch-input:checked:hover+.custom-switch::before {
-            box-shadow: 0 0 0px 8px rgba(32, 151, 243, .15);
-        }
+  .custom-switch-input:checked + .slider::before {
+    transform: translateX(1.5rem);
+    border-color: rgba(32, 151, 243, 1);
+  }
 
-        .custom-switch-input:checked+.custom-switch::before {
-            transform: translateX(100%);
-            border-color: rgba(32, 151, 243, 1);
-        }
+  .slider:hover::before {
+    box-shadow: 0 0 0px 8px rgba(0, 0, 0, .15);
+  }
 
+  .custom-switch-input:checked:hover + .slider::before {
+    box-shadow: 0 0 0px 8px rgba(32, 151, 243, .15);
+  }
         @keyframes spin {
             0% {
                 transform: rotate(0deg);
@@ -741,7 +744,9 @@
         ${labelHtml}
 <label class="custom-switch" style="display: flex; align-items: center;">
   <input type="checkbox" id="${key}" class="custom-switch-input" ${value === 1 ? 'checked' : ''} onchange="handleSwitchChange('${key}', this.checked)">
+  <span class="slider"></span>
 </label>
+
 
 
       </div>`;
