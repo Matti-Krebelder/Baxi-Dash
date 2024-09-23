@@ -360,11 +360,18 @@
             transition: all .3s ease;
         }
 
-        .custom-switch-input:checked {
+        .custom-switch-input {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .custom-switch-input:checked+.custom-switch {
             background-color: rgba(32, 151, 243, 1);
         }
 
-        .custom-switch-input::before {
+        .custom-switch::before {
             position: absolute;
             content: "";
             left: calc(1.5rem - 1.6rem);
@@ -380,15 +387,15 @@
             transition: all .3s ease;
         }
 
-        .custom-switch-input:hover::before {
+        .custom-switch:hover::before {
             box-shadow: 0 0 0px 8px rgba(0, 0, 0, .15);
         }
 
-        .custom-switch-input:checked:hover::before {
+        .custom-switch-input:checked:hover+.custom-switch::before {
             box-shadow: 0 0 0px 8px rgba(32, 151, 243, .15);
         }
 
-        .custom-switch-input:checked:before {
+        .custom-switch-input:checked+.custom-switch::before {
             transform: translateX(100%);
             border-color: rgba(32, 151, 243, 1);
         }
