@@ -657,17 +657,17 @@
         }
 
         const modules = [
-            { title: "Anti Raid", description: "Protect your server by automatically blocking users and bots if it resembles a raid.", enabled: true, apiEndpoint: "anti_raid", saveApiEndpoint: "anti_raid" },
-            { title: "Minigame guessing", description: "The mini-game where you have to guess a number alone or as a team.", enabled: true, apiEndpoint: "mgg", saveApiEndpoint: "mgg" },
-            { title: "Counting game", description: "The mini-game in which you have to count as far as possible as a team without making a mistake.", enabled: true, apiEndpoint: "mgc", saveApiEndpoint: "/api/rta/save" },
-            { title: "Global chat", description: "Chat with users from many different communities.", enabled: true, apiEndpoint: "gc", saveApiEndpoint: "gc" },
-            { title: "Welcome system", description: "Automatically welcome new users to your server.", enabled: true, apiEndpoint: "welc", saveApiEndpoint: "welc" },
-            { title: "Verify system", description: "Secure your server with the Verify System to keep bot / automated accounts away.", enabled: true, apiEndpoint: "verify", saveApiEndpoint: "verify" },
-            { title: "Suggestion system", description: "Let the community vote on user suggestions quickly and easily.", enabled: true, apiEndpoint: "sugg", saveApiEndpoint: "sugg" },
-            { title: "Ticket system", description: "Manage your communitys support requests easier than ever before.", enabled: true, apiEndpoint: "ticket", saveApiEndpoint: "ticket" },
-            { title: "Log system", description: "Document all the things on your server that cannot be found in the audit log.", enabled: true, apiEndpoint: "log", saveApiEndpoint: "log" },
-            { title: "Security system", description: "Protect your channels with our smart chat filter and automatically remove inappropriate content.", enabled: true, apiEndpoint: "sec", saveApiEndpoint: "sec" },
-            { title: "Auto Role", description: "Let users automatically add roles as soon as they join your server.", enabled: true, apiEndpoint: "auto_roles", saveApiEndpoint: "auto_roles" },
+            { title: "Anti Raid", description: "Protect your server by automatically blocking users and bots if it resembles a raid.", enabled: true, apiEndpoint: "settings/load/anti_raid", saveApiEndpoint: "anti_raid" },
+            { title: "Minigame guessing", description: "The mini-game where you have to guess a number alone or as a team.", enabled: true, apiEndpoint: "settings/load/mgg", saveApiEndpoint: "mgg" },
+            { title: "Counting game", description: "The mini-game in which you have to count as far as possible as a team without making a mistake.", enabled: true, apiEndpoint: "settings/load/mgc", saveApiEndpoint: "mgc" },
+            { title: "Global chat", description: "Chat with users from many different communities.", enabled: true, apiEndpoint: "settings/load/gc", saveApiEndpoint: "gc" },
+            { title: "Welcome system", description: "Automatically welcome new users to your server.", enabled: true, apiEndpoint: "settings/load/welc", saveApiEndpoint: "welc" },
+            { title: "Verify system", description: "Secure your server with the Verify System to keep bot / automated accounts away.", enabled: true, apiEndpoint: "settings/load/verify", saveApiEndpoint: "verify" },
+            { title: "Suggestion system", description: "Let the community vote on user suggestions quickly and easily.", enabled: true, apiEndpoint: "settings/load/sugg", saveApiEndpoint: "sugg" },
+            { title: "Ticket system", description: "Manage your communitys support requests easier than ever before.", enabled: true, apiEndpoint: "settings/load/ticket", saveApiEndpoint: "ticket" },
+            { title: "Log system", description: "Document all the things on your server that cannot be found in the audit log.", enabled: true, apiEndpoint: "settings/load/log", saveApiEndpoint: "log" },
+            { title: "Security system", description: "Protect your channels with our smart chat filter and automatically remove inappropriate content.", enabled: true, apiEndpoint: "settings/load/sec", saveApiEndpoint: "sec" },
+            { title: "Auto Role", description: "Let users automatically add roles as soon as they join your server.", enabled: true, apiEndpoint: "settings/load/auto_roles", saveApiEndpoint: "auto_roles" },
         ];
 
         const container = document.getElementById('modules-container');
