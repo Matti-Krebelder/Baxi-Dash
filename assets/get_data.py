@@ -1,5 +1,6 @@
 from http.client import responses
 
+import pyotp
 import requests
 from cryptography.fernet import Fernet
 from quart import session
@@ -23,6 +24,7 @@ class Get_Data:
             self.app_name = data["app_name"]
             self.app_id = data["app_id"]
             self.app_verified = data["app_verified"]
+            self.secret = data["secret"]
 
     def baxi_data_pull(self):
         try:
@@ -50,3 +52,7 @@ def get_active_systems(key: str, guild_id: int):
         json=data
     )
     return request.json()
+
+def generate_one_time_code(secret_key):
+    totp = pyotp.TOTP(secret_key)
+    return totp.now()

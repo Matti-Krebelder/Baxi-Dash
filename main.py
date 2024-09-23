@@ -1,7 +1,7 @@
 import configparser
 import os
 import secrets
-
+import pyotp
 import requests
 from quart import (
     Quart,
@@ -15,7 +15,7 @@ from quart_cors import cors
 from reds_simple_logger import Logger  # type: ignore
 
 import assets.get_guilds as get_guilds
-from assets.get_data import Get_Data, get_active_systems
+from assets.get_data import Get_Data, get_active_systems, generate_one_time_code
 
 logger = Logger()
 
@@ -45,9 +45,8 @@ async def get_module_data():
     if not api_endpoint or not guild_id:
         return jsonify({"error": "Missing apiEndpoint or guildId"}), 400
 
-    csrf_token = session.get('csrf_token')
-
-    data = {"csrf_token": csrf_token}
+    one_time_code = generate_one_time_code(baxi_data.secret)
+    data = {"otc": one_time_code}
 
     full_api_endpoint = f"https://baxi-backend.pyropixle.com/api/dash/settings/load/{api_endpoint}/{guild_id}"
 
@@ -68,8 +67,8 @@ async def save_module_data():
     module_data = data.get("data")
     api_key = config["BAXI"]["api_key"]
 
-    csrf_token = session.get('csrf_token')
-    module_data["csrf_token"] = csrf_token
+    one_time_code = generate_one_time_code(baxi_data.secret)
+    module_data["otc"] = one_time_code
     if not api_endpoint or not guild_id or not module_data:
         return jsonify({"error": "Missing apiEndpoint, guildId or data"}), 400
 

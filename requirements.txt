@@ -5,3 +5,4 @@ quart_cors
 reds_simple_logger~=2.4
 configparser~=7.1.0
 aiohttp~=3.10.5
+pyotp~=2.9.0
