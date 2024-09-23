@@ -324,49 +324,92 @@
         }
 
         .render-field-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 40px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #36393f;
+            border-radius: 5px;
         }
 
         .render-field-label {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
             margin-bottom: 10px;
+            color: #ffffff;
         }
 
-        .render-field-input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid red;
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }
-
+        .render-field-input,
         .render-field-select {
             width: 100%;
-            padding: 10px;
-            border: 1px solid red;
-            border-radius: 5px;
-            margin-bottom: 20px;
+            padding: 8px;
+            background-color: #2f3136;
+            border: 1px solid #202225;
+            border-radius: 3px;
+            color: #ffffff;
+            margin-bottom: 10px;
         }
 
         .render-field-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
 
         .render-field-table th,
         .render-field-table td {
-            border: 1px solid #ccc;
-            padding: 10px;
+            border: 1px solid #202225;
+            padding: 8px;
             text-align: left;
+            color: #ffffff;
         }
 
         .render-field-table th {
-            background-color: #f0f0f0;
+            background-color: #2f3136;
+        }
+
+        /* New styles for the switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: #2196F3;
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(26px);
         }
 
         @keyframes spin {
@@ -637,7 +680,7 @@
             moduleData.innerHTML = '';
 
             try {
-                
+
                 const response = await fetch(`/api/module-data?apiEndpoint=${encodeURIComponent(apiEndpoint)}&guildId=${encodeURIComponent(guildId)}`, {
                     method: 'GET',
                     headers: {
