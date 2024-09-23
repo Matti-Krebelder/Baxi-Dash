@@ -42,8 +42,6 @@ class Get_Data:
         except Exception as e:
             logger.error("ERROR: " + str(e))
 
-config = configparser.ConfigParser()
-config.read("config/runtime.conf")
 def get_active_systems(key: str, guild_id: int, secret):
     headers = {"Authorization": f"{key}"}
 
