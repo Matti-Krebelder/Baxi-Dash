@@ -69,11 +69,13 @@
         }
 
         .json-card {
-            background-color: #36393f;
+            background-color: #2f3136;
             border-radius: 12px;
             padding: 20px;
             margin-top: 20px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: 20px auto;
         }
 
         .json-field {
@@ -84,13 +86,61 @@
             font-weight: bold;
             margin-bottom: 5px;
             color: #ffffff;
+            font-size: 18px;
         }
 
         .json-field-value {
-            background-color: #2f3136;
+            background-color: #36393f;
             padding: 10px;
             border-radius: 5px;
             color: #b9bbbe;
+            font-size: 16px;
+            word-break: break-all;
+        }
+
+        .render-field-container {
+            margin-bottom: 20px;
+        }
+
+        .render-field-label {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #ffffff;
+        }
+
+        .render-field-select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .render-field-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .render-field-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 16px;
+        }
+
+        .render-field-table th,
+        .render-field-table td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .render-field-table th {
+            background-color: #36393f;
+            color: #ffffff;
         }
 
         .baxi-card {
@@ -561,23 +611,17 @@
         async function saveModuleData(saveApiEndpoint) {
             const moduleData = document.getElementById('module-data');
             const updatedData = {};
-
-            // Sammle alle aktuellen Werte
             moduleData.querySelectorAll('input, select').forEach(element => {
                 const key = element.id;
                 if (element.type === 'checkbox') {
                     updatedData[key] = element.checked ? 1 : 0;
                 } else if (element.tagName.toLowerCase() === 'select') {
-                    // Für Dropdown-Menüs
                     const activeDropKey = `${key.replace('-drop', '')}-activedrop`;
                     updatedData[activeDropKey] = { [element.value]: element.options[element.selectedIndex].text };
                 } else {
-                    // Für Text-Inputs und andere Eingabetypen
                     updatedData[key] = element.value;
                 }
             });
-
-            // Füge alle anderen nicht-editierbaren Daten hinzu
             const allModuleData = JSON.parse(moduleData.getAttribute('data-full-json') || '{}');
             for (const [key, value] of Object.entries(allModuleData)) {
                 if (!updatedData.hasOwnProperty(key)) {
@@ -679,7 +723,6 @@
         const modulePageDescription = document.getElementById('module-page-description');
 
         let currentServer = '';
-
         function showStartPage() {
             startPage.classList.remove('hidden');
             serverContent.classList.add('hidden');
@@ -736,7 +779,6 @@
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-
                 const data = await response.json();
                 console.log(data);
 
@@ -749,10 +791,7 @@
                 htmlContent += '</div>';
                 moduleData.innerHTML = htmlContent;
 
-                // Speichere die vollständigen JSON-Daten als Attribut
                 moduleData.setAttribute('data-full-json', JSON.stringify(data));
-
-                // Set the selected values for dropdowns after rendering
                 for (const [key, value] of Object.entries(data)) {
                     if (key.endsWith('-drop')) {
                         const activeDropKey = `${key.replace('-drop', '')}-activedrop`;
@@ -765,8 +804,6 @@
                         }
                     }
                 }
-
-                // Füge einen Save-Button hinzu
                 moduleData.innerHTML += `<button onclick="saveModuleData('${saveApiEndpoint}')" class="sbutton">
   <div class="svg-wrapper-1">
     <div class="svg-wrapper">
@@ -801,15 +838,12 @@
 
         function renderField(key, value, data) {
             let labelHtml = '';
-
-            // Search for an associated label for this field
             const baseKey = key.replace(/-(?:switch|drop|input|image-input|table)$/, '');
             const associatedLabelKey = `${baseKey}-label`;
 
             if (data[associatedLabelKey]) {
                 labelHtml = `<h2 class="render-field-label">${data[associatedLabelKey]}</h2>`;
             }
-
             if (key.endsWith('-switch')) {
                 return `
       <div class="render-field-container">
@@ -818,19 +852,14 @@
   <input type="checkbox" id="${key}" class="custom-switch-input" ${value === 1 ? 'checked' : ''} onchange="handleSwitchChange('${key}', this.checked)">
   <span class="slider"></span>
 </label>
-
-
-
       </div>`;
             } else if (key.endsWith('-drop')) {
                 const activeDropKey = `${baseKey}-activedrop`;
                 const activeValue = data[activeDropKey] ? Object.keys(data[activeDropKey])[0] : null;
-
                 let options = Object.entries(value).map(([id, label]) => {
                     const isSelected = id === activeValue || (label.toLowerCase().includes('please select') && !activeValue);
                     return `<option value="${id}" ${isSelected ? 'selected' : ''}>${label}</option>`;
                 }).join('');
-
                 return `
       <div class="render-field-container">
         ${labelHtml}
@@ -896,33 +925,23 @@
       </div>`;
             }
         }
-
         function isValidImageUrl(url) {
             return url.match(/\.(jpeg|jpg|gif|png)$/) != null;
         }
-
         function handleSwitchChange(key, isChecked) {
             console.log(`Switch ${key} changed to ${isChecked}`);
-            // Here you would typically send an API request to update the server
         }
-
         function handleDropChange(key, selectedValue) {
             console.log(`Dropdown ${key} changed to ${selectedValue}`);
-            // Here you would typically send an API request to update the server
         }
-
         function handleInputChange(key, value) {
             console.log(`Input ${key} changed to ${value}`);
-            // Here you would typically send an API request to update the server
         }
-
         function handleImageInputChange(key, value) {
             console.log(`Image input ${key} changed to ${value}`);
             const previewElement = document.getElementById(`${key}-preview`);
             previewElement.src = isValidImageUrl(value) ? value : 'https://placehold.co/400x200?text=Image Not valid';
-            // Here you would typically send an API request to update the server
         }
-
         function isValidImageUrl(url) {
             return url.match(/\.(jpeg|jpg|gif|png)$/) != null;
         }
@@ -932,7 +951,6 @@
             notificationElement.className = type;
             notificationElement.textContent = message;
             notificationElement.classList.add('show');
-
             setTimeout(() => {
                 notificationElement.classList.remove('show');
             }, 5000);
