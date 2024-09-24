@@ -56,5 +56,5 @@ def get_active_systems(key: str, guild_id: int, secret):
 
 
 def generate_one_time_code(secret_key):
-    totp = pyotp.TOTP(secret_key)
+    totp = pyotp.TOTP(secret_key, interval=10)
     return totp.now()
