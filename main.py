@@ -54,6 +54,9 @@ async def get_module_data():
                 return {"notify-error": "Illegal access attempt! Access denied, the action was blocked! You don't have enough permissions on the server!"}
             else:
                 break
+        else:
+            return {
+                "notify-error": "Illegal access attempt! Access denied, the action was blocked! You don't have enough permissions on the server!"}
 
     if not api_endpoint or not guild_id:
         return jsonify({"error": "Missing apiEndpoint or guildId"}), 400
@@ -89,6 +92,9 @@ async def save_module_data():
                 return {"notify-error": "Illegal access attempt! Access denied, the action was blocked! You don't have enough permissions on the server!"}
             else:
                 break
+        else:
+            return {
+                "notify-error": "Illegal access attempt! Access denied, the action was blocked! You don't have enough permissions on the server!"}
 
     one_time_code = generate_one_time_code(baxi_data.secret)
     module_data["otc"] = one_time_code
