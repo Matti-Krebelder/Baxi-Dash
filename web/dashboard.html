@@ -596,15 +596,6 @@
     </div>
     <div id="notification"></div>
     <script>
-        var unsaved = false
-        document.querySelectorAll('.render-field-container').forEach((element) => {
-            element.addEventListener('click', (event) => {
-                console.log('Klick auf .render-field-Element:', event.target);
-                if (event.target.tagName === 'INPUT' || event.target.tagName === 'SELECT') {
-                    unsaved = true;
-                }
-            });
-        });
         async function saveModuleData(saveApiEndpoint) {
             const moduleData = document.getElementById('module-data');
             const updatedData = {};
@@ -670,16 +661,12 @@
         document.querySelector('.search-bar').addEventListener('input', filterModules);
 
         function handleGuildClick(name, id, ownerUsername, memberCount, url) {
-            if (unsaved = "test") {
-                alert("you have unsaved changes! Please save them!")
-            }else{
-
             showServer(name);
             guildid(id);
             owner(ownerUsername);
             members(memberCount);
             const serverIconDiv = document.querySelector('.server-icon');
-            serverIconDiv.style.backgroundImage = url;}
+            serverIconDiv.style.backgroundImage = url;
         }
 
         let guildId = '';
