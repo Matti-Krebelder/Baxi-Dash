@@ -548,6 +548,7 @@
         <div id="line"></div> {% for guild in guild_details %} <img src="{{ guild.icon_url }}" alt="{{ guild.name }}"
             onclick="handleGuildClick('{{ guild.name }}', '{{ guild.id }}', '{{ guild.owner_username }}', '{{ guild.member_count }}', '{{ guild.icon_url }}')">
         {% endfor %}
+        <img src="https://t3.ftcdn.net/jpg/07/57/68/60/360_F_757686061_zAWoUtEKv7kkMiFiVALwYHmzTYXl7VNn.jpg" alt="Logout" onclick="window.location.href='https://baxi.pyropixle.com/logout'" style="bottom: 0;">
 
 
     </div>
@@ -657,7 +658,6 @@
                 }
             });
         }
-
         document.querySelector('.search-bar').addEventListener('input', filterModules);
 
         function handleGuildClick(name, id, ownerUsername, memberCount, url) {
