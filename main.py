@@ -48,15 +48,19 @@ async def get_module_data():
         session["token"], config["ENDPOINT"]["discord_api"]
     )
 
+    found_matching_guild = False
     for guild in user_guilds:
         if int(guild["id"]) == int(guild_id):
+            found_matching_guild = True
             if not (int(guild["permissions"]) & MANAGE_GUILD_PERMISSION) == MANAGE_GUILD_PERMISSION:
-                return {"notify-error": "Illegal access attempt! Access denied, the action was blocked! You don't have enough permissions on the server!"}
+                return {
+                    "notify-error": "Illegal access attempt! Access denied, the action was blocked! You don't have enough permissions on the server!"}
             else:
                 break
-        else:
-            return {
-                "notify-error": "Illegal access attempt! Access denied, the action was blocked! You don't have enough permissions on the server!"}
+
+    if not found_matching_guild:
+        return {
+            "notify-error": "Illegal access attempt! Access denied, the action was blocked! You don't have enough permissions on the server!"}
 
     if not api_endpoint or not guild_id:
         return jsonify({"error": "Missing apiEndpoint or guildId"}), 400
@@ -86,15 +90,19 @@ async def save_module_data():
         session["token"], config["ENDPOINT"]["discord_api"]
     )
 
+    found_matching_guild = False
     for guild in user_guilds:
         if int(guild["id"]) == int(guild_id):
+            found_matching_guild = True
             if not (int(guild["permissions"]) & MANAGE_GUILD_PERMISSION) == MANAGE_GUILD_PERMISSION:
-                return {"notify-error": "Illegal access attempt! Access denied, the action was blocked! You don't have enough permissions on the server!"}
+                return {
+                    "notify-error": "Illegal access attempt! Access denied, the action was blocked! You don't have enough permissions on the server!"}
             else:
                 break
-        else:
-            return {
-                "notify-error": "Illegal access attempt! Access denied, the action was blocked! You don't have enough permissions on the server!"}
+
+    if not found_matching_guild:
+        return {
+            "notify-error": "Illegal access attempt! Access denied, the action was blocked! You don't have enough permissions on the server!"}
 
     one_time_code = generate_one_time_code(baxi_data.secret)
     module_data["otc"] = one_time_code
