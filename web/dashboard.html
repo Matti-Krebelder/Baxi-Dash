@@ -596,6 +596,32 @@
     </div>
     <div id="notification"></div>
     <script>
+        let unsavedChanges = false;
+        function handleFieldChange() {
+            unsavedChanges = true;
+        }
+
+        function beforeUnload(event) {
+            if (unsavedChanges) {
+                event.preventDefault();
+                event.returnValue = 'Sie haben ungespeicherte Änderungen. Sind Sie sicher, dass Sie die Seite verlassen möchten?';
+            }
+        }
+
+        function handleServerChange() {
+            if (unsavedChanges) {
+                if (!confirm('Sie haben ungespeicherte Änderungen. Sind Sie sicher, dass Sie den Server wechseln möchten?')) {
+                    return false;
+                }
+            }
+        }
+
+        window.addEventListener('beforeunload', beforeUnload);
+
+        document.querySelectorAll('.render-field-input, .render-field-select').forEach(field => {
+            field.addEventListener('change', handleFieldChange);
+        });
+        document.querySelector('.server-selector').addEventListener('click', handleServerChange);
         async function saveModuleData(saveApiEndpoint) {
             const moduleData = document.getElementById('module-data');
             const updatedData = {};
