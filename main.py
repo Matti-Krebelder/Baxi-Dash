@@ -35,12 +35,25 @@ baxi_data = Get_Data(
 
 logger.debug.info("Logged in as " + baxi_data.app_name)
 
+MANAGE_GUILD_PERMISSION = 0x0000000000000020
+
 
 @app.route("/api/module-data", methods=["GET"])
 async def get_module_data():
     api_endpoint = request.args.get("apiEndpoint")
     guild_id = request.args.get("guildId")
     api_key = config["BAXI"]["api_key"]
+
+    user_guilds = get_guilds.get_user_guilds(
+        session["token"], config["ENDPOINT"]["discord_api"]
+    )
+
+    for guild in user_guilds:
+        if int(guild["id"]) == int(guild_id):
+            if not (int(guild["permissions"]) & MANAGE_GUILD_PERMISSION) == MANAGE_GUILD_PERMISSION:
+                return {"notify-error": "Illegal access attempt! Access denied, the action was blocked! You don't have enough permissions on the server!"}
+            else:
+                break
 
     if not api_endpoint or not guild_id:
         return jsonify({"error": "Missing apiEndpoint or guildId"}), 400
@@ -66,6 +79,16 @@ async def save_module_data():
     guild_id = data.get("guildId")
     module_data = data.get("data")
     api_key = config["BAXI"]["api_key"]
+    user_guilds = get_guilds.get_user_guilds(
+        session["token"], config["ENDPOINT"]["discord_api"]
+    )
+
+    for guild in user_guilds:
+        if int(guild["id"]) == int(guild_id):
+            if not (int(guild["permissions"]) & MANAGE_GUILD_PERMISSION) == MANAGE_GUILD_PERMISSION:
+                return {"notify-error": "Illegal access attempt! Access denied, the action was blocked! You don't have enough permissions on the server!"}
+            else:
+                break
 
     one_time_code = generate_one_time_code(baxi_data.secret)
     module_data["otc"] = one_time_code
@@ -125,7 +148,6 @@ async def dash_send_to_new_dash():
 
 @app.route("/")
 async def dash():
-    MANAGE_GUILD_PERMISSION = 0x0000000000000020
     if "token" not in session:
         return await render_template("login.html", version=config["DASH"]["version"],
                                      dashboardmessage=config["DASH"]["dashboardmessage"])
@@ -149,7 +171,8 @@ async def dash():
         guild_details = []
         bot_headers = {"Authorization": f"Bot {str(baxi_data.token)}"}
         for guild in common_guilds:
-            active_systems = get_active_systems(key=config["BAXI"]["api_key"], guild_id=int(guild["id"]), secret=baxi_data.secret)
+            active_systems = get_active_systems(key=config["BAXI"]["api_key"], guild_id=int(guild["id"]),
+                                                secret=baxi_data.secret)
             guild_id = guild["id"]
             guild_info_response = requests.get(
                 f'{config["ENDPOINT"]["discord_api"]}/guilds/{guild_id}?with_counts=true',
