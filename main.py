@@ -75,8 +75,9 @@ async def get_module_data():
         "Authorization": f"{api_key}",
     }
 
-    request_user = requests.get(full_api_endpoint, headers=headers, json=data)
-    return request_user.json()
+    request = requests.get(full_api_endpoint, headers=headers, json=data)
+    logger.debug.info(request.text)
+    return request.json()
 
 
 @app.route("/api/module-save", methods=["POST"])
