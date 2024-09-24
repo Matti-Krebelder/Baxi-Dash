@@ -17,12 +17,14 @@
     <link rel="shortcut icon" href="https://pyropixle.com/img/pb-baxi.gif" type="image/x-icon">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 </head>
+
 <body>
     <div class="sidebar"> <img src="/static/imgs/baxilogoanimated.gif" alt="Baxi Image" onclick="showStartPage()">
         <div id="line"></div> {% for guild in guild_details %} <img src="{{ guild.icon_url }}" alt="{{ guild.name }}"
             onclick="handleGuildClick('{{ guild.name }}', '{{ guild.id }}', '{{ guild.owner_username }}', '{{ guild.member_count }}', '{{ guild.icon_url }}')">
         {% endfor %}
-        <img src="https://pyropixle.com/img/log-out.svg" alt="Logout" onclick="window.location.href='https://baxi.pyropixle.com/logout'" style="bottom: 0;">
+        <img src="https://pyropixle.com/img/log-out.svg" alt="Logout"
+            onclick="window.location.href='https://baxi.pyropixle.com/logout'" style="bottom: 0;">
     </div>
     <div class="container">
         <div id="start-page" class="start-page">
@@ -48,7 +50,6 @@
             <div class="modules-grid" id="modules-container">
             </div>
         </div>
-
         <div id="module-page" class="module-page hidden">
             <h1 id="module-page-title"></h1>
             <p id="module-page-description"></p>
@@ -64,4 +65,5 @@
     <div id="notification"></div>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
+
 </html>
