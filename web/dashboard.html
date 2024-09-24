@@ -596,6 +596,13 @@
     </div>
     <div id="notification"></div>
     <script>
+        var unsaved = false
+        document.querySelectorAll('.render-field-container').forEach((element) => {
+            element.addEventListener('click', (event) => {
+                console.log('Klick auf .render-field-Element:', event.target);
+                let unsaved = true
+            });
+        });
         async function saveModuleData(saveApiEndpoint) {
             const moduleData = document.getElementById('module-data');
             const updatedData = {};
@@ -661,7 +668,7 @@
         document.querySelector('.search-bar').addEventListener('input', filterModules);
 
         function handleGuildClick(name, id, ownerUsername, memberCount, url) {
-            if(unsaved =  true) {
+            if (unsaved = true) {
                 alert("you have unsaved changes! Please save them!")
             }
 
@@ -949,17 +956,6 @@
         }
     </script>
 
-    <!--unsaved warning-->
-
-    <script>
-        let unsaved = false
-        document.querySelectorAll('.render-field-container').forEach((element) => {
-  element.addEventListener('click', (event) => {
-    console.log('Klick auf .render-field-Element:', event.target);
-    let unsaved = true
-  });
-});
-    </script>
 </body>
 
 </html>
