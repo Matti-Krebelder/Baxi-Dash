@@ -23,9 +23,10 @@
         <div id="line"></div> {% for guild in guild_details %} <img src="{{ guild.icon_url }}" alt="{{ guild.name }}"
             onclick="handleGuildClick('{{ guild.name }}', '{{ guild.id }}', '{{ guild.owner_username }}', '{{ guild.member_count }}', '{{ guild.icon_url }}')">
         {% endfor %}
-        <img src="https://pyropixle.com/img/log-out.svg" alt="Logout"
-            onclick="window.location.href='https://baxi.pyropixle.com/logout'" style="bottom: 0;">
+            <img src="https://pyropixle.com/img/log-out.svg" alt="Logout"
+            onclick="window.location.href='https://baxi.pyropixle.com/logout'" style="bottom: 0; position: absolute;">
     </div>
+    
     <div class="container">
         <div id="start-page" class="start-page">
             <h1>Welcome to the Baxi Dashboard!</h1>
