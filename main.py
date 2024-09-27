@@ -27,7 +27,6 @@ app = cors(app)
 app.secret_key = os.urandom(24)
 
 maintenance = config.getboolean("DASH", "maintenance")
-
 baxi_data = Get_Data(
     encryption_key=config.get("BAXI", "encryption_key"),
     api_key=config.get("BAXI", "baxi_info_key"),
@@ -40,120 +39,134 @@ MANAGE_GUILD_PERMISSION = 0x0000000000000020
 
 @app.route("/api/module-data", methods=["GET"])
 async def get_module_data():
-    api_endpoint = request.args.get("apiEndpoint")
-    guild_id = request.args.get("guildId")
-    api_key = config["BAXI"]["api_key"]
+    try:
+        api_endpoint = request.args.get("apiEndpoint")
+        guild_id = request.args.get("guildId")
+        api_key = config["BAXI"]["api_key"]
 
-    user_guilds = get_guilds.get_user_guilds(
-        session["token"], config["ENDPOINT"]["discord_api"]
-    )
+        user_guilds = get_guilds.get_user_guilds(
+            session["token"], config["ENDPOINT"]["discord_api"]
+        )
 
-    found_matching_guild = False
-    for guild in user_guilds:
-        if int(guild["id"]) == int(guild_id):
-            found_matching_guild = True
-            if not (int(guild["permissions"]) & MANAGE_GUILD_PERMISSION) == MANAGE_GUILD_PERMISSION:
-                return {
-                    "notify-error": "Illegal access attempt! Access denied, the action was blocked! You don't have enough permissions on the server!"}
-            else:
-                break
+        found_matching_guild = False
+        for guild in user_guilds:
+            if int(guild["id"]) == int(guild_id):
+                found_matching_guild = True
+                if not (int(guild["permissions"]) & MANAGE_GUILD_PERMISSION) == MANAGE_GUILD_PERMISSION:
+                    return {
+                        "notify-error": "Illegal access attempt! Access denied, the action was blocked! You don't have enough permissions on the server!"}
+                else:
+                    break
 
-    if not found_matching_guild:
-        return {
-            "notify-error": "Illegal access attempt! Access denied, the action was blocked! You don't have enough permissions on the server!"}
+        if not found_matching_guild:
+            return {
+                "notify-error": "Illegal access attempt! Access denied, the action was blocked! You don't have enough permissions on the server!"}
 
-    if not api_endpoint or not guild_id:
-        return jsonify({"error": "Missing apiEndpoint or guildId"}), 400
+        if not api_endpoint or not guild_id:
+            return jsonify({"error": "Missing apiEndpoint or guildId"}), 400
 
-    one_time_code = generate_one_time_code(baxi_data.secret)
-    data = {"otc": one_time_code}
+        one_time_code = generate_one_time_code(baxi_data.secret)
+        data = {"otc": one_time_code}
 
-    full_api_endpoint = f"https://baxi-backend.pyropixle.com/api/dash/{api_endpoint}/{guild_id}"
+        full_api_endpoint = f"https://baxi-backend.pyropixle.com/api/dash/{api_endpoint}/{guild_id}"
 
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f"{api_key}",
-    }
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"{api_key}",
+        }
 
-    response = requests.get(full_api_endpoint, headers=headers, json=data)
-    logger.debug.info(response.text)
-    return response.json()
+        response = requests.get(full_api_endpoint, headers=headers, json=data)
+        logger.debug.info(response.text)
+        return response.json()
+    except Exception as e:
+        return await render_template('error.html', ec=500, em=str(e)), 500
 
 
 @app.route("/api/module-save", methods=["POST"])
 async def save_module_data():
-    data = await request.get_json()
-    api_endpoint = data.get("apiEndpoint")
-    guild_id = data.get("guildId")
-    module_data = data.get("data")
-    api_key = config["BAXI"]["api_key"]
-    user_guilds = get_guilds.get_user_guilds(
-        session["token"], config["ENDPOINT"]["discord_api"]
-    )
+    try:
+        data = await request.get_json()
+        api_endpoint = data.get("apiEndpoint")
+        guild_id = data.get("guildId")
+        module_data = data.get("data")
+        api_key = config["BAXI"]["api_key"]
+        user_guilds = get_guilds.get_user_guilds(
+            session["token"], config["ENDPOINT"]["discord_api"]
+        )
 
-    found_matching_guild = False
-    for guild in user_guilds:
-        if int(guild["id"]) == int(guild_id):
-            found_matching_guild = True
-            if not (int(guild["permissions"]) & MANAGE_GUILD_PERMISSION) == MANAGE_GUILD_PERMISSION:
-                return {
-                    "notify-error": "Illegal access attempt! Access denied, the action was blocked! You don't have enough permissions on the server!"}
-            else:
-                break
+        found_matching_guild = False
+        for guild in user_guilds:
+            if int(guild["id"]) == int(guild_id):
+                found_matching_guild = True
+                if not (int(guild["permissions"]) & MANAGE_GUILD_PERMISSION) == MANAGE_GUILD_PERMISSION:
+                    return {
+                        "notify-error": "Illegal access attempt! Access denied, the action was blocked! You don't have enough permissions on the server!"}
+                else:
+                    break
 
-    if not found_matching_guild:
-        return {
-            "notify-error": "Illegal access attempt! Access denied, the action was blocked! You don't have enough permissions on the server!"}
+        if not found_matching_guild:
+            return {
+                "notify-error": "Illegal access attempt! Access denied, the action was blocked! You don't have enough permissions on the server!"}
 
-    one_time_code = generate_one_time_code(baxi_data.secret)
-    module_data["otc"] = one_time_code
-    if not api_endpoint or not guild_id or not module_data:
-        return jsonify({"error": "Missing apiEndpoint, guildId or data"}), 400
+        one_time_code = generate_one_time_code(baxi_data.secret)
+        module_data["otc"] = one_time_code
+        if not api_endpoint or not guild_id or not module_data:
+            return jsonify({"error": "Missing apiEndpoint, guildId or data"}), 400
 
-    full_api_endpoint = f"https://baxi-backend.pyropixle.com/api/dash/settings/save/{api_endpoint}/{guild_id}"
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f"{api_key}",
-    }
-    response = requests.post(full_api_endpoint, json=module_data, headers=headers)
-    return response.json()
-
+        full_api_endpoint = f"https://baxi-backend.pyropixle.com/api/dash/settings/save/{api_endpoint}/{guild_id}"
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"{api_key}",
+        }
+        response = requests.post(full_api_endpoint, json=module_data, headers=headers)
+        return response.json()
+    except Exception as e:
+        return await render_template('error.html', ec=500, em=str(e)), 500
 
 @app.route("/login")
 async def login():
-    if "token" in session:
-        return redirect("/")
-    return redirect(
-        f'{config["ENDPOINT"]["auth"]}?client_id={int(baxi_data.client_id)}&redirect_uri={baxi_data.redirect_uri}&response_type=code&scope=identify%20guilds'
-    )
+    try:
+        if "token" in session:
+            return redirect("/")
+        return redirect(
+            f'{config["ENDPOINT"]["auth"]}?client_id={int(baxi_data.client_id)}&redirect_uri={baxi_data.redirect_uri}&response_type=code&scope=identify%20guilds'
+        )
+    except Exception as e:
+        return await render_template('error.html', ec=500, em=str(e)), 500
 
 
 @app.route("/logout")
 async def logout():
-    if "token" in session:
-        session.clear()
-        return await render_template("logout.html", version=config["DASH"]["version"],
-                                     dashboardmessage=config["DASH"]["dashboardmessage"])
-    else:
-        return redirect("/")
+    try:
+        if "token" in session:
+            session.clear()
+            return await render_template("logout.html", version=config["DASH"]["version"],
+                                         dashboardmessage=config["DASH"]["dashboardmessage"])
+        else:
+            return redirect("/")
+    except Exception as e:
+        return await render_template('error.html', ec=500, em=str(e)), 500
 
 
 @app.route("/callback")
 async def callback():
-    code = request.args.get("code")
-    data = {
-        "client_id": int(baxi_data.client_id),
-        "client_secret": str(baxi_data.client_secret),
-        "grant_type": "authorization_code",
-        "code": code,
-        "redirect_uri": str(baxi_data.redirect_uri),
-    }
-    headers = {"Content-Type": "application/x-www-form-urlencoded"}
-    r = requests.post(config["ENDPOINT"]["tocken"], data=data, headers=headers)
-    logger.debug.info(r.text)
-    r.raise_for_status()
-    session["token"] = r.json()["access_token"]
-    return redirect("/")
+    try:
+        code = request.args.get("code")
+        data = {
+            "client_id": int(baxi_data.client_id),
+            "client_secret": str(baxi_data.client_secret),
+            "grant_type": "authorization_code",
+            "code": code,
+            "redirect_uri": str(baxi_data.redirect_uri),
+        }
+        headers = {"Content-Type": "application/x-www-form-urlencoded"}
+        r = requests.post(config["ENDPOINT"]["tocken"], data=data, headers=headers)
+        logger.debug.info(r.text)
+        r.raise_for_status()
+        session["token"] = r.json()["access_token"]
+        return redirect("/")
+    except Exception as e:
+        return await render_template('error.html', ec=500, em=str(e)), 500
 
 
 @app.route("/dashboard")
@@ -231,7 +244,12 @@ async def dash():
 
     except Exception as e:
         logger.error('Error in app.route("/"): ' + str(e))
-        return jsonify({"notify-error": f"Error: {str(e)}"}), 500
+        return await render_template('error.html', ec=500, em=str(e)), 500
+
+
+@app.errorhandler(404)
+async def page_not_found(e):  # noqa
+    return await render_template('error.html', error_code=404, error_message="Page not found!"), 404
 
 
 if __name__ == "__main__":

@@ -40,6 +40,7 @@ class Get_Data:
             return self.Response(response, self.encryption_key)
         except Exception as e:
             logger.error("ERROR: " + str(e))
+            return 500
 
 def get_active_systems(key: str, guild_id: int, secret):
     headers = {"Authorization": f"{key}"}
