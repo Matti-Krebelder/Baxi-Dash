@@ -32,7 +32,7 @@ class Get_Data:
         try:
             headers = {"Authorization": f"{self.api_key}"}
             request = requests.get(
-                "https://baxi-backend.pyropixle.com/api/oauth/get/data/baxi",
+                "https://baxi-backend.avocloud.net/api/oauth/get/data/baxi",
                 headers=headers
             )
             logger.debug.info(request.text)
@@ -49,7 +49,7 @@ def get_active_systems(key: str, guild_id: int, secret):
     data = {"otc": one_time_code}
 
     request = requests.get(
-        f"https://baxi-backend.pyropixle.com/api/dash/get/active_systems/{guild_id}",
+        f"https://baxi-backend.avocloud.net/api/dash/get/active_systems/{guild_id}",
         headers=headers,
         json=data
     )

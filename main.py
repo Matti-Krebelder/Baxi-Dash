@@ -68,7 +68,7 @@ async def get_module_data():
         one_time_code = generate_one_time_code(baxi_data.secret)
         data = {"otc": one_time_code}
 
-        full_api_endpoint = f"https://baxi-backend.pyropixle.com/api/dash/{api_endpoint}/{guild_id}"
+        full_api_endpoint = f"https://baxi-backend.avocloud.net/api/dash/{api_endpoint}/{guild_id}"
 
         headers = {
             "Content-Type": "application/json",
@@ -113,7 +113,7 @@ async def save_module_data():
         if not api_endpoint or not guild_id or not module_data:
             return jsonify({"error": "Missing apiEndpoint, guildId or data"}), 400
 
-        full_api_endpoint = f"https://baxi-backend.pyropixle.com/api/dash/settings/save/{api_endpoint}/{guild_id}"
+        full_api_endpoint = f"https://baxi-backend.avocloud.net/api/dash/settings/save/{api_endpoint}/{guild_id}"
         headers = {
             "Content-Type": "application/json",
             "Authorization": f"{api_key}",

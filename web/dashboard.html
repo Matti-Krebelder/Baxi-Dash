@@ -8,13 +8,13 @@
     <meta property="og:title" content="Baxi Dashboard">
     <meta property="og:description"
         content="Manage all your server's systems quickly and easily via the Baxi Dashboard. ">
-    <meta property="og:url" content="https://baxi.pyropixle.com/">
-    <meta property="og:image" content="https://pyropixle.com/img/pb-baxi.gif">
+    <meta property="og:url" content="https://baxi.avocloud.net/">
+    <meta property="og:image" content="https://avocloud.net/img/pb-baxi.gif">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:type" content="website">
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="shortcut icon" href="https://pyropixle.com/img/pb-baxi.gif" type="image/x-icon">
+    <link rel="shortcut icon" href="https://avocloud.net/img/pb-baxi.gif" type="image/x-icon">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 </head>
 
@@ -23,8 +23,8 @@
         <div id="line"></div> {% for guild in guild_details %} <img src="{{ guild.icon_url }}" alt="{{ guild.name }}"
             onclick="handleGuildClick('{{ guild.name }}', '{{ guild.id }}', '{{ guild.owner_username }}', '{{ guild.member_count }}', '{{ guild.icon_url }}')">
         {% endfor %}
-            <img src="https://pyropixle.com/img/log-out.svg" alt="Logout"
-            onclick="window.location.href='https://baxi.pyropixle.com/logout'" style="bottom: 0; position: absolute;">
+            <img src="https://avocloud.net/img/log-out.svg" alt="Logout"
+            onclick="window.location.href='https://baxi.avocloud.net/logout'" style="bottom: 0; position: absolute;">
     </div>
     
     <div class="container">
